@@ -1,6 +1,6 @@
 # Tools for checking triggers
 
-This repository contains a few tools to for CMS triggers.
+This repository contains a few tools to study CMS triggers.
 
 
 ## Installation
@@ -15,7 +15,7 @@ git clone https://github.com/IzaakWN/TriggerChecks TauPOG/TriggerChecks
 cmsenv
 scram b -j4
 ```
-If you choose a different naming for the CMSSW package than `TauPOG/TriggerChecks`, make sure to update [`plugin/BuildFile.xml`](plugin/BuildFile.xml).
+
 
 ## List filters
 
@@ -63,4 +63,5 @@ The script [`python/matchTauTriggersNanoAOD.py`](python/matchTauTriggersNanoAOD.
       -> 'filter' = last filter associated with this trigger path
       -> 'filterbits' = shorthand of filter patterns 
 ```
+The trigger bits can be found in [`PhysicsTools/NanoAOD/python/triggerObjects_cff.py`](https://github.com/cms-sw/cmssw/blob/master/PhysicsTools/NanoAOD/python/triggerObjects_cff.py)
 This can be read in by a class that handles trigger tau object matching (see [`python/matchTauTriggersNanoAOD.py`](python/matchTauTriggersNanoAOD.py)). The scripts creates the files in the [`json`](json) directory.
