@@ -63,5 +63,5 @@ The script [`python/matchTauTriggersNanoAOD.py`](python/matchTauTriggersNanoAOD.
       -> 'filter' = last filter associated with this trigger path
       -> 'filterbits' = shorthand of filter patterns 
 ```
-The trigger bits can be found in [`PhysicsTools/NanoAOD/python/triggerObjects_cff.py`](https://github.com/cms-sw/cmssw/blob/master/PhysicsTools/NanoAOD/python/triggerObjects_cff.py)
+The definition of the filter bits for the trigger objects can be found in the [nanoAOD documentation](https://cms-nanoaod-integration.web.cern.ch/integration/master-102X/data102X_doc.html#TrigObj) and [`PhysicsTools/NanoAOD/python/triggerObjects_cff.py`](https://github.com/cms-sw/cmssw/blob/master/PhysicsTools/NanoAOD/python/triggerObjects_cff.py).
 This can be read in by a class that handles trigger tau object matching (see [`python/matchTauTriggersNanoAOD.py`](python/matchTauTriggersNanoAOD.py)). The scripts creates the files in the [`json`](json) directory.
