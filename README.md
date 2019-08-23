@@ -8,7 +8,7 @@ This repository contains a few tools to study CMS triggers.
 To install the tool for reading the tau ID scale factors, do
 ```
 export SCRAM_ARCH=slc6_amd64_gcc700 # for CMSSW_10_3_3, check "scram list"
-CMSSW_BASE=CMSSW_10_3_3             # or whichever release one you desire
+CMSSW_BASE=CMSSW_10_3_3             # or whichever release you desire
 cmsrel $CMSSW_BASE
 cd $CMSSW_BASE/src
 git clone https://github.com/IzaakWN/TriggerChecks TauPOG/TriggerChecks
@@ -60,8 +60,8 @@ The script [`python/matchTauTriggersNanoAOD.py`](python/matchTauTriggersNanoAOD.
    -> shorthand for filters patterns in nanoAOD
       -> bits (powers of 2)
 'hltcombs'
-   -> data type ('data', 'mc')
-      -> tau trigger type ('etau', 'mutau', 'ditau')
+   -> data type ('data' or 'mc')
+      -> tau trigger type ('etau', 'mutau' or 'ditau')
         -> list of recommended HLT paths
 'hltpaths'
    -> HLT path ("HLT_*PFTau*")
@@ -70,7 +70,8 @@ The script [`python/matchTauTriggersNanoAOD.py`](python/matchTauTriggersNanoAOD.
       -> 'filter':     last filter associated with this trigger path ("hlt*PFTau*")
       -> 'filterbits': list of shorthands for filter patterns
 ```
+The files can be found in the [`json`](json) directory.
 The filter associated with some HLT path can be found using [`plugin/TriggerChecks.cc`](#list-filters).
 The definition of the filter bits for the trigger objects can be found in the [nanoAOD documentation](https://cms-nanoaod-integration.web.cern.ch/integration/master-102X/data102X_doc.html#TrigObj) and [`PhysicsTools/NanoAOD/python/triggerObjects_cff.py`](https://github.com/cms-sw/cmssw/blob/master/PhysicsTools/NanoAOD/python/triggerObjects_cff.py).
 
-This JSON file can be read in by a class that handles trigger tau object matching (see [`python/matchTauTriggersNanoAOD.py`](#match-trigger-objects-in-nanoaod)). The scripts creates the files in the [`json`](json) directory.
+This JSON file can be read in by a class that handles trigger tau object matching (see [`python/matchTauTriggersNanoAOD.py`](#match-trigger-objects-in-nanoaod)).
