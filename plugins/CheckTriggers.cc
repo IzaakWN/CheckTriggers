@@ -70,8 +70,13 @@ class TriggerChecks
       "HLT_DoubleMediumChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg",
       
       // 2018
+      "HLT_Ele24_eta2p1_WPTight_Gsf_LooseChargedIsoPFTau30_eta2p1_CrossL1" // data only
       "HLT_Ele24_eta2p1_WPTight_Gsf_LooseChargedIsoPFTauHPS30_eta2p1_CrossL1",
+      "HLT_IsoMu20_eta2p1_LooseChargedIsoPFTau27_eta2p1_CrossL1",  // data only
       "HLT_IsoMu20_eta2p1_LooseChargedIsoPFTauHPS27_eta2p1_CrossL1",
+      "HLT_DoubleMediumChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg", // data only
+      "HLT_DoubleTightChargedIsoPFTau40_Trk1_eta2p1_Reg",          // data only
+      "HLT_DoubleTightChargedIsoPFTau35_Trk1_TightID_eta2p1_Reg",  // data only
       "HLT_DoubleMediumChargedIsoPFTauHPS35_Trk1_eta2p1_Reg",
       
     };

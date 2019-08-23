@@ -54,14 +54,23 @@ python python/matchTauTriggersNanoAOD.py
 
 The script [`python/matchTauTriggersNanoAOD.py`](python/matchTauTriggersNanoAOD.py) creates per year one JSON file of trigger objects associated with the recommended tau triggers. The structure is as follows:
 ```
+'year'
+   -> year
 'filterbits'
    -> shorthand for filters patterns in nanoAOD
       -> bits (powers of 2)
- tau trigger type ('etau', 'mutau', 'ditau')
-   -> HLT path ('HLT_*PFTau*")
-      -> 'ptcut' = offline cut on tau pt 
-      -> 'filter' = last filter associated with this trigger path
-      -> 'filterbits' = shorthand of filter patterns 
+'hltcombs'
+   -> data type ('data', 'mc')
+      -> tau trigger type ('etau', 'mutau', 'ditau')
+        -> list of recommended HLT paths
+'hltpaths'
+   -> HLT path ("HLT_*PFTau*")
+      -> 'ptcut':      offline cut on tau pt 
+      -> 'runrange':   in case this path was only available in some data runs (optional)
+      -> 'filter':     last filter associated with this trigger path ("hlt*PFTau*")
+      -> 'filterbits': list of shorthands for filter patterns
 ```
+The filter associated with some HLT path can be found using [`plugin/TriggerChecks.cc`](#list-filters).
 The definition of the filter bits for the trigger objects can be found in the [nanoAOD documentation](https://cms-nanoaod-integration.web.cern.ch/integration/master-102X/data102X_doc.html#TrigObj) and [`PhysicsTools/NanoAOD/python/triggerObjects_cff.py`](https://github.com/cms-sw/cmssw/blob/master/PhysicsTools/NanoAOD/python/triggerObjects_cff.py).
-This can be read in by a class that handles trigger tau object matching (see [`python/matchTauTriggersNanoAOD.py`](python/matchTauTriggersNanoAOD.py)). The scripts creates the files in the [`json`](json) directory.
+
+This JSON file can be read in by a class that handles trigger tau object matching (see [`python/matchTauTriggersNanoAOD.py`](#match-trigger-objects-in-nanoaod)). The scripts creates the files in the [`json`](json) directory.

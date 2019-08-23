@@ -1,4 +1,5 @@
 {
+  "year": 2018, 
   "filterbits": {
     "LooseChargedIso": 1, 
     "MediumChargedIso": 2, 
@@ -6,38 +7,132 @@
     "TightOOSCPhotons": 8, 
     "Hps": 16, 
     "SelectedPFTau": 32, 
-    "DoublePFTau_Reg": 64, 
+    "DoublePFTau_Dz02Reg": 64, 
     "OverlapFilterIsoEle": 128, 
     "OverlapFilterIsoMu": 256, 
     "DoublePFTau": 512
   }, 
-  "etau": {
-    "HLT_Ele24_eta2p1_WPTight_Gsf_LooseChargedIsoPFTauHPS30_eta2p1_CrossL1": {
-      "filter": "hltHpsOverlapFilterIsoEle24WPTightGsfLooseIsoPFTau30", 
+  "hltcombs": {
+    "data": {
+      "etau": [
+        "HLT_Ele24_eta2p1_WPTight_Gsf_LooseChargedIsoPFTau30_eta2p1_CrossL1", 
+        "HLT_Ele24_eta2p1_WPTight_Gsf_LooseChargedIsoPFTauHPS30_eta2p1_CrossL1"
+      ], 
+      "mutau": [
+        "HLT_IsoMu20_eta2p1_LooseChargedIsoPFTau27_eta2p1_CrossL1", 
+        "HLT_IsoMu20_eta2p1_LooseChargedIsoPFTauHPS27_eta2p1_CrossL1"
+      ], 
+      "ditau": [
+        "HLT_DoubleMediumChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg", 
+        "HLT_DoubleTightChargedIsoPFTau40_Trk1_eta2p1_Reg", 
+        "HLT_DoubleTightChargedIsoPFTau35_Trk1_TightID_eta2p1_Reg", 
+        "HLT_DoubleMediumChargedIsoPFTauHPS35_Trk1_eta2p1_Reg"
+      ]
+    }, 
+    "mc": {
+      "etau": [
+        "HLT_Ele24_eta2p1_WPTight_Gsf_LooseChargedIsoPFTauHPS30_eta2p1_CrossL1"
+      ], 
+      "mutau": [
+        "HLT_IsoMu20_eta2p1_LooseChargedIsoPFTauHPS27_eta2p1_CrossL1"
+      ], 
+      "ditau": [
+        "HLT_DoubleMediumChargedIsoPFTauHPS35_Trk1_eta2p1_Reg"
+      ]
+    }
+  }, 
+  "hltpaths": {
+    "HLT_Ele24_eta2p1_WPTight_Gsf_LooseChargedIsoPFTau30_eta2p1_CrossL1": {
       "ptcut": 30, 
+      "runrange": [
+        315252, 
+        317508
+      ], 
+      "filter": "hltOverlapFilterIsoEle24WPTightGsfLooseIsoPFTau30", 
       "filterbits": [
-        "LooseChargedIso", 
-        "OverlapFilterIsoEle"
+        "OverlapFilterIsoEle", 
+        "LooseChargedIso"
       ]
-    }
-  }, 
-  "mutau": {
-    "HLT_IsoMu20_eta2p1_LooseChargedIsoPFTauHPS27_eta2p1_CrossL1": {
-      "filter": "hltHpsOverlapFilterIsoMu20LooseChargedIsoPFTau27L1Seeded", 
+    }, 
+    "HLT_Ele24_eta2p1_WPTight_Gsf_LooseChargedIsoPFTauHPS30_eta2p1_CrossL1": {
+      "ptcut": 30, 
+      "runrange": [
+        317509, 
+        325765
+      ], 
+      "filter": "hltHpsOverlapFilterIsoEle24WPTightGsfLooseIsoPFTau30", 
+      "filterbits": [
+        "OverlapFilterIsoEle", 
+        "LooseChargedIso", 
+        "Hps"
+      ]
+    }, 
+    "HLT_IsoMu20_eta2p1_LooseChargedIsoPFTau27_eta2p1_CrossL1": {
       "ptcut": 27, 
+      "runrange": [
+        315252, 
+        317508
+      ], 
+      "filter": "hltOverlapFilterIsoMu20LooseChargedIsoPFTau27L1Seeded", 
       "filterbits": [
-        "LooseChargedIso", 
-        "OverlapFilterIsoMu"
+        "OverlapFilterIsoMu", 
+        "LooseChargedIso"
       ]
-    }
-  }, 
-  "ditau": {
-    "HLT_DoubleMediumChargedIsoPFTauHPS35_Trk1_eta2p1_Reg": {
-      "filter": "hltHpsDoublePFTau35TrackPt1MediumChargedIsolationDz02Reg", 
-      "ptcut": 35, 
+    }, 
+    "HLT_IsoMu20_eta2p1_LooseChargedIsoPFTauHPS27_eta2p1_CrossL1": {
+      "ptcut": 27, 
+      "runrange": [
+        317509, 
+        325765
+      ], 
+      "filter": "hltHpsOverlapFilterIsoMu20LooseChargedIsoPFTau27L1Seeded", 
       "filterbits": [
+        "OverlapFilterIsoMu", 
+        "LooseChargedIso", 
+        "Hps"
+      ]
+    }, 
+    "HLT_DoubleMediumChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg": {
+      "ptcut": 40, 
+      "filter": "hltDoublePFTau40TrackPt1MediumChargedIsolationAndTightOOSCPhotonsDz02Reg", 
+      "filterbits": [
+        "DoublePFTau_Dz02Reg", 
         "MediumChargedIso", 
-        "DoublePFTau_Reg"
+        "TightOOSCPhotons"
+      ]
+    }, 
+    "HLT_DoubleTightChargedIsoPFTau40_Trk1_eta2p1_Reg": {
+      "ptcut": 40, 
+      "filter": "hltDoublePFTau40TrackPt1TightChargedIsolationDz02Reg", 
+      "filterbits": [
+        "DoublePFTau_Dz02Reg", 
+        "TightChargedIso"
+      ]
+    }, 
+    "HLT_DoubleTightChargedIsoPFTau35_Trk1_TightID_eta2p1_Reg": {
+      "ptcut": 35, 
+      "runrange": [
+        315252, 
+        317508
+      ], 
+      "filter": "hltDoublePFTau35TrackPt1TightChargedIsolationAndTightOOSCPhotonsDz02Reg", 
+      "filterbits": [
+        "DoublePFTau_Dz02Reg", 
+        "TightChargedIso", 
+        "TightOOSCPhotons"
+      ]
+    }, 
+    "HLT_DoubleMediumChargedIsoPFTauHPS35_Trk1_eta2p1_Reg": {
+      "ptcut": 35, 
+      "runrange": [
+        317509, 
+        325765
+      ], 
+      "filter": "hltHpsDoublePFTau35TrackPt1MediumChargedIsolationDz02Reg", 
+      "filterbits": [
+        "DoublePFTau_Dz02Reg", 
+        "MediumChargedIso", 
+        "Hps"
       ]
     }
   }

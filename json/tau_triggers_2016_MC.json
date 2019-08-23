@@ -1,75 +1,102 @@
 {
+  "year": 2016, 
   "filterbits": {
-    "LooseChargedIso": 1, 
-    "MediumChargedIso": 2, 
-    "TightChargedIso": 4, 
-    "TightOOSCPhotons": 8, 
-    "Hps": 16, 
-    "SelectedPFTau": 32, 
-    "DoublePFTau_Reg": 64, 
-    "OverlapFilterIsoEle": 128, 
-    "OverlapFilterIsoMu": 256, 
-    "DoublePFTau": 512
+    "LooseIso": 1, 
+    "MediumIso": 2, 
+    "VLooseIso": 4, 
+    "L2TauIsoFilter": 16, 
+    "OverlapFilterIsoMu": 32, 
+    "OverlapFilterIsoEle": 64, 
+    "L1HLTMatched": 128, 
+    "Dz02": 256
   }, 
-  "etau": {
+  "hltcombs": {
+    "data": {
+      "etau": [
+        "HLT_Ele24_eta2p1_WPLoose_Gsf_LooseIsoPFTau20_SingleL1", 
+        "HLT_Ele24_eta2p1_WPLoose_Gsf_LooseIsoPFTau20", 
+        "HLT_Ele24_eta2p1_WPLoose_Gsf_LooseIsoPFTau30"
+      ], 
+      "mutau": [
+        "HLT_IsoMu19_eta2p1_LooseIsoPFTau20", 
+        "HLT_IsoMu19_eta2p1_LooseIsoPFTau20_SingleL1"
+      ], 
+      "ditau": [
+        "HLT_DoubleMediumIsoPFTau35_Trk1_eta2p1_Reg", 
+        "HLT_DoubleMediumCombinedIsoPFTau35_Trk1_eta2p1_Reg"
+      ]
+    }, 
+    "mc": {
+      "etau": [
+        "HLT_Ele24_eta2p1_WPLoose_Gsf_LooseIsoPFTau20_SingleL1", 
+        "HLT_Ele24_eta2p1_WPLoose_Gsf_LooseIsoPFTau20", 
+        "HLT_Ele24_eta2p1_WPLoose_Gsf_LooseIsoPFTau30"
+      ], 
+      "mutau": [
+        "HLT_IsoMu19_eta2p1_LooseIsoPFTau20", 
+        "HLT_IsoMu19_eta2p1_LooseIsoPFTau20_SingleL1"
+      ], 
+      "ditau": [
+        "HLT_DoubleMediumIsoPFTau35_Trk1_eta2p1_Reg", 
+        "HLT_DoubleMediumCombinedIsoPFTau35_Trk1_eta2p1_Reg"
+      ]
+    }
+  }, 
+  "hltpaths": {
     "HLT_Ele24_eta2p1_WPLoose_Gsf_LooseIsoPFTau20_SingleL1": {
-      "filter": "hltOverlapFilterSingleIsoEle24WPLooseGsfLooseIsoPFTau20", 
       "ptcut": 20, 
+      "filter": "hltOverlapFilterSingleIsoEle24WPLooseGsfLooseIsoPFTau20", 
       "filterbits": [
-        "LooseChargedIso", 
-        "OverlapFilterIsoEle"
+        "OverlapFilterIsoEle", 
+        "LooseIso"
       ]
     }, 
     "HLT_Ele24_eta2p1_WPLoose_Gsf_LooseIsoPFTau20": {
-      "filter": "hltOverlapFilterIsoEle24WPLooseGsfLooseIsoPFTau20", 
       "ptcut": 20, 
+      "filter": "hltOverlapFilterIsoEle24WPLooseGsfLooseIsoPFTau20", 
       "filterbits": [
-        "LooseChargedIso", 
-        "OverlapFilterIsoEle"
+        "OverlapFilterIsoEle", 
+        "LooseIso"
       ]
     }, 
     "HLT_Ele24_eta2p1_WPLoose_Gsf_LooseIsoPFTau30": {
-      "filter": "hltOverlapFilterIsoEle24WPLooseGsfLooseIsoPFTau30", 
       "ptcut": 30, 
+      "filter": "hltOverlapFilterIsoEle24WPLooseGsfLooseIsoPFTau30", 
       "filterbits": [
-        "LooseChargedIso", 
-        "OverlapFilterIsoEle"
+        "OverlapFilterIsoEle", 
+        "LooseIso"
       ]
-    }
-  }, 
-  "mutau": {
+    }, 
     "HLT_IsoMu19_eta2p1_LooseIsoPFTau20": {
-      "filter": "hltOverlapFilterIsoMu19LooseIsoPFTau20", 
       "ptcut": 20, 
+      "filter": "hltOverlapFilterIsoMu19LooseIsoPFTau20", 
       "filterbits": [
-        "LooseChargedIso", 
-        "OverlapFilterIsoMu"
+        "OverlapFilterIsoMu", 
+        "LooseIso"
       ]
     }, 
     "HLT_IsoMu19_eta2p1_LooseIsoPFTau20_SingleL1": {
-      "filter": "hltOverlapFilterSingleIsoMu19LooseIsoPFTau20", 
       "ptcut": 20, 
+      "filter": "hltOverlapFilterSingleIsoMu19LooseIsoPFTau20", 
       "filterbits": [
-        "LooseChargedIso", 
-        "OverlapFilterIsoMu"
+        "OverlapFilterIsoMu", 
+        "LooseIso"
       ]
-    }
-  }, 
-  "ditau": {
+    }, 
     "HLT_DoubleMediumIsoPFTau35_Trk1_eta2p1_Reg": {
-      "filter": "hltDoublePFTau35TrackPt1MediumIsolationDz02Reg", 
       "ptcut": 35, 
+      "filter": "hltDoublePFTau35TrackPt1MediumIsolationDz02Reg", 
       "filterbits": [
-        "MediumChargedIso", 
-        "DoublePFTau_Reg"
+        "MediumIso", 
+        "Dz02"
       ]
     }, 
     "HLT_DoubleMediumCombinedIsoPFTau35_Trk1_eta2p1_Reg": {
-      "filter": "hltDoublePFTau35TrackPt1MediumCombinedIsolationDz02Reg", 
       "ptcut": 35, 
+      "filter": "hltDoublePFTau35TrackPt1MediumCombinedIsolationDz02Reg", 
       "filterbits": [
-        "MediumChargedIso", 
-        "DoublePFTau_Reg"
+        "MediumIso", 
+        "Dz02"
       ]
     }
   }
