@@ -13,9 +13,9 @@ cmsrel $CMSSW_BASE
 cd $CMSSW_BASE/src
 git clone https://github.com/IzaakWN/TriggerChecks TauPOG/TriggerChecks
 cmsenv
-scram b -j8
+scram b -j4
 ```
-
+If you choose a different naming for the CMSSW package than `TauPOG/TriggerChecks`, make sure to update [`plugin/BuildFile.xml`](plugin/BuildFile.xml).
 
 ## List filters
 
@@ -23,6 +23,7 @@ The plugin [`plugin/TriggerChecks.cc`](plugin/TriggerChecks.cc) checks the avail
 ```
 cmsRun python/checkTriggers_cfg.py
 ```
+You can include a MiniAOD file from any year, data or MC.
 
 
 ## List filters and path per trigger object in miniAOD
@@ -41,7 +42,7 @@ The nanoAOD postprocessor [`python/matchTauTriggersNanoAOD.py`](python/matchTauT
 cd $CMSSW_BASE/src
 cmsenv
 git clone https://github.com/cms-nanoAOD/nanoAOD-tools.git PhysicsTools/NanoAODTools
-scram b
+scram b -j4
 ```
 Once installed, you can simply run the postprocessor as
 ```
