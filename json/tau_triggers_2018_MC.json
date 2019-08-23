@@ -1,0 +1,44 @@
+{
+  "filterbits": {
+    "LooseChargedIso": 1, 
+    "MediumChargedIso": 2, 
+    "TightChargedIso": 4, 
+    "TightOOSCPhotons": 8, 
+    "Hps": 16, 
+    "SelectedPFTau": 32, 
+    "DoublePFTau_Reg": 64, 
+    "OverlapFilterIsoEle": 128, 
+    "OverlapFilterIsoMu": 256, 
+    "DoublePFTau": 512
+  }, 
+  "etau": {
+    "HLT_Ele24_eta2p1_WPTight_Gsf_LooseChargedIsoPFTauHPS30_eta2p1_CrossL1": {
+      "filter": "hltHpsOverlapFilterIsoEle24WPTightGsfLooseIsoPFTau30", 
+      "ptcut": 30, 
+      "filterbits": [
+        "LooseChargedIso", 
+        "OverlapFilterIsoEle"
+      ]
+    }
+  }, 
+  "mutau": {
+    "HLT_IsoMu20_eta2p1_LooseChargedIsoPFTauHPS27_eta2p1_CrossL1": {
+      "filter": "hltHpsOverlapFilterIsoMu20LooseChargedIsoPFTau27L1Seeded", 
+      "ptcut": 27, 
+      "filterbits": [
+        "LooseChargedIso", 
+        "OverlapFilterIsoMu"
+      ]
+    }
+  }, 
+  "ditau": {
+    "HLT_DoubleMediumChargedIsoPFTauHPS35_Trk1_eta2p1_Reg": {
+      "filter": "hltHpsDoublePFTau35TrackPt1MediumChargedIsolationDz02Reg", 
+      "ptcut": 35, 
+      "filterbits": [
+        "MediumChargedIso", 
+        "DoublePFTau_Reg"
+      ]
+    }
+  }
+}

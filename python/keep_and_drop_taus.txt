@@ -1,0 +1,16 @@
+#keep * # start with all
+drop * # start with nothing
+keep event
+keep *Jet*
+drop HLT_*
+keep *Electron*
+keep *Muon*
+keep *Tau*
+keep *GenPart*
+keep *TrigObj*
+drop L1*
+drop *SoftActivity*
+drop *FatJet*
+drop *SubJet*
+drop *GenJet*
+drop *CorrT1*
