@@ -4,39 +4,84 @@
 # Source:
 #   https://github.com/cms-tau-pog/TauTriggerSFs/blob/run2_SFs/python/getTauTriggerSFs.py
 #   https://github.com/cms-sw/cmssw/blob/master/PhysicsTools/NanoAOD/python/triggerObjects_cff.py#L78-L94
-import os, sys
+import os, sys, yaml #json
 import numpy as np
 from math import sqrt, pi
+from utils import ensureDirectory
 from PhysicsTools.NanoAODTools.postprocessing.framework.postprocessor import PostProcessor
 from PhysicsTools.NanoAODTools.postprocessing.framework.datamodel import Collection 
 from PhysicsTools.NanoAODTools.postprocessing.framework.eventloop import Module
 #from collections import namedtuples
-from ROOT import PyConfig, gROOT, gDirectory, gPad, gStyle, TFile, TCanvas, TLegend, TH1F
+from ROOT import PyConfig, gROOT, gDirectory, gPad, gStyle, TFile, TCanvas, TLegend, TLatex, TH1F
 PyConfig.IgnoreCommandLineOptions = True
 gROOT.SetBatch(True)
-#gStyle.SetOptTitle(False); #gStyle.SetOptStat(False);
+gStyle.SetOptTitle(False)
+gStyle.SetOptStat(False) #gStyle.SetOptStat(1110)
 #TriggerFilter = namedtuples('TriggerFilter','hltpath filters pt')
 
+
+
+
+# LOAD JSON
+def loadTriggersFromJSON(filename):
+    """Load JSON file for triggers."""
+    print ">>> loadTriggersFromJSON: loading '%s'"%(filename)
+    filters         = [ ]
+    filterbits_dict = { }
+    triggers        = { }
+    with open(filename,'r') as file:
+      #data = json.load(file)
+      data = yaml.safe_load(file)
+    for filterbit, bit in data['filterbits'].iteritems():
+      filterbits_dict[filterbit] = bit
+      filter = TriggerFilter(filterbit,bit=bit)
+      filters.append(filter)
+    for hltpath, trigdict in data['hltpaths'].iteritems():  
+      hltpath    = str(hltpath)
+      ptcut      = trigdict['ptcut']
+      filterbits = trigdict['filterbits']
+      etacut     = trigdict.get('etacut',2.5)
+      runrange   = trigdict.get('runrange',None)
+      filter     = TriggerFilter(filterbits,hltpath,ptcut,etacut,runrange)
+      filter.setbits(filterbits_dict)
+      filters.append(filter)
+    for datatype in data['hltcombs']:
+      print ">>>   %s trigger requirements:"%datatype
+      triggers[datatype] = { }
+      for channel, hltcombs in data['hltcombs'][datatype].iteritems():
+        print ">>> %10s:  "%channel + ' || '.join(hltcombs)
+        exec "triggers[datatype][channel] = lambda e: e."+' or e.'.join(hltcombs) in locals()
+    filters.sort(key=lambda f: (-int(f.name in data['filterbits']),f.bits))
+    return filters, filterbits_dict, triggers
+    
 
 
 # TRIGGER FILTER
 class TriggerFilter:
     """Container class for trigger filter."""
     
-    def __init__(self,filters,hltpath=[ ],pt=0,eta=2.5,bit=0):
+    def __init__(self,filters,hltpath=[],pt=0,eta=2.5,runrange=None,bit=0):
         if isinstance(filters,str): filters = [filters]
         if isinstance(hltpath,str): hltpath = [hltpath]
         self.filters  = filters
-        self.name     = '_'.join(self.filters)
+        self.name     = '_'.join(filters)
         self.hltpaths = hltpath
         self.pt       = pt
         self.eta      = eta
+        self.runrange = runrange
         self.bits     = bit
+        self.channel  = ( None if not self.hltpaths else
+                         'etau' if any('IsoEle' in f for f in self.filters) else
+                         'mutau' if any('IsoMu' in f for f in self.filters) else 'ditau' )
         if self.hltpaths:
           # function to check if a HLT paths were fired in an event (e)
           exec "self.hltfired = lambda e: e."+' or e.'.join(self.hltpaths) in locals()
         else:
           self.hltfired = lambda e: True
+        
+    def __repr__(self):
+        """Returns string representation of TriggerFilter object."""
+        return '<%s("%s",%s) at %s>'%(self.__class__.__name__,self.name,self.bits,hex(id(self)))
         
     def setbits(self,filterbits_dict):
         """Compute bits for all filters with some dictionairy."""
@@ -55,73 +100,24 @@ class TriggerFilter:
 # MODULE
 class TauTriggerChecks(Module):
     
-    def __init__(self,year=2017,wps=['loose','medium','tight']):
+    def __init__(self,year=2017,wps=['loose','medium','tight'],datatype='mc'):
         
-        assert year in [2017,2018], "Year should be 2017 or 2018"
+        assert year in [2016,2017,2018], "Year should be 2016, 2017 or 2018"
+        assert datatype in ['mc','data'], "Wrong datatype '%s'! It should be 'mc' or 'data'!"%datatype
+        
+        jsonfile = "json/tau_triggers_%d.json"%year
+        filters, filterbits_dict, triggers = loadTriggersFromJSON(jsonfile)
         
         # FILTER bits
         print ">>> filter bits:"
-        filters = [ 'LooseChargedIso', 'MediumChargedIso', 'TightChargedIso', 'TightOOSCPhotons', 'Hps', 'SelectedPFTau', 'DoublePFTau_Reg', 'OverlapFilterIsoEle', 'OverlapFilterIsoMu', 'DoublePFTau' ]
-        self.filters = [ ]
-        self.filter_dict = { }
-        for i, filter in enumerate(filters):
-          bit = 2**i
-          print ">>> %6d: %s"%(bit,filter)
-          self.filter_dict[filter] = bit
-          self.filters.append(TriggerFilter(filter,bit=bit))
-        
-        # TRIGGERS
-        if year==2016:
-          self.trigger_etau  = lambda e: e.HLT_Ele24_eta2p1_WPLoose_Gsf_LooseIsoPFTau20_SingleL1 or e.HLT_Ele24_eta2p1_WPLoose_Gsf_LooseIsoPFTau20 or e.HLT_Ele24_eta2p1_WPLoose_Gsf_LooseIsoPFTau30
-          self.trigger_mutau = lambda e: e.HLT_IsoMu19_eta2p1_LooseIsoPFTau20_SingleL1 or e.HLT_IsoMu19_eta2p1_LooseIsoPFTau20
-          self.trigger_ditau = lambda e: e.HLT_DoubleMediumIsoPFTau35_Trk1_eta2p1_Reg or e.HLT_DoubleMediumCombinedIsoPFTau35_Trk1_eta2p1_Reg
-          self.filters_etau  = [
-            TriggerFilter(['LooseChargedIso','OverlapFilterIsoEle'],['HLT_Ele24_eta2p1_WPLoose_Gsf_LooseIsoPFTau20_SingleL1','HLT_Ele24_eta2p1_WPLoose_Gsf_LooseIsoPFTau20'],20),
-            TriggerFilter(['LooseChargedIso','OverlapFilterIsoEle'], 'HLT_Ele24_eta2p1_WPLoose_Gsf_LooseIsoPFTau30',30),
-          ]
-          self.filters_mutau = [
-            TriggerFilter(['LooseChargedIso','OverlapFilterIsoMu'],['HLT_IsoMu19_eta2p1_LooseIsoPFTau20_SingleL1','HLT_IsoMu19_eta2p1_LooseIsoPFTau20'],20),
-          ]
-          self.filters_ditau = [
-            TriggerFilter(['MediumChargedIso','DoublePFTau_Reg'],['HLT_DoubleMediumIsoPFTau35_Trk1_eta2p1_Reg','HLT_DoubleMediumCombinedIsoPFTau35_Trk1_eta2p1_Reg'],35),
-          ]
-        elif year==2017:
-          self.trigger_etau  = lambda e: e.HLT_Ele24_eta2p1_WPTight_Gsf_LooseChargedIsoPFTau30_eta2p1_CrossL1
-          self.trigger_mutau = lambda e: e.HLT_IsoMu20_eta2p1_LooseChargedIsoPFTau27_eta2p1_CrossL1
-          self.trigger_ditau = lambda e: e.HLT_DoubleTightChargedIsoPFTau35_Trk1_TightID_eta2p1_Reg or e.HLT_DoubleTightChargedIsoPFTau40_Trk1_eta2p1_Reg or e.HLT_DoubleMediumChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg
-          self.filters_etau  = [
-            TriggerFilter(['LooseChargedIso','OverlapFilterIsoEle'],'HLT_Ele24_eta2p1_WPTight_Gsf_LooseChargedIsoPFTau30_eta2p1_CrossL1',30),
-          ]
-          self.filters_mutau = [
-            TriggerFilter(['LooseChargedIso','OverlapFilterIsoMu'],'HLT_IsoMu20_eta2p1_LooseChargedIsoPFTau27_eta2p1_CrossL1',27),
-          ]
-          self.filters_ditau = [
-            TriggerFilter(['TightChargedIso', 'DoublePFTau_Reg','TightOOSCPhotons'],'HLT_DoubleTightChargedIsoPFTau35_Trk1_TightID_eta2p1_Reg', 35),
-            TriggerFilter(['TightChargedIso', 'DoublePFTau_Reg'                   ],'HLT_DoubleTightChargedIsoPFTau40_Trk1_eta2p1_Reg',         40),
-            TriggerFilter(['MediumChargedIso','DoublePFTau_Reg','TightOOSCPhotons'],'HLT_DoubleMediumChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg',40),
-          ]
-        else:
-          self.trigger_etau  = lambda e: e.HLT_Ele24_eta2p1_WPTight_Gsf_LooseChargedIsoPFTauHPS30_eta2p1_CrossL1
-          self.trigger_mutau = lambda e: e.HLT_IsoMu20_eta2p1_LooseChargedIsoPFTauHPS27_eta2p1_CrossL1
-          self.trigger_ditau = lambda e: e.HLT_DoubleMediumChargedIsoPFTauHPS35_Trk1_eta2p1_Reg
-          self.filters_etau  = [
-            TriggerFilter(['LooseChargedIso','OverlapFilterIsoEle'],'HLT_Ele24_eta2p1_WPTight_Gsf_LooseChargedIsoPFTauHPS30_eta2p1_CrossL1',30),
-          ]
-          self.filters_mutau = [
-            TriggerFilter(['LooseChargedIso','OverlapFilterIsoMu'],'HLT_IsoMu20_eta2p1_LooseChargedIsoPFTauHPS27_eta2p1_CrossL1',27),
-          ]
-          self.filters_ditau = [
-            TriggerFilter(['MediumChargedIso','DoublePFTau_Reg'],'HLT_DoubleMediumChargedIsoPFTauHPS35_Trk1_eta2p1_Reg',35),
-          ]
-        
-        self.trigger = lambda e: self.trigger_etau(e) or self.trigger_mutau(e) or self.trigger_ditau(e)
+        self.filters         = filters
+        self.filterbits_dict = filterbits_dict
+        self.triggers        = triggers[datatype]
+        self.trigger         = lambda e: self.triggers['etau'](e) or self.triggers['mutau'](e) or self.triggers['ditau'](e)
         
         # COMBINED FILTER bits
-        for filter in self.filters_etau+self.filters_mutau+self.filters_ditau:
-          filter.setbits(self.filter_dict)
+        for filter in self.filters:
           print ">>> %6d: %s"%(filter.bits,filter.name)
-          self.filter_dict[filter.bits] = filter.name
-          self.filters.append(filter)
         
         # TAU ID WP bits
         print ">>> tau ID WP bits:"
@@ -160,22 +156,22 @@ class TauTriggerChecks(Module):
         for filter in self.filters:
           if filter.hltfired(event):
             trigObjExists = False 
-            for trigobj, filterBits in trigObjects.iteritems():
+            for trigobj, filters in trigObjects.iteritems():
               if filter.hasbits(trigobj.filterBits):
-                filterBits.append(filter.bits)
+                filters.append(filter)
                 trigObjExists = True
             if trigObjExists:
-              # there exists a trigger object in this event with given filter bits
+              # there exists a trigger object in this event with the given filter bits
               for wp in nMatches:
-                nMatches[wp][filter.bits] =  0
+                nMatches[wp][filter] =  0
             else:
-              # there does not exists a trigger object in this event with given filter bits
+              # there does not exists a trigger object in this event with the given filter bits
               for wp in nMatches:
-                nMatches[wp][filter.bits] = -1
-          elif filter.bits not in nMatches[0]:
+                nMatches[wp][filter] = -1
+          else:
             # trigger was not fired
             for wp in nMatches:
-              nMatches[wp][filter.bits] = -2
+              nMatches[wp][filter] = -2
             continue
         
         # LOOP over TAUS
@@ -185,35 +181,28 @@ class TauTriggerChecks(Module):
           ###if dm not in [0,1,10]: continue
           
           # MATCH
-          for trigobj, filterBits in trigObjects.iteritems():
-            if DeltaR(tau,trigobj) > 0.4: continue
-            for bits in filterBits:
-              nMatches[0][bits] += 1
+          for trigobj, filters in trigObjects.iteritems():
+            if tau.DeltaR(trigobj) > 0.4: continue
+            for filter in filters:
+              nMatches[0][filter] += 1
+              #if tau.pt<filter.pt: continue
               for wpbit, wp in self.tauIDWPs: # ascending order
                 if tau.idMVAoldDM2017v2>=wpbit:
-                  nMatches[wpbit][bits] += 1
+                  nMatches[wpbit][filter] += 1
                 else:
                   break
         
         # FILL BRANCHES
-        self.out.fillBranch("trigger_etau",  self.trigger_etau(event))
-        self.out.fillBranch("trigger_mutau", self.trigger_mutau(event))
-        self.out.fillBranch("trigger_ditau", self.trigger_ditau(event))
+        self.out.fillBranch("trigger_etau",  self.triggers['etau'](event))
+        self.out.fillBranch("trigger_mutau", self.triggers['mutau'](event))
+        self.out.fillBranch("trigger_ditau", self.triggers['ditau'](event))
         for filter in self.filters:
-          self.out.fillBranch("nTau_%s"%filter.name,nMatches[0][filter.bits]) #.get(bit,0)
+          self.out.fillBranch("nTau_%s"%filter.name,nMatches[0][filter]) #.get(bit,0)
           for wpbit, wp in self.tauIDWPs:
-            self.out.fillBranch("nTau_%s_%s"%(filter.name,wp),nMatches[wpbit][filter.bits])
+            self.out.fillBranch("nTau_%s_%s"%(filter.name,wp),nMatches[wpbit][filter])
         
         return True
-        
 
-def DeltaR(obj1,obj2):
-  deta = abs(obj1.eta - obj2.eta)
-  dphi = abs(obj1.phi - obj2.phi)
-  while dphi > pi:
-    dphi = abs(dphi - 2*pi)
-  return sqrt(dphi**2+deta**2)
-  
 
 
 def getBits(x):
@@ -282,61 +271,89 @@ p.run()
 # PLOT
 if plot:
   filename = infiles[0].split('/')[-1].replace(".root",postfix+".root")
-  file = TFile(filename)
-  tree = file.Get('Events')
-  triggers = { 'etau': module.filters_etau, 'mutau': module.filters_mutau, 'ditau': module.filters_ditau, }
-  WPs = [ "all" ] + [ w[1] for w in module.tauIDWPs]
-  for trigger, filters in triggers.iteritems():
-    for filter in filters:
-      gStyle.SetOptTitle(True)
-      hists = [ ]
-      for i, wp in enumerate(WPs,1):
-        ###canvas    = TCanvas('canvas','canvas',100,100,800,600)
-        branch    = ("nTau_%s_%s"%(filter.name,wp)).replace("_all","")
-        histname  = "%s_%s"%(trigger,branch)
-        histtitle = wp #"%s, %s"%(trigger,wp)
-        hist = TH1F(histname,histtitle,6,0,6)
-        hist.GetXaxis().SetTitle(branch)
-        hist.GetYaxis().SetTitle("Fraction")
-        for ibin in xrange(6): hist.GetXaxis().SetBinLabel(ibin+1,str(ibin))
-        hist.GetXaxis().SetLabelSize(0.065)
-        hist.GetYaxis().SetLabelSize(0.046)
-        hist.GetXaxis().SetTitleSize(0.046)
-        hist.GetYaxis().SetTitleSize(0.052)
-        hist.GetXaxis().SetTitleOffset(1.05)
-        hist.GetYaxis().SetTitleOffset(0.95)
-        hist.GetXaxis().SetLabelOffset(0.004)
-        hist.SetLineWidth(2)
-        hist.SetLineColor(i)
-        out = tree.Draw("%s >> %s"%(branch,histname),"trigger_%s"%trigger,'gOff')
-        if out>0:
-          hist.Scale(1./hist.Integral())
-        ###hist.Draw('HISTE')
-        ###canvas.SaveAs(histname+".png")
-        ###canvas.SaveAs(histname+".pdf")
-        ###canvas.Close()
-        hists.append(hist)
-      gStyle.SetOptTitle(False)
-      canvas   = TCanvas('canvas','canvas',100,100,800,600)
-      canvas.SetTopMargin(0.03)
-      legend   = TLegend(0.7,0.7,0.88,0.45)
-      legend.SetTextSize(0.04)
-      legend.SetBorderSize(0)
-      legend.SetFillStyle(0)
-      legend.SetFillColor(0)
-      legend.SetTextFont(62)
-      legend.SetHeader(trigger)
-      legend.SetTextFont(42)
-      plotname = "%s_nTau_%s_comparison"%(trigger,filter.name)
-      hists[0].SetMaximum(1.18*max(h.GetMaximum() for h in hists))
-      for hist in hists:
-        hist.Draw('HISTSAME')
-        legend.AddEntry(hist,hist.GetTitle(),'l')
-      legend.Draw()
-      canvas.SaveAs(plotname+".png")
-      canvas.SaveAs(plotname+".pdf")
-      canvas.Close()
-      for hist in hists:
-        gDirectory.Delete(hist.GetName())
+  file     = TFile(filename)
+  tree     = file.Get('Events')
+  outdir   = ensureDirectory('plots')
+  WPs      = [ "all (slimmed)" ] + [ w[1] for w in module.tauIDWPs]
+  for filter in module.filters:
+    trigger = filter.channel
+    if not trigger: continue
+    header   = "#tau_{h} MVAoldDM2017v2"
+    channel  = trigger.replace('mu',"#mu").replace('di',"tau").replace('tau',"#tau_{h}")
+    plotname = "%s/%s_nTau_%s_comparison"%(outdir,trigger,filter.name)
+    ctexts   = ["#tau_{h} trigger-reco object matching"] + ['|| '+t if i>0 else t for i, t in enumerate(filter.hltpaths)]
+    gStyle.SetOptTitle(True)
+    hists = [ ]
+    for i, wp in enumerate(WPs,1):
+      ###canvas    = TCanvas('canvas','canvas',100,100,800,600)
+      branch    = "nTau_%s%s"%(filter.name,"" if 'all' in wp else '_'+wp)
+      histname  = "%s_%s"%(trigger,branch)
+      histtitle = wp #"%s, %s"%(trigger,wp)
+      hist = TH1F(histname,histtitle,8,-2,6)
+      hist.GetXaxis().SetTitle(branch)
+      hist.GetYaxis().SetTitle("Fraction")
+      for ibin in xrange(1,hist.GetXaxis().GetNbins()+1):
+        xbin = hist.GetBinLowEdge(ibin)
+        if xbin==-2:
+          hist.GetXaxis().SetBinLabel(ibin,"HLT not fired")
+        elif xbin==-1:
+          hist.GetXaxis().SetBinLabel(ibin,"No trig. obj.")
+        elif xbin==0:
+          hist.GetXaxis().SetBinLabel(ibin,"No match")
+        elif xbin==1:
+          hist.GetXaxis().SetBinLabel(ibin,"1 match")
+        else:
+          hist.GetXaxis().SetBinLabel(ibin,"%d matches"%xbin)
+      hist.GetXaxis().SetLabelSize(0.065)
+      hist.GetYaxis().SetLabelSize(0.046)
+      hist.GetXaxis().SetTitleSize(0.046)
+      hist.GetYaxis().SetTitleSize(0.052)
+      hist.GetXaxis().SetTitleOffset(2.03)
+      hist.GetYaxis().SetTitleOffset(0.98)
+      hist.GetXaxis().SetLabelOffset(0.009)
+      if len(branch)>40:
+        hist.GetXaxis().CenterTitle(True)
+        hist.GetXaxis().SetTitleSize(0.044)
+      hist.SetLineWidth(2)
+      hist.SetLineColor(i)
+      out = tree.Draw("%s >> %s"%(branch,histname),"trigger_%s"%trigger,'gOff')
+      if hist.Integral()>0:
+        hist.Scale(1./hist.Integral())
+      else:
+        print "Warning! Histogram '%s' is empty!"%hist.GetName()
+      ###hist.Draw('HISTE')
+      ###canvas.SaveAs(histname+".png")
+      ###canvas.SaveAs(histname+".pdf")
+      ###canvas.Close()
+      hists.append(hist)
+    gStyle.SetOptTitle(False)
+    canvas   = TCanvas('canvas','canvas',100,100,800,600)
+    canvas.SetMargin(0.10,0.09,0.17,0.03)
+    legend   = TLegend(0.63,0.70,0.88,0.45)
+    legend.SetTextSize(0.040)
+    legend.SetBorderSize(0)
+    legend.SetFillStyle(0)
+    legend.SetFillColor(0)
+    legend.SetTextFont(62)
+    legend.SetHeader(header)
+    legend.SetTextFont(42)
+    latex = TLatex()
+    latex.SetTextAlign(13)
+    latex.SetTextFont(42)
+    latex.SetNDC(True)
+    hists[0].SetMaximum(1.25*max(h.GetMaximum() for h in hists))
+    for hist in hists:
+      hist.Draw('HISTSAME')
+      legend.AddEntry(hist,hist.GetTitle().capitalize(),'l')
+    legend.Draw()
+    for i, text in enumerate(ctexts):
+      textsize = 0.031 if i>0 else 0.044
+      latex.SetTextSize(textsize)
+      latex.DrawLatex(0.14,0.94-1.6*i*textsize,text)
+    canvas.SaveAs(plotname+".png")
+    canvas.SaveAs(plotname+".pdf")
+    canvas.Close()
+    for hist in hists:
+      gDirectory.Delete(hist.GetName())
   file.Close()
   
