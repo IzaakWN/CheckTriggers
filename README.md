@@ -57,18 +57,21 @@ The script [`python/matchTauTriggersNanoAOD.py`](python/matchTauTriggersNanoAOD.
 'year'
    -> year
 'filterbits'
-   -> shorthand for filters patterns in nanoAOD
-      -> bits (powers of 2)
+   -> object type ('ele', 'mu', 'tau')
+      -> shorthand for filters patterns in nanoAOD
+         -> bits (powers of 2)
 'hltcombs'
    -> data type ('data' or 'mc')
       -> tau trigger type ('etau', 'mutau' or 'ditau')
         -> list of recommended HLT paths
 'hltpaths'
    -> HLT path ("HLT_*PFTau*")
-      -> 'ptcut':      offline cut on tau pt 
       -> 'runrange':   in case this path was only available in some data runs (optional)
       -> 'filter':     last filter associated with this trigger path ("hlt*PFTau*")
-      -> 'filterbits': list of shorthands for filter patterns
+      -> object type ('ele', 'mu', 'tau')
+        -> 'pt_min':     offline cut on pt 
+        -> 'eta_max':    offline cut on eta (optional)
+        -> 'filterbits': list of shorthands for filter patterns
 ```
 The files can be found in the [`json`](json) directory.
 The filter associated with some HLT path can be found using [`plugin/TriggerChecks.cc`](#list-filters).
