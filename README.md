@@ -15,6 +15,10 @@ git clone https://github.com/IzaakWN/TriggerChecks TauPOG/TriggerChecks
 cmsenv
 scram b -j4
 ```
+Source `setEnv.sh` each new session to make the python modules available:
+```
+source setEnv.sh
+```
 
 
 ## List filters
