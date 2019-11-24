@@ -62,39 +62,39 @@ class TriggerChecks
       "HLT_IsoMu24",
       "HLT_IsoMu27",
       
-//       // Electron muon triggers
-//       "HLT_Ele25_eta2p1_WPTight_Gsf",
-//       "HLT_Ele27_WPTight_Gsf",
-//       "HLT_Ele45_WPLoose_Gsf_L1JetTauSeeded",
-//       "HLT_Ele35_WPTight_Gsf",
-//       "HLT_Ele32_WPTight_Gsf",
-//       "HLT_Ele32_WPTight_Gsf_L1DoubleEG",
-//       
-//       // 2016
-//       "HLT_Ele24_eta2p1_WPLoose_Gsf_LooseIsoPFTau20_SingleL1",
-//       "HLT_Ele24_eta2p1_WPLoose_Gsf_LooseIsoPFTau20",
-//       "HLT_Ele24_eta2p1_WPLoose_Gsf_LooseIsoPFTau30",
-//       "HLT_IsoMu19_eta2p1_LooseIsoPFTau20_SingleL1",
-//       "HLT_IsoMu19_eta2p1_LooseIsoPFTau20",
-//       "HLT_DoubleMediumIsoPFTau35_Trk1_eta2p1_Reg",
-//       "HLT_DoubleMediumCombinedIsoPFTau35_Trk1_eta2p1_Reg",
-//       
-//       // 2017
-//       "HLT_Ele24_eta2p1_WPTight_Gsf_LooseChargedIsoPFTau30_eta2p1_CrossL1",
-//       "HLT_IsoMu20_eta2p1_LooseChargedIsoPFTau27_eta2p1_CrossL1",
-//       "HLT_DoubleTightChargedIsoPFTau35_Trk1_TightID_eta2p1_Reg",
-//       "HLT_DoubleTightChargedIsoPFTau40_Trk1_eta2p1_Reg",
-//       "HLT_DoubleMediumChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg",
-//       
-//       // 2018
-//       "HLT_Ele24_eta2p1_WPTight_Gsf_LooseChargedIsoPFTau30_eta2p1_CrossL1" // data only
-//       "HLT_Ele24_eta2p1_WPTight_Gsf_LooseChargedIsoPFTauHPS30_eta2p1_CrossL1",
-//       "HLT_IsoMu20_eta2p1_LooseChargedIsoPFTau27_eta2p1_CrossL1",  // data only
-//       "HLT_IsoMu20_eta2p1_LooseChargedIsoPFTauHPS27_eta2p1_CrossL1",
-//       "HLT_DoubleMediumChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg", // data only
-//       "HLT_DoubleTightChargedIsoPFTau40_Trk1_eta2p1_Reg",          // data only
-//       "HLT_DoubleTightChargedIsoPFTau35_Trk1_TightID_eta2p1_Reg",  // data only
-//       "HLT_DoubleMediumChargedIsoPFTauHPS35_Trk1_eta2p1_Reg",
+      // Electron muon triggers
+      "HLT_Ele25_eta2p1_WPTight_Gsf",
+      "HLT_Ele27_WPTight_Gsf",
+      "HLT_Ele45_WPLoose_Gsf_L1JetTauSeeded",
+      "HLT_Ele35_WPTight_Gsf",
+      "HLT_Ele32_WPTight_Gsf",
+      "HLT_Ele32_WPTight_Gsf_L1DoubleEG",
+      
+      // 2016
+      "HLT_Ele24_eta2p1_WPLoose_Gsf_LooseIsoPFTau20_SingleL1",
+      "HLT_Ele24_eta2p1_WPLoose_Gsf_LooseIsoPFTau20",
+      "HLT_Ele24_eta2p1_WPLoose_Gsf_LooseIsoPFTau30",
+      "HLT_IsoMu19_eta2p1_LooseIsoPFTau20_SingleL1",
+      "HLT_IsoMu19_eta2p1_LooseIsoPFTau20",
+      "HLT_DoubleMediumIsoPFTau35_Trk1_eta2p1_Reg",
+      "HLT_DoubleMediumCombinedIsoPFTau35_Trk1_eta2p1_Reg",
+      
+      // 2017
+      "HLT_Ele24_eta2p1_WPTight_Gsf_LooseChargedIsoPFTau30_eta2p1_CrossL1",
+      "HLT_IsoMu20_eta2p1_LooseChargedIsoPFTau27_eta2p1_CrossL1",
+      "HLT_DoubleTightChargedIsoPFTau35_Trk1_TightID_eta2p1_Reg",
+      "HLT_DoubleTightChargedIsoPFTau40_Trk1_eta2p1_Reg",
+      "HLT_DoubleMediumChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg",
+      
+      // 2018
+      "HLT_Ele24_eta2p1_WPTight_Gsf_LooseChargedIsoPFTau30_eta2p1_CrossL1" // data only
+      "HLT_Ele24_eta2p1_WPTight_Gsf_LooseChargedIsoPFTauHPS30_eta2p1_CrossL1",
+      "HLT_IsoMu20_eta2p1_LooseChargedIsoPFTau27_eta2p1_CrossL1",  // data only
+      "HLT_IsoMu20_eta2p1_LooseChargedIsoPFTauHPS27_eta2p1_CrossL1",
+      "HLT_DoubleMediumChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg", // data only
+      "HLT_DoubleTightChargedIsoPFTau40_Trk1_eta2p1_Reg",          // data only
+      "HLT_DoubleTightChargedIsoPFTau35_Trk1_TightID_eta2p1_Reg",  // data only
+      "HLT_DoubleMediumChargedIsoPFTauHPS35_Trk1_eta2p1_Reg",
       
     };
 };
