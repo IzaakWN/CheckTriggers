@@ -61,6 +61,13 @@ class TriggerChecks
       "HLT_IsoTkMu22_eta2p1",
       "HLT_IsoMu24",
       "HLT_IsoMu27",
+      "HLT_Mu50",
+      "HLT_TkMu50",
+      "HLT_Mu100",
+      "HLT_OldMu100",
+      "HLT_TkMu100",
+      //"HLT_*Mu50*",
+      //"HLT_*Mu100*",
       
       // Electron muon triggers
       "HLT_Ele25_eta2p1_WPTight_Gsf",
@@ -69,6 +76,10 @@ class TriggerChecks
       "HLT_Ele35_WPTight_Gsf",
       "HLT_Ele32_WPTight_Gsf",
       "HLT_Ele32_WPTight_Gsf_L1DoubleEG",
+      "HLT_Ele50*",
+      "HLT_Ele105_CaloIdVT_GsfTrkIdT",
+      "HLT_Ele115_CaloIdVT_GsfTrkIdT",
+      "HLT_Photon175",      
       
       // 2016
       "HLT_Ele24_eta2p1_WPLoose_Gsf_LooseIsoPFTau20_SingleL1",
@@ -124,6 +135,7 @@ void TriggerChecks::beginRun(const edm::Run& iRun, const edm::EventSetup& iSetup
           if(!selectTrigger(trigname)) continue;
           //std::cout << ">>>   " << trigname << std::endl;
           std::vector<std::string> filters = hltConfig_.moduleLabels(trigname);
+          //for(auto const& filter: filters) std::cout << ">>>     " << filter << std::endl;
           if(filters.size()>=2){
             std::string shortname  = removeVersionLabel(trigname);
             std::string lastfilter = filters[filters.size()-2];
@@ -152,7 +164,6 @@ void TriggerChecks::endJob(){
   //std::cout << ">>> endJob()" << std::endl;
   for(auto const& table: trigFilters_){
     std::cout << "\n  " << std::string(4,'*') << " Summary of filters per trigger in '\e[1m" << table.first << "\e[0m' "
-                        //<< " (" << hltConfig_.globalTag() << ")"
                         << std::string(abs(int(54-table.first.size())),'*') << std::endl;
     for(auto const& trigger: table.second){
       std::cout << "  *" << std::setw(94) << " " << "*" << std::endl;
@@ -180,14 +191,18 @@ void TriggerChecks::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 
 
 bool TriggerChecks::selectTrigger(const std::string& path){
-  //if(     path.find("HLT_")==std::string::npos) return false;
-  //else if(path.find("HLT_IsoMu2")!=std::string::npos || path.find("HLT_IsoTkMu2")!=std::string::npos) return true;
-  //else if(path.find("PFTau")==std::string::npos) return false;
-  //return (path.find("HLT_IsoMu2")!=std::string::npos ||
-  //        path.find("HLT_Ele")!=std::string::npos ||
-  //        path.find("HLT_Double")!=std::string::npos);
   for(auto const& trigname: trigNames_){
-    if(path.find(trigname+"_v")!=std::string::npos) return true;
+    if(trigname.find("*")!=std::string::npos){
+      //std::string wilcardstr  = "(?<!\\.)\\*";
+      std::regex wilcardexp("\\*");
+      std::string trigexp = std::regex_replace(trigname,wilcardexp,".*")+"_v";
+      //std::cout << ">>> " << trigexp << std::endl;
+      std::smatch match;
+      std::regex pattern2(trigexp);
+      if(std::regex_search(path,match,pattern2)) return true;
+    }else{
+      if(path.find(trigname+"_v")!=std::string::npos) return true;
+    }
   }
   return false;
 }

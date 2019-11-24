@@ -23,7 +23,7 @@ source setEnv.sh
 
 ## List filters
 
-The plugin [`plugin/TriggerChecks.cc`](plugin/TriggerChecks.cc) checks the available trigger per run (in `TriggerChecks::beginRun`) and summarizes the last filter. Your favorite triggers can be defined in `TriggerChecks.cc`. To run it, specify some files in [`python/checkTriggers_cfg.py`](python/checkTriggers_cfg.py), and do
+The plugin [`plugin/TriggerChecks.cc`](plugin/TriggerChecks.cc) checks the available triggers per run (in `TriggerChecks::beginRun`) and summarizes the last filter. Your favorite triggers can be defined in `TriggerChecks.cc`. To run it, specify some files in [`python/checkTriggers_cfg.py`](python/checkTriggers_cfg.py), and do
 ```
 cmsRun python/checkTriggers_cfg.py
 ```
