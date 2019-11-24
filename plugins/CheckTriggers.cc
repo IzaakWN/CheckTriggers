@@ -18,6 +18,7 @@
 #include <map>
 #include <set>
 #include <vector>
+#include <cmath>
 #include <algorithm>
 #include <regex>
 #include <memory>
@@ -50,34 +51,50 @@ class TriggerChecks
     bool selectTrigger(const std::string&);
     HLTConfigProvider hltConfig_;
     //edm::EDGetTokenT<edm::TriggerResults> triggerBits_;
-    std::map<std::string,std::set<std::string>> trigFilters_;
+    std::map<std::string,std::map<std::string,std::set<std::string>>> trigFilters_;
     std::vector<std::string> trigNames_ = {
       
-      // 2016
-      "HLT_Ele24_eta2p1_WPLoose_Gsf_LooseIsoPFTau20_SingleL1",
-      "HLT_Ele24_eta2p1_WPLoose_Gsf_LooseIsoPFTau20",
-      "HLT_Ele24_eta2p1_WPLoose_Gsf_LooseIsoPFTau30",
-      "HLT_IsoMu19_eta2p1_LooseIsoPFTau20_SingleL1",
-      "HLT_IsoMu19_eta2p1_LooseIsoPFTau20",
-      "HLT_DoubleMediumIsoPFTau35_Trk1_eta2p1_Reg",
-      "HLT_DoubleMediumCombinedIsoPFTau35_Trk1_eta2p1_Reg",
+      // Single muon triggers
+      "HLT_IsoMu22",
+      "HLT_IsoMu22_eta2p1",
+      "HLT_IsoTkMu22",
+      "HLT_IsoTkMu22_eta2p1",
+      "HLT_IsoMu24",
+      "HLT_IsoMu27",
       
-      // 2017
-      "HLT_Ele24_eta2p1_WPTight_Gsf_LooseChargedIsoPFTau30_eta2p1_CrossL1",
-      "HLT_IsoMu20_eta2p1_LooseChargedIsoPFTau27_eta2p1_CrossL1",
-      "HLT_DoubleTightChargedIsoPFTau35_Trk1_TightID_eta2p1_Reg",
-      "HLT_DoubleTightChargedIsoPFTau40_Trk1_eta2p1_Reg",
-      "HLT_DoubleMediumChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg",
-      
-      // 2018
-      "HLT_Ele24_eta2p1_WPTight_Gsf_LooseChargedIsoPFTau30_eta2p1_CrossL1" // data only
-      "HLT_Ele24_eta2p1_WPTight_Gsf_LooseChargedIsoPFTauHPS30_eta2p1_CrossL1",
-      "HLT_IsoMu20_eta2p1_LooseChargedIsoPFTau27_eta2p1_CrossL1",  // data only
-      "HLT_IsoMu20_eta2p1_LooseChargedIsoPFTauHPS27_eta2p1_CrossL1",
-      "HLT_DoubleMediumChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg", // data only
-      "HLT_DoubleTightChargedIsoPFTau40_Trk1_eta2p1_Reg",          // data only
-      "HLT_DoubleTightChargedIsoPFTau35_Trk1_TightID_eta2p1_Reg",  // data only
-      "HLT_DoubleMediumChargedIsoPFTauHPS35_Trk1_eta2p1_Reg",
+//       // Electron muon triggers
+//       "HLT_Ele25_eta2p1_WPTight_Gsf",
+//       "HLT_Ele27_WPTight_Gsf",
+//       "HLT_Ele45_WPLoose_Gsf_L1JetTauSeeded",
+//       "HLT_Ele35_WPTight_Gsf",
+//       "HLT_Ele32_WPTight_Gsf",
+//       "HLT_Ele32_WPTight_Gsf_L1DoubleEG",
+//       
+//       // 2016
+//       "HLT_Ele24_eta2p1_WPLoose_Gsf_LooseIsoPFTau20_SingleL1",
+//       "HLT_Ele24_eta2p1_WPLoose_Gsf_LooseIsoPFTau20",
+//       "HLT_Ele24_eta2p1_WPLoose_Gsf_LooseIsoPFTau30",
+//       "HLT_IsoMu19_eta2p1_LooseIsoPFTau20_SingleL1",
+//       "HLT_IsoMu19_eta2p1_LooseIsoPFTau20",
+//       "HLT_DoubleMediumIsoPFTau35_Trk1_eta2p1_Reg",
+//       "HLT_DoubleMediumCombinedIsoPFTau35_Trk1_eta2p1_Reg",
+//       
+//       // 2017
+//       "HLT_Ele24_eta2p1_WPTight_Gsf_LooseChargedIsoPFTau30_eta2p1_CrossL1",
+//       "HLT_IsoMu20_eta2p1_LooseChargedIsoPFTau27_eta2p1_CrossL1",
+//       "HLT_DoubleTightChargedIsoPFTau35_Trk1_TightID_eta2p1_Reg",
+//       "HLT_DoubleTightChargedIsoPFTau40_Trk1_eta2p1_Reg",
+//       "HLT_DoubleMediumChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg",
+//       
+//       // 2018
+//       "HLT_Ele24_eta2p1_WPTight_Gsf_LooseChargedIsoPFTau30_eta2p1_CrossL1" // data only
+//       "HLT_Ele24_eta2p1_WPTight_Gsf_LooseChargedIsoPFTauHPS30_eta2p1_CrossL1",
+//       "HLT_IsoMu20_eta2p1_LooseChargedIsoPFTau27_eta2p1_CrossL1",  // data only
+//       "HLT_IsoMu20_eta2p1_LooseChargedIsoPFTauHPS27_eta2p1_CrossL1",
+//       "HLT_DoubleMediumChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg", // data only
+//       "HLT_DoubleTightChargedIsoPFTau40_Trk1_eta2p1_Reg",          // data only
+//       "HLT_DoubleTightChargedIsoPFTau35_Trk1_TightID_eta2p1_Reg",  // data only
+//       "HLT_DoubleMediumChargedIsoPFTauHPS35_Trk1_eta2p1_Reg",
       
     };
 };
@@ -96,8 +113,12 @@ void TriggerChecks::beginRun(const edm::Run& iRun, const edm::EventSetup& iSetup
     std::string process = "HLT";
     if(hltConfig_.init(iRun,iSetup,process,changed)){
       if(changed){
+        std::string tableName = hltConfig_.tableName();
+        std::string globalTag = hltConfig_.globalTag();
         std::cout << ">>> HLT config extraction succeeded with process name '" << process << "'" << std::endl;
-        std::cout << ">>> HLT menu name: " << hltConfig_.tableName() << std::endl;
+        std::cout << ">>> HLT menu name: '\e[1m" << tableName << "\e[0m'" << std::endl;
+        std::cout << ">>> Global tag:    '\e[1m" << globalTag << "\e[0m'" << std::endl;
+        trigFilters_[tableName] = { };
         const std::vector<std::string>& trignames = hltConfig_.triggerNames();
         for(auto const& trigname: trignames){
           if(!selectTrigger(trigname)) continue;
@@ -107,10 +128,10 @@ void TriggerChecks::beginRun(const edm::Run& iRun, const edm::EventSetup& iSetup
             std::string shortname  = removeVersionLabel(trigname);
             std::string lastfilter = filters[filters.size()-2];
             //std::cout << ">>>     " << lastfilter << std::endl;
-            if(trigFilters_.find(shortname)!=trigFilters_.end())
-              trigFilters_[shortname] = { lastfilter };
+            if(trigFilters_[tableName].find(shortname)!=trigFilters_[tableName].end())
+              trigFilters_[tableName][shortname] = { lastfilter };
             else
-              trigFilters_[shortname].insert(lastfilter);
+              trigFilters_[tableName][shortname].insert(lastfilter);
           }else{
             std::cerr << ">>>     Warning! Filter list has only " << filters.size() << "<2 elements!" << std::endl;
           }
@@ -129,17 +150,20 @@ void TriggerChecks::beginRun(const edm::Run& iRun, const edm::EventSetup& iSetup
 
 void TriggerChecks::endJob(){
   //std::cout << ">>> endJob()" << std::endl;
-  std::cout << "\n  " << std::string(14,'*') << " Summary of filters per trigger "
-                      << std::string(44,'*') << std::endl;
-  for(auto const& trigger: trigFilters_){
-    std::cout << "  *" << std::setw(88) << " " << "*" << std::endl;
-    std::cout << "  *   " << std::left << std::setw(85) << trigger.first << "*" << std::endl;
-    for(auto const& filter: trigger.second){
-      std::cout << "  *     " << std::left << std::setw(83) << filter << "*" << std::endl;
+  for(auto const& table: trigFilters_){
+    std::cout << "\n  " << std::string(4,'*') << " Summary of filters per trigger in '\e[1m" << table.first << "\e[0m' "
+                        //<< " (" << hltConfig_.globalTag() << ")"
+                        << std::string(abs(int(54-table.first.size())),'*') << std::endl;
+    for(auto const& trigger: table.second){
+      std::cout << "  *" << std::setw(94) << " " << "*" << std::endl;
+      std::cout << "  *   " << std::left << std::setw(91) << trigger.first << "*" << std::endl;
+      for(auto const& filter: trigger.second){
+        std::cout << "  *     " << std::left << std::setw(89) << filter << "*" << std::endl;
+      }
     }
+    std::cout << "  *" << std::setw(94) << " " << "*" << std::endl;
+    std::cout << "  " << std::string(96,'*') << std::endl;
   }
-  std::cout << "  *" << std::setw(88) << " " << "*" << std::endl;
-  std::cout << "  " << std::string(90,'*') << std::endl;
 }
 
 
@@ -163,7 +187,7 @@ bool TriggerChecks::selectTrigger(const std::string& path){
   //        path.find("HLT_Ele")!=std::string::npos ||
   //        path.find("HLT_Double")!=std::string::npos);
   for(auto const& trigname: trigNames_){
-    if(path.find(trigname)!=std::string::npos) return true;
+    if(path.find(trigname+"_v")!=std::string::npos) return true;
   }
   return false;
 }

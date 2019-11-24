@@ -23,7 +23,7 @@ source setEnv.sh
 
 ## List filters
 
-The plugin [`plugin/TriggerChecks.cc`](plugin/TriggerChecks.cc) checks the available trigger per run (in `TriggerChecks::beginRun`) and saves the last filter for some selected triggers. Run it on a given set of files as
+The plugin [`plugin/TriggerChecks.cc`](plugin/TriggerChecks.cc) checks the available trigger per run (in `TriggerChecks::beginRun`) and summarizes the last filter. Your favorite triggers can be defined in `TriggerChecks.cc`. To run it, specify some files in [`python/checkTriggers_cfg.py`](python/checkTriggers_cfg.py), and do
 ```
 cmsRun python/checkTriggers_cfg.py
 ```
@@ -61,7 +61,7 @@ The script [`python/matchTauTriggersNanoAOD.py`](python/matchTauTriggersNanoAOD.
 'year'
    -> year
 'filterbits'
-   -> object type ('ele', 'mu', 'tau')
+   -> object type (e.g. 'Electron', 'Muon', 'Tau')
       -> shorthand for filters patterns in nanoAOD
          -> bits (powers of 2)
 'hltcombs'
@@ -69,12 +69,12 @@ The script [`python/matchTauTriggersNanoAOD.py`](python/matchTauTriggersNanoAOD.
       -> tau trigger type ('etau', 'mutau' or 'ditau')
         -> list of recommended HLT paths
 'hltpaths'
-   -> HLT path ("HLT_*PFTau*")
+   -> HLT path ("HLT_*")
       -> 'runrange':   in case this path was only available in some data runs (optional)
-      -> 'filter':     last filter associated with this trigger path ("hlt*PFTau*")
-      -> object type ('ele', 'mu', 'tau')
-        -> 'pt_min':     offline cut on pt 
-        -> 'eta_max':    offline cut on eta (optional)
+      -> 'filter':     last filter associated with this trigger path ("hlt*")
+      -> object type (e.g. 'Electron', 'Muon', 'Tau')
+        -> 'ptmin':      offline cut on pt 
+        -> 'etamax':     offline cut on eta (optional)
         -> 'filterbits': list of shorthands for filter patterns
 ```
 The files can be found in the [`json`](json) directory.
