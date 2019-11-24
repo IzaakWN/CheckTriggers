@@ -51,7 +51,9 @@ class TriggerChecks
     bool selectTrigger(const std::string&);
     HLTConfigProvider hltConfig_;
     //edm::EDGetTokenT<edm::TriggerResults> triggerBits_;
+    std::map<std::string,std::set<std::string>> trigTables_;
     std::map<std::string,std::map<std::string,std::set<std::string>>> trigFilters_;
+    std::vector<std::string> globalTags_ = { };
     std::vector<std::string> trigNames_ = {
       
       // Single muon triggers
@@ -116,7 +118,10 @@ TriggerChecks::TriggerChecks(const edm::ParameterSet& iConfig)
   //: triggerBits_(consumes<edm::TriggerResults>(edm::InputTag("TriggerResults","",TriggerProcess)))
   //: triggerBits_(iConfig.getUntrackedParameter<edm::InputTag>("HLTriggerResults",edm::InputTag("TriggerResults::HLT")))
   //: tracksToken_(consumes<TrackCollection>(iConfig.getUntrackedParameter<edm::InputTag>("tracks")))
-{ }
+{
+  //std::string triggers = iConfig.getUntrackedParameter<std::string>("triggers","test");
+  trigNames_ = iConfig.getUntrackedParameter<std::vector<std::string>>("triggers",trigNames_);
+}
 
 
 void TriggerChecks::beginRun(const edm::Run& iRun, const edm::EventSetup& iSetup){
@@ -124,12 +129,22 @@ void TriggerChecks::beginRun(const edm::Run& iRun, const edm::EventSetup& iSetup
     std::string process = "HLT";
     if(hltConfig_.init(iRun,iSetup,process,changed)){
       if(changed){
+        
+        // MENU & GLOBAL TAG
         std::string tableName = hltConfig_.tableName();
         std::string globalTag = hltConfig_.globalTag();
         std::cout << ">>> HLT config extraction succeeded with process name '" << process << "'" << std::endl;
         std::cout << ">>> HLT menu name: '\e[1m" << tableName << "\e[0m'" << std::endl;
         std::cout << ">>> Global tag:    '\e[1m" << globalTag << "\e[0m'" << std::endl;
-        trigFilters_[tableName] = { };
+        if(std::find(globalTags_.begin(),globalTags_.end(),globalTag)==globalTags_.end())
+          globalTags_.push_back(globalTag);
+        if(trigTables_.find(globalTag)!=trigTables_.end())
+          trigTables_[globalTag] = { tableName };
+        else
+          trigTables_[globalTag].insert(tableName);
+        
+        // GET TRIGGERS & FILTERS
+        std::map<std::string,std::set<std::string>> trigFilters;
         const std::vector<std::string>& trignames = hltConfig_.triggerNames();
         for(auto const& trigname: trignames){
           if(!selectTrigger(trigname)) continue;
@@ -140,10 +155,10 @@ void TriggerChecks::beginRun(const edm::Run& iRun, const edm::EventSetup& iSetup
             std::string shortname  = removeVersionLabel(trigname);
             std::string lastfilter = filters[filters.size()-2];
             //std::cout << ">>>     " << lastfilter << std::endl;
-            if(trigFilters_[tableName].find(shortname)!=trigFilters_[tableName].end())
-              trigFilters_[tableName][shortname] = { lastfilter };
+            if(trigFilters.find(shortname)!=trigFilters.end())
+              trigFilters[shortname] = { lastfilter };
             else
-              trigFilters_[tableName][shortname].insert(lastfilter);
+              trigFilters[shortname].insert(lastfilter);
           }else{
             std::cerr << ">>>     Warning! Filter list has only " << filters.size() << "<2 elements!" << std::endl;
           }
@@ -153,6 +168,9 @@ void TriggerChecks::beginRun(const edm::Run& iRun, const edm::EventSetup& iSetup
           //for(auto const& filter2: filters2)
           //  std::cout << ">>>     " << filter2 << std::endl;
         }
+        trigFilters_[globalTag] = trigFilters;
+      }else{
+        std::cout << ">>> Trigger menu did not change. Skipping..." << std::endl;
       }
     }else{
       std::cerr << ">>> HLT config extraction failure with process name '" << process << "'" << std::endl;
@@ -162,19 +180,35 @@ void TriggerChecks::beginRun(const edm::Run& iRun, const edm::EventSetup& iSetup
 
 void TriggerChecks::endJob(){
   //std::cout << ">>> endJob()" << std::endl;
-  for(auto const& table: trigFilters_){
-    std::cout << "\n  " << std::string(4,'*') << " Summary of filters per trigger in '\e[1m" << table.first << "\e[0m' "
-                        << std::string(abs(int(54-table.first.size())),'*') << std::endl;
-    for(auto const& trigger: table.second){
-      std::cout << "  *" << std::setw(94) << " " << "*" << std::endl;
-      std::cout << "  *   " << std::left << std::setw(91) << trigger.first << "*" << std::endl;
+  
+  // MENUS PER GLOBAL TAG
+  std::cout << "\n  " << std::string(4,'*') << " Summary of trigger menus "
+                      << std::string(24,'*') << std::endl;
+  for(auto const& globalTag: globalTags_){
+    std::cout << "  *" << std::setw(52) << " " << "*" << std::endl;
+    std::cout << "  *   \e[1m" << std::left << std::setw(49) << globalTag << "\e[0m*" << std::endl;
+    for(auto const& tableName: trigTables_[globalTag]){
+      std::cout << "  *     " << std::left << std::setw(47) << tableName << "*" << std::endl;
+    }
+  }
+  std::cout << "  *" << std::setw(52) << " " << "*" << std::endl;
+  std::cout << "  " << std::string(54,'*') << std::endl;
+  
+  // FILTERS PER TRIGGER
+  for(auto const& globalTag: globalTags_){
+    std::cout << "\n  " << std::string(4,'*') << " Summary of filters per trigger in '\e[1m" << globalTag << "\e[0m' "
+                        << std::string(abs(int(50-globalTag.size())),'*') << std::endl;
+    for(auto const& trigger: trigFilters_[globalTag]){
+      std::cout << "  *" << std::setw(90) << " " << "*" << std::endl;
+      std::cout << "  *   " << std::left << std::setw(87) << trigger.first << "*" << std::endl;
       for(auto const& filter: trigger.second){
-        std::cout << "  *     " << std::left << std::setw(89) << filter << "*" << std::endl;
+        std::cout << "  *     " << std::left << std::setw(85) << filter << "*" << std::endl;
       }
     }
-    std::cout << "  *" << std::setw(94) << " " << "*" << std::endl;
-    std::cout << "  " << std::string(96,'*') << std::endl;
+    std::cout << "  *" << std::setw(90) << " " << "*" << std::endl;
+    std::cout << "  " << std::string(92,'*') << std::endl;
   }
+  
 }
 
 
