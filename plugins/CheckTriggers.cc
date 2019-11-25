@@ -49,9 +49,12 @@ class TriggerChecks
     virtual void endRun(const edm::Run&, const edm::EventSetup&) override { }
     virtual void endJob() override;
     bool selectTrigger(const std::string&);
+    bool verbose_ = false;
+    int nlast_ = 1; // number of last filters
     HLTConfigProvider hltConfig_;
     //edm::EDGetTokenT<edm::TriggerResults> triggerBits_;
     std::map<std::string,std::set<std::string>> trigTables_;
+    std::map<std::string,std::set<std::string>> trigFiltersAll_;
     std::map<std::string,std::map<std::string,std::set<std::string>>> trigFilters_;
     std::vector<std::string> globalTags_ = { };
     std::vector<std::string> trigNames_ = {
@@ -102,11 +105,11 @@ class TriggerChecks
       // 2018
       "HLT_Ele24_eta2p1_WPTight_Gsf_LooseChargedIsoPFTau30_eta2p1_CrossL1" // data only
       "HLT_Ele24_eta2p1_WPTight_Gsf_LooseChargedIsoPFTauHPS30_eta2p1_CrossL1",
-      "HLT_IsoMu20_eta2p1_LooseChargedIsoPFTau27_eta2p1_CrossL1",  // data only
+      "HLT_IsoMu20_eta2p1_LooseChargedIsoPFTau27_eta2p1_CrossL1",          // data only
       "HLT_IsoMu20_eta2p1_LooseChargedIsoPFTauHPS27_eta2p1_CrossL1",
-      "HLT_DoubleMediumChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg", // data only
-      "HLT_DoubleTightChargedIsoPFTau40_Trk1_eta2p1_Reg",          // data only
-      "HLT_DoubleTightChargedIsoPFTau35_Trk1_TightID_eta2p1_Reg",  // data only
+      "HLT_DoubleMediumChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg",         // data only
+      "HLT_DoubleTightChargedIsoPFTau40_Trk1_eta2p1_Reg",                  // data only
+      "HLT_DoubleTightChargedIsoPFTau35_Trk1_TightID_eta2p1_Reg",          // data only
       "HLT_DoubleMediumChargedIsoPFTauHPS35_Trk1_eta2p1_Reg",
       
     };
@@ -119,8 +122,10 @@ TriggerChecks::TriggerChecks(const edm::ParameterSet& iConfig)
   //: triggerBits_(iConfig.getUntrackedParameter<edm::InputTag>("HLTriggerResults",edm::InputTag("TriggerResults::HLT")))
   //: tracksToken_(consumes<TrackCollection>(iConfig.getUntrackedParameter<edm::InputTag>("tracks")))
 {
-  //std::string triggers = iConfig.getUntrackedParameter<std::string>("triggers","test");
-  trigNames_ = iConfig.getUntrackedParameter<std::vector<std::string>>("triggers",trigNames_);
+  verbose_           = iConfig.getUntrackedParameter<bool>("verbose",verbose_);
+  nlast_             = iConfig.getUntrackedParameter<int>("nlast",   nlast_);
+  trigNames_         = iConfig.getUntrackedParameter<std::vector<std::string>>("triggers",trigNames_);
+  trigTables_["All"] = { };
 }
 
 
@@ -134,33 +139,33 @@ void TriggerChecks::beginRun(const edm::Run& iRun, const edm::EventSetup& iSetup
         std::string tableName = hltConfig_.tableName();
         std::string globalTag = hltConfig_.globalTag();
         std::cout << ">>> HLT config extraction succeeded with process name '" << process << "'" << std::endl;
-        std::cout << ">>> HLT menu name: '\e[1m" << tableName << "\e[0m'" << std::endl;
-        std::cout << ">>> Global tag:    '\e[1m" << globalTag << "\e[0m'" << std::endl;
+        std::cout << ">>>   HLT menu name: '\e[1m" << tableName << "\e[0m'" << std::endl;
+        std::cout << ">>>   Global tag:    '\e[1m" << globalTag << "\e[0m'" << std::endl;
         if(std::find(globalTags_.begin(),globalTags_.end(),globalTag)==globalTags_.end())
           globalTags_.push_back(globalTag);
-        if(trigTables_.find(globalTag)!=trigTables_.end())
-          trigTables_[globalTag] = { tableName };
-        else
-          trigTables_[globalTag].insert(tableName);
+        trigTables_[globalTag].insert(tableName);
         
         // GET TRIGGERS & FILTERS
         std::map<std::string,std::set<std::string>> trigFilters;
         const std::vector<std::string>& trignames = hltConfig_.triggerNames();
         for(auto const& trigname: trignames){
           if(!selectTrigger(trigname)) continue;
-          //std::cout << ">>>   " << trigname << std::endl;
           std::vector<std::string> filters = hltConfig_.moduleLabels(trigname);
-          //for(auto const& filter: filters) std::cout << ">>>     " << filter << std::endl;
-          if(filters.size()>=2){
-            std::string shortname  = removeVersionLabel(trigname);
-            std::string lastfilter = filters[filters.size()-2];
-            //std::cout << ">>>     " << lastfilter << std::endl;
-            if(trigFilters.find(shortname)!=trigFilters.end())
-              trigFilters[shortname] = { lastfilter };
-            else
+          if(verbose_){
+            std::cout << ">>>   " << trigname << std::endl;
+            for(auto const& filter: filters) std::cout << ">>>     " << filter << std::endl;
+          }
+          std::string shortname  = removeVersionLabel(trigname);
+          if(int(filters.size())>=nlast_+1){
+            for(int i=nlast_; i>=1; i--){
+              std::string lastfilter = filters[filters.size()-i-1];
+              if(nlast_>1) lastfilter = std::to_string(nlast_-i+1)+") "+lastfilter;
               trigFilters[shortname].insert(lastfilter);
+              trigFilters_["All"][shortname].insert(lastfilter);
+            }
           }else{
-            std::cerr << ">>>     Warning! Filter list has only " << filters.size() << "<2 elements!" << std::endl;
+            std::cerr << ">>>   Warning! Filter list has only " << filters.size() << "<2 elements!" << std::endl;
+            break;
           }
           //for(auto const& filter: filters)
           //  std::cout << ">>>     " << filter << std::endl;
@@ -170,7 +175,7 @@ void TriggerChecks::beginRun(const edm::Run& iRun, const edm::EventSetup& iSetup
         }
         trigFilters_[globalTag] = trigFilters;
       }else{
-        std::cout << ">>> Trigger menu did not change. Skipping..." << std::endl;
+        std::cout << ">>>   Trigger menu did not change. Skipping..." << std::endl;
       }
     }else{
       std::cerr << ">>> HLT config extraction failure with process name '" << process << "'" << std::endl;
@@ -195,7 +200,9 @@ void TriggerChecks::endJob(){
   std::cout << "  " << std::string(54,'*') << std::endl;
   
   // FILTERS PER TRIGGER
-  for(auto const& globalTag: globalTags_){
+  std::vector<std::string> globalTagsAll(globalTags_);
+  globalTagsAll.push_back("All");
+  for(auto const& globalTag: globalTagsAll){
     std::cout << "\n  " << std::string(4,'*') << " Summary of filters per trigger in '\e[1m" << globalTag << "\e[0m' "
                         << std::string(abs(int(50-globalTag.size())),'*') << std::endl;
     for(auto const& trigger: trigFilters_[globalTag]){
