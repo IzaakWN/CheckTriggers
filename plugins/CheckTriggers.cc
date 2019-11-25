@@ -7,7 +7,8 @@
  * @source:
  *   https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideHLTAnalysis
  *   https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideHighLevelTrigger#Access_to_the_HLT_configuration
- *   
+ *   https://github.com/cms-sw/cmssw/blob/master/HLTrigger/HLTcore/interface/HLTConfigProvider.h
+ *
  *   to check:
  *     https://github.com/cms-sw/cmssw/blob/CMSSW_5_3_X/HLTrigger/HLTfilters/python/hltSummaryFilter_cfi.py
  *     https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideGlobalHLT#Using_frozen_Run_1_or_Run_2_trig
@@ -81,10 +82,13 @@ class TriggerChecks
       "HLT_Ele35_WPTight_Gsf",
       "HLT_Ele32_WPTight_Gsf",
       "HLT_Ele32_WPTight_Gsf_L1DoubleEG",
-      "HLT_Ele50*",
+      "HLT_Ele45_CaloIdVT_GsfTrkIdT_PFJet200_PFJet50",
+      "HLT_Ele50_CaloIdVT_GsfTrkIdT_PFJet165",
+      //"HLT_Ele50*",
       "HLT_Ele105_CaloIdVT_GsfTrkIdT",
       "HLT_Ele115_CaloIdVT_GsfTrkIdT",
-      "HLT_Photon175",      
+      "HLT_Photon175",
+      "HLT_Photon200",
       
       // 2016
       "HLT_Ele24_eta2p1_WPLoose_Gsf_LooseIsoPFTau20_SingleL1",
@@ -123,7 +127,7 @@ TriggerChecks::TriggerChecks(const edm::ParameterSet& iConfig)
   //: tracksToken_(consumes<TrackCollection>(iConfig.getUntrackedParameter<edm::InputTag>("tracks")))
 {
   verbose_           = iConfig.getUntrackedParameter<bool>("verbose",verbose_);
-  nlast_             = iConfig.getUntrackedParameter<int>("nlast",   nlast_);
+  nlast_             = std::max(iConfig.getUntrackedParameter<int>("nlast",nlast_),1);
   trigNames_         = iConfig.getUntrackedParameter<std::vector<std::string>>("triggers",trigNames_);
   trigTables_["All"] = { };
 }
@@ -152,7 +156,7 @@ void TriggerChecks::beginRun(const edm::Run& iRun, const edm::EventSetup& iSetup
           if(!selectTrigger(trigname)) continue;
           std::vector<std::string> filters = hltConfig_.moduleLabels(trigname);
           if(verbose_){
-            std::cout << ">>>   " << trigname << std::endl;
+            std::cout << ">>>   \e[1m" << trigname << "\e[0m" << std::endl;
             for(auto const& filter: filters) std::cout << ">>>     " << filter << std::endl;
           }
           std::string shortname  = removeVersionLabel(trigname);
@@ -164,7 +168,7 @@ void TriggerChecks::beginRun(const edm::Run& iRun, const edm::EventSetup& iSetup
               trigFilters_["All"][shortname].insert(lastfilter);
             }
           }else{
-            std::cerr << ">>>   Warning! Filter list has only " << filters.size() << "<2 elements!" << std::endl;
+            std::cerr << ">>>   Warning! Filter list has only " << filters.size() << "<" << std::to_string(nlast_+1) << " elements!" << std::endl;
             break;
           }
           //for(auto const& filter: filters)

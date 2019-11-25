@@ -1,66 +1,74 @@
 #! /usr/bin/env cmsRun
 import FWCore.ParameterSet.Config as cms
-
+from FWCore.ParameterSet.VarParsing import VarParsing
+options = VarParsing('analysis')
+options.register('verbose', 0,  mytype=VarParsing.varType.int)
+options.register('nlast',   1,  mytype=VarParsing.varType.int)
+options.register('trigger', "", mytype=VarParsing.varType.string)
+options.parseArguments()
 director = "file:root://xrootd-cms.infn.it/"
-verbose  = True and False
-nlast    = 1
-
-triggers = [
-  
-  # SINGLE MUON
-  "HLT_IsoMu22",
-  "HLT_IsoMu22_eta2p1",
-  "HLT_IsoTkMu22",
-  "HLT_IsoTkMu22_eta2p1",
-  "HLT_IsoMu24",
-  "HLT_IsoMu27",
-  "HLT_Mu50",
-  "HLT_TkMu50",
-  "HLT_Mu100",
-  "HLT_OldMu100",
-  "HLT_TkMu100",
-  ###"HLT_*Mu50*",
-  ###"HLT_*Mu100*",
-   
-  # SINGLE ELECTRON
-  "HLT_Ele25_eta2p1_WPTight_Gsf",
-  "HLT_Ele27_WPTight_Gsf",
-  "HLT_Ele45_WPLoose_Gsf_L1JetTauSeeded",
-  "HLT_Ele35_WPTight_Gsf",
-  "HLT_Ele32_WPTight_Gsf",
-  "HLT_Ele32_WPTight_Gsf_L1DoubleEG",
-  "HLT_Ele50*",
+verbose  = options.verbose>0
+nlast    = options.nlast
+triggers = options.trigger.split(',') if options.trigger else [
+#   
+#   # SINGLE MUON
+#   "HLT_IsoMu22",
+#   "HLT_IsoMu22_eta2p1",
+#   "HLT_IsoTkMu22",
+#   "HLT_IsoTkMu22_eta2p1",
+#   "HLT_IsoMu24",
+#   "HLT_IsoMu27",
+#   "HLT_Mu50",
+#   "HLT_TkMu50",
+#   "HLT_Mu100",
+#   "HLT_OldMu100",
+#   "HLT_TkMu100",
+#   ###"HLT_*Mu50*",
+#   ###"HLT_*Mu100*",
+#   
+#   # SINGLE ELECTRON
+#   "HLT_Ele25_eta2p1_WPTight_Gsf",
+#   "HLT_Ele27_WPTight_Gsf",
+#   "HLT_Ele45_WPLoose_Gsf_L1JetTauSeeded",
+#   "HLT_Ele35_WPTight_Gsf",
+#   "HLT_Ele32_WPTight_Gsf",
+#   "HLT_Ele32_WPTight_Gsf_L1DoubleEG",
+  "HLT_Ele45_CaloIdVT_GsfTrkIdT_PFJet200_PFJet50",
+  "HLT_Ele50_CaloIdVT_GsfTrkIdT_PFJet165",
+  #"HLT_Ele50*",
   "HLT_Ele105_CaloIdVT_GsfTrkIdT",
   "HLT_Ele115_CaloIdVT_GsfTrkIdT",
   "HLT_Photon175",
-  
-  # TAU 2016
-  "HLT_Ele24_eta2p1_WPLoose_Gsf_LooseIsoPFTau20_SingleL1",
-  "HLT_Ele24_eta2p1_WPLoose_Gsf_LooseIsoPFTau20",
-  "HLT_Ele24_eta2p1_WPLoose_Gsf_LooseIsoPFTau30",
-  "HLT_IsoMu19_eta2p1_LooseIsoPFTau20_SingleL1",
-  "HLT_IsoMu19_eta2p1_LooseIsoPFTau20",
-  "HLT_DoubleMediumIsoPFTau35_Trk1_eta2p1_Reg",
-  "HLT_DoubleMediumCombinedIsoPFTau35_Trk1_eta2p1_Reg",
-  
-  # TAU 2017
-  "HLT_Ele24_eta2p1_WPTight_Gsf_LooseChargedIsoPFTau30_eta2p1_CrossL1",
-  "HLT_IsoMu20_eta2p1_LooseChargedIsoPFTau27_eta2p1_CrossL1",
-  "HLT_DoubleTightChargedIsoPFTau35_Trk1_TightID_eta2p1_Reg",
-  "HLT_DoubleTightChargedIsoPFTau40_Trk1_eta2p1_Reg",
-  "HLT_DoubleMediumChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg",
-  
-  # TAU 2018
-  "HLT_Ele24_eta2p1_WPTight_Gsf_LooseChargedIsoPFTau30_eta2p1_CrossL1" # data only
-  "HLT_Ele24_eta2p1_WPTight_Gsf_LooseChargedIsoPFTauHPS30_eta2p1_CrossL1",
-  "HLT_IsoMu20_eta2p1_LooseChargedIsoPFTau27_eta2p1_CrossL1",          # data only
-  "HLT_IsoMu20_eta2p1_LooseChargedIsoPFTauHPS27_eta2p1_CrossL1",
-  "HLT_DoubleMediumChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg",         # data only
-  "HLT_DoubleTightChargedIsoPFTau40_Trk1_eta2p1_Reg",                  # data only
-  "HLT_DoubleTightChargedIsoPFTau35_Trk1_TightID_eta2p1_Reg",          # data only
-  "HLT_DoubleMediumChargedIsoPFTauHPS35_Trk1_eta2p1_Reg",
+  "HLT_Photon200",
+#   
+#   # TAU 2016
+#   "HLT_Ele24_eta2p1_WPLoose_Gsf_LooseIsoPFTau20_SingleL1",
+#   "HLT_Ele24_eta2p1_WPLoose_Gsf_LooseIsoPFTau20",
+#   "HLT_Ele24_eta2p1_WPLoose_Gsf_LooseIsoPFTau30",
+#   "HLT_IsoMu19_eta2p1_LooseIsoPFTau20_SingleL1",
+#   "HLT_IsoMu19_eta2p1_LooseIsoPFTau20",
+#   "HLT_DoubleMediumIsoPFTau35_Trk1_eta2p1_Reg",
+#   "HLT_DoubleMediumCombinedIsoPFTau35_Trk1_eta2p1_Reg",
+#   
+#   # TAU 2017
+#   "HLT_Ele24_eta2p1_WPTight_Gsf_LooseChargedIsoPFTau30_eta2p1_CrossL1",
+#   "HLT_IsoMu20_eta2p1_LooseChargedIsoPFTau27_eta2p1_CrossL1",
+#   "HLT_DoubleTightChargedIsoPFTau35_Trk1_TightID_eta2p1_Reg",
+#   "HLT_DoubleTightChargedIsoPFTau40_Trk1_eta2p1_Reg",
+#   "HLT_DoubleMediumChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg",
+#   
+#   # TAU 2018
+#   "HLT_Ele24_eta2p1_WPTight_Gsf_LooseChargedIsoPFTau30_eta2p1_CrossL1" # data only
+#   "HLT_Ele24_eta2p1_WPTight_Gsf_LooseChargedIsoPFTauHPS30_eta2p1_CrossL1",
+#   "HLT_IsoMu20_eta2p1_LooseChargedIsoPFTau27_eta2p1_CrossL1",          # data only
+#   "HLT_IsoMu20_eta2p1_LooseChargedIsoPFTauHPS27_eta2p1_CrossL1",
+#   "HLT_DoubleMediumChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg",         # data only
+#   "HLT_DoubleTightChargedIsoPFTau40_Trk1_eta2p1_Reg",                  # data only
+#   "HLT_DoubleTightChargedIsoPFTau35_Trk1_TightID_eta2p1_Reg",          # data only
+#   "HLT_DoubleMediumChargedIsoPFTauHPS35_Trk1_eta2p1_Reg",
   
 ]
+
 
 files = [
   
@@ -114,29 +122,29 @@ files = [
   #director+'/store/data/Run2018C/SingleMuon/MINIAOD/17Sep2018-v1/110000/8DB2B7A5-F627-2144-8F8F-180A8DA0E90D.root',
   #director+'/store/data/Run2018D/SingleMuon/MINIAOD/PromptReco-v2/000/320/569/00000/3C8C28E7-1A96-E811-BA8D-02163E012DD8.root',
   
-  ## 2016 SingleElectron datasets
-  #director+'/store/data/Run2016B/SingleElectron/MINIAOD/17Jul2018_ver1-v1/40000/CACD4C5F-BE8B-E811-B0EB-00010100085C.root',
-  #director+'/store/data/Run2016B/SingleElectron/MINIAOD/17Jul2018_ver2-v1/00000/3CF8D177-BB8B-E811-986D-A0369F836430.root',
-  #director+'/store/data/Run2016C/SingleElectron/MINIAOD/17Jul2018-v1/40000/F22B7438-4B8C-E811-A008-0242AC130002.root',
-  #director+'/store/data/Run2016D/SingleElectron/MINIAOD/17Jul2018-v1/40000/C66CFA48-E18B-E811-A984-3417EBE64B25.root',
-  #director+'/store/data/Run2016E/SingleElectron/MINIAOD/17Jul2018-v1/40000/E0ED4529-9D8B-E811-A5B8-0CC47A4D999A.root',
-  #director+'/store/data/Run2016F/SingleElectron/MINIAOD/17Jul2018-v1/50000/5626FF00-1D8B-E811-AA3F-AC1F6B0F6FCE.root',
-  #director+'/store/data/Run2016G/SingleElectron/MINIAOD/17Jul2018-v1/50000/02DC57F5-A48B-E811-A98E-0CC47AF9B496.root',
-  #director+'/store/data/Run2016H/SingleElectron/MINIAOD/17Jul2018-v1/00000/D0FB608B-5F8A-E811-8FBF-003048FFD7A4.root',
+  # 2016 SingleElectron datasets
+  director+'/store/data/Run2016B/SingleElectron/MINIAOD/17Jul2018_ver1-v1/40000/CACD4C5F-BE8B-E811-B0EB-00010100085C.root',
+  director+'/store/data/Run2016B/SingleElectron/MINIAOD/17Jul2018_ver2-v1/00000/3CF8D177-BB8B-E811-986D-A0369F836430.root',
+  director+'/store/data/Run2016C/SingleElectron/MINIAOD/17Jul2018-v1/40000/F22B7438-4B8C-E811-A008-0242AC130002.root',
+  director+'/store/data/Run2016D/SingleElectron/MINIAOD/17Jul2018-v1/40000/C66CFA48-E18B-E811-A984-3417EBE64B25.root',
+  director+'/store/data/Run2016E/SingleElectron/MINIAOD/17Jul2018-v1/40000/E0ED4529-9D8B-E811-A5B8-0CC47A4D999A.root',
+  director+'/store/data/Run2016F/SingleElectron/MINIAOD/17Jul2018-v1/50000/5626FF00-1D8B-E811-AA3F-AC1F6B0F6FCE.root',
+  director+'/store/data/Run2016G/SingleElectron/MINIAOD/17Jul2018-v1/50000/02DC57F5-A48B-E811-A98E-0CC47AF9B496.root',
+  director+'/store/data/Run2016H/SingleElectron/MINIAOD/17Jul2018-v1/00000/D0FB608B-5F8A-E811-8FBF-003048FFD7A4.root',
   
-  ## 2017 SingleElectron datasets
-  #director+'/store/data/Run2017B/SingleElectron/MINIAOD/31Mar2018-v1/60000/66EAEA69-3E37-E811-BC12-008CFAC91CD4.root',
-  #director+'/store/data/Run2017C/SingleElectron/MINIAOD/31Mar2018-v1/90000/4075BED6-9D37-E811-9EE6-0025905B85CC.root',
-  #director+'/store/data/Run2017D/SingleElectron/MINIAOD/31Mar2018-v1/80000/C0051DB1-EE38-E811-AE60-E0071B74AC10.root',
-  #director+'/store/data/Run2017E/SingleElectron/MINIAOD/31Mar2018-v1/90000/24DC3796-C338-E811-BA7E-00266CFFBEB4.root',
-  #director+'/store/data/Run2017F/SingleElectron/MINIAOD/31Mar2018-v1/100000/C05D396F-A437-E811-A49D-0025905A6118.root',
+  # 2017 SingleElectron datasets
+  director+'/store/data/Run2017B/SingleElectron/MINIAOD/31Mar2018-v1/60000/66EAEA69-3E37-E811-BC12-008CFAC91CD4.root',
+  director+'/store/data/Run2017C/SingleElectron/MINIAOD/31Mar2018-v1/90000/4075BED6-9D37-E811-9EE6-0025905B85CC.root',
+  director+'/store/data/Run2017D/SingleElectron/MINIAOD/31Mar2018-v1/80000/C0051DB1-EE38-E811-AE60-E0071B74AC10.root',
+  director+'/store/data/Run2017E/SingleElectron/MINIAOD/31Mar2018-v1/90000/24DC3796-C338-E811-BA7E-00266CFFBEB4.root',
+  director+'/store/data/Run2017F/SingleElectron/MINIAOD/31Mar2018-v1/100000/C05D396F-A437-E811-A49D-0025905A6118.root',
   
-  ## 2018 EGamma datasets
-  #director+'/store/data/Run2018A/EGamma/MINIAOD/17Sep2018-v2/120000/D0C18EBB-8DD7-EC4F-9C1B-CA3EAD44D993.root',
-  #director+'/store/data/Run2018B/EGamma/MINIAOD/17Sep2018-v1/00000/ADB4BB53-A766-E546-80C7-E2E0058062CD.root',
-  #director+'/store/data/Run2018C/EGamma/MINIAOD/17Sep2018-v1/110000/16D0608A-36CE-7543-93A4-DD42EA7A417B.root',
-  #director+'/store/data/Run2018C/EGamma/MINIAOD/17Sep2018-v1/110000/492125B7-444F-844F-A6CD-87045AC0487E.root',
-  #director+'/store/data/Run2018D/EGamma/MINIAOD/PromptReco-v2/000/320/500/00000/703D2061-0096-E811-A12F-FA163EBDCF4F.root',
+  # 2018 EGamma datasets
+  director+'/store/data/Run2018A/EGamma/MINIAOD/17Sep2018-v2/120000/D0C18EBB-8DD7-EC4F-9C1B-CA3EAD44D993.root',
+  director+'/store/data/Run2018B/EGamma/MINIAOD/17Sep2018-v1/00000/ADB4BB53-A766-E546-80C7-E2E0058062CD.root',
+  director+'/store/data/Run2018C/EGamma/MINIAOD/17Sep2018-v1/110000/16D0608A-36CE-7543-93A4-DD42EA7A417B.root',
+  director+'/store/data/Run2018C/EGamma/MINIAOD/17Sep2018-v1/110000/492125B7-444F-844F-A6CD-87045AC0487E.root',
+  director+'/store/data/Run2018D/EGamma/MINIAOD/PromptReco-v2/000/320/500/00000/703D2061-0096-E811-A12F-FA163EBDCF4F.root',
   
 ]
 
