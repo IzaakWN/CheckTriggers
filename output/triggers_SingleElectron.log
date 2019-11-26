@@ -1,0 +1,832 @@
+>>> --------------- checkTriggers_cfg.py ---------------------------------
+>>> year     = -1
+>>> dtype    = ''
+>>> verbose  = False
+>>> nlast    = 1
+>>> triggers = ['HLT_Ele25_eta2p1_WPTight_Gsf', 'HLT_Ele27_WPTight_Gsf', 'HLT_Ele45_WPLoose_Gsf_L1JetTauSeeded', 'HLT_Ele35_WPTight_Gsf', 'HLT_Ele32_WPTight_Gsf', 'HLT_Ele32_WPTight_Gsf_L1DoubleEG', 'HLT_Ele45_CaloIdVT_GsfTrkIdT_PFJet200_PFJet50', 'HLT_Ele50_CaloIdVT_GsfTrkIdT_PFJet165', 'HLT_Ele105_CaloIdVT_GsfTrkIdT', 'HLT_Ele115_CaloIdVT_GsfTrkIdT', 'HLT_Photon175', 'HLT_Photon200']
+>>> filters  = ['hltEgammaCandidates', '*PixelMatchFilter', 'hltEle*CaloIdVTGsfTrkIdTGsf*Filter', '*RelTrkIso*Filtered0p4', 'hltL3cr*IsoFiltered0p09', 'hltL3f*IsoFiltered0p09', 'hlt*L3MuonCandidates', 'hltHighPtTkMuonCands', 'hlt*TkMuonCands', 'hlt*TrkMuonCands']
+>>> files    = [
+>>>   'file:root://xrootd-cms.infn.it//store/mc/RunIISummer16MiniAODv3/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUMoriond17_94X_mcRun2_asymptotic_v3_ext1-v2/120000/ACDA5D95-3EDF-E811-AC6F-842B2B6AEE8B.root',
+>>>   'file:root://xrootd-cms.infn.it//store/mc/RunIIFall17MiniAODv2/DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/MINIAODSIM/PU2017RECOSIMstep_12Apr2018_94X_mc2017_realistic_v14-v1/70000/0256D125-5A44-E811-8C69-44A842CFD64D.root',
+>>>   'file:root://xrootd-cms.infn.it//store/mc/RunIIAutumn18MiniAOD/DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/MINIAODSIM/102X_upgrade2018_realistic_v15-v1/100000/08540B6C-AA39-3F49-8FFE-8771AD2A8885.root',
+>>>   'file:root://xrootd-cms.infn.it//store/data/Run2016B/SingleElectron/MINIAOD/17Jul2018_ver1-v1/40000/CACD4C5F-BE8B-E811-B0EB-00010100085C.root',
+>>>   'file:root://xrootd-cms.infn.it//store/data/Run2016B/SingleElectron/MINIAOD/17Jul2018_ver2-v1/00000/3CF8D177-BB8B-E811-986D-A0369F836430.root',
+>>>   'file:root://xrootd-cms.infn.it//store/data/Run2016C/SingleElectron/MINIAOD/17Jul2018-v1/40000/F22B7438-4B8C-E811-A008-0242AC130002.root',
+>>>   'file:root://xrootd-cms.infn.it//store/data/Run2016D/SingleElectron/MINIAOD/17Jul2018-v1/40000/C66CFA48-E18B-E811-A984-3417EBE64B25.root',
+>>>   'file:root://xrootd-cms.infn.it//store/data/Run2016E/SingleElectron/MINIAOD/17Jul2018-v1/40000/E0ED4529-9D8B-E811-A5B8-0CC47A4D999A.root',
+>>>   'file:root://xrootd-cms.infn.it//store/data/Run2016F/SingleElectron/MINIAOD/17Jul2018-v1/50000/5626FF00-1D8B-E811-AA3F-AC1F6B0F6FCE.root',
+>>>   'file:root://xrootd-cms.infn.it//store/data/Run2016G/SingleElectron/MINIAOD/17Jul2018-v1/50000/02DC57F5-A48B-E811-A98E-0CC47AF9B496.root',
+>>>   'file:root://xrootd-cms.infn.it//store/data/Run2016H/SingleElectron/MINIAOD/17Jul2018-v1/00000/D0FB608B-5F8A-E811-8FBF-003048FFD7A4.root',
+>>>   'file:root://xrootd-cms.infn.it//store/data/Run2017B/SingleElectron/MINIAOD/31Mar2018-v1/60000/66EAEA69-3E37-E811-BC12-008CFAC91CD4.root',
+>>>   'file:root://xrootd-cms.infn.it//store/data/Run2017C/SingleElectron/MINIAOD/31Mar2018-v1/90000/4075BED6-9D37-E811-9EE6-0025905B85CC.root',
+>>>   'file:root://xrootd-cms.infn.it//store/data/Run2017D/SingleElectron/MINIAOD/31Mar2018-v1/80000/C0051DB1-EE38-E811-AE60-E0071B74AC10.root',
+>>>   'file:root://xrootd-cms.infn.it//store/data/Run2017E/SingleElectron/MINIAOD/31Mar2018-v1/90000/24DC3796-C338-E811-BA7E-00266CFFBEB4.root',
+>>>   'file:root://xrootd-cms.infn.it//store/data/Run2017F/SingleElectron/MINIAOD/31Mar2018-v1/100000/C05D396F-A437-E811-A49D-0025905A6118.root',
+>>>   'file:root://xrootd-cms.infn.it//store/data/Run2018A/EGamma/MINIAOD/17Sep2018-v2/120000/D0C18EBB-8DD7-EC4F-9C1B-CA3EAD44D993.root',
+>>>   'file:root://xrootd-cms.infn.it//store/data/Run2018B/EGamma/MINIAOD/17Sep2018-v1/00000/ADB4BB53-A766-E546-80C7-E2E0058062CD.root',
+>>>   'file:root://xrootd-cms.infn.it//store/data/Run2018C/EGamma/MINIAOD/17Sep2018-v1/110000/16D0608A-36CE-7543-93A4-DD42EA7A417B.root',
+>>>   'file:root://xrootd-cms.infn.it//store/data/Run2018C/EGamma/MINIAOD/17Sep2018-v1/110000/492125B7-444F-844F-A6CD-87045AC0487E.root',
+>>>   'file:root://xrootd-cms.infn.it//store/data/Run2018D/EGamma/MINIAOD/PromptReco-v2/000/320/500/00000/703D2061-0096-E811-A12F-FA163EBDCF4F.root'
+>>> ]
+>>> ----------------------------------------------------------------------
+26-Nov-2019 17:55:03 CET  Initiating request to open file file:root://xrootd-cms.infn.it//store/mc/RunIISummer16MiniAODv3/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUMoriond17_94X_mcRun2_asymptotic_v3_ext1-v2/120000/ACDA5D95-3EDF-E811-AC6F-842B2B6AEE8B.root
+%MSG-w XrdAdaptor:  file_open 26-Nov-2019 17:55:06 CET pre-events
+Data is served from ciemat.es instead of original site infn.it
+%MSG
+26-Nov-2019 17:55:10 CET  Successfully opened file file:root://xrootd-cms.infn.it//store/mc/RunIISummer16MiniAODv3/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUMoriond17_94X_mcRun2_asymptotic_v3_ext1-v2/120000/ACDA5D95-3EDF-E811-AC6F-842B2B6AEE8B.root
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/frozen/2016/25ns15e33/v4.0/HLT/V2'
+>>>   Global tag:    '80X_mcRun2_asymptotic_2016_TrancheIV_v6'
+26-Nov-2019 17:55:17 CET  Closed file file:root://xrootd-cms.infn.it//store/mc/RunIISummer16MiniAODv3/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUMoriond17_94X_mcRun2_asymptotic_v3_ext1-v2/120000/ACDA5D95-3EDF-E811-AC6F-842B2B6AEE8B.root
+26-Nov-2019 17:55:17 CET  Initiating request to open file file:root://xrootd-cms.infn.it//store/mc/RunIIFall17MiniAODv2/DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/MINIAODSIM/PU2017RECOSIMstep_12Apr2018_94X_mc2017_realistic_v14-v1/70000/0256D125-5A44-E811-8C69-44A842CFD64D.root
+%MSG-w XrdAdaptor:  file_open 26-Nov-2019 17:55:19 CET PostStreamBeginLumi
+Data is served from TR-03-METU instead of original site infn.it
+%MSG
+26-Nov-2019 17:55:20 CET  Successfully opened file file:root://xrootd-cms.infn.it//store/mc/RunIIFall17MiniAODv2/DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/MINIAODSIM/PU2017RECOSIMstep_12Apr2018_94X_mc2017_realistic_v14-v1/70000/0256D125-5A44-E811-8C69-44A842CFD64D.root
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/frozen/2017/2e34/v4.0/HLT/V5'
+>>>   Global tag:    '94X_mc2017_realistic_v10'
+26-Nov-2019 17:55:24 CET  Closed file file:root://xrootd-cms.infn.it//store/mc/RunIIFall17MiniAODv2/DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/MINIAODSIM/PU2017RECOSIMstep_12Apr2018_94X_mc2017_realistic_v14-v1/70000/0256D125-5A44-E811-8C69-44A842CFD64D.root
+26-Nov-2019 17:55:24 CET  Initiating request to open file file:root://xrootd-cms.infn.it//store/mc/RunIIAutumn18MiniAOD/DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/MINIAODSIM/102X_upgrade2018_realistic_v15-v1/100000/08540B6C-AA39-3F49-8FFE-8771AD2A8885.root
+%MSG-w XrdAdaptor:  file_open 26-Nov-2019 17:55:25 CET PostStreamBeginLumi
+Data is served from desy.de instead of original site infn.it
+%MSG
+26-Nov-2019 17:55:25 CET  Successfully opened file file:root://xrootd-cms.infn.it//store/mc/RunIIAutumn18MiniAOD/DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/MINIAODSIM/102X_upgrade2018_realistic_v15-v1/100000/08540B6C-AA39-3F49-8FFE-8771AD2A8885.root
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/frozen/2018/2e34/v3.2/HLT/V1'
+>>>   Global tag:    '102X_upgrade2018_realistic_v15'
+26-Nov-2019 17:55:29 CET  Closed file file:root://xrootd-cms.infn.it//store/mc/RunIIAutumn18MiniAOD/DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/MINIAODSIM/102X_upgrade2018_realistic_v15-v1/100000/08540B6C-AA39-3F49-8FFE-8771AD2A8885.root
+26-Nov-2019 17:55:29 CET  Initiating request to open file file:root://xrootd-cms.infn.it//store/data/Run2016B/SingleElectron/MINIAOD/17Jul2018_ver1-v1/40000/CACD4C5F-BE8B-E811-B0EB-00010100085C.root
+%MSG-w XrdAdaptor:  file_open 26-Nov-2019 17:55:31 CET PostStreamBeginLumi
+Data is served from grid.hep.ph.ic.ac.uk instead of original site infn.it
+%MSG
+26-Nov-2019 17:55:31 CET  Successfully opened file file:root://xrootd-cms.infn.it//store/data/Run2016B/SingleElectron/MINIAOD/17Jul2018_ver1-v1/40000/CACD4C5F-BE8B-E811-B0EB-00010100085C.root
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2016/25ns10e33/v1.0.1/HLT/V4'
+>>>   Global tag:    '80X_dataRun2_HLT_v12'
+>>>   Trigger menu did not change. Skipping...
+26-Nov-2019 17:55:35 CET  Closed file file:root://xrootd-cms.infn.it//store/data/Run2016B/SingleElectron/MINIAOD/17Jul2018_ver1-v1/40000/CACD4C5F-BE8B-E811-B0EB-00010100085C.root
+26-Nov-2019 17:55:35 CET  Initiating request to open file file:root://xrootd-cms.infn.it//store/data/Run2016B/SingleElectron/MINIAOD/17Jul2018_ver2-v1/00000/3CF8D177-BB8B-E811-986D-A0369F836430.root
+%MSG-w XrdAdaptor:  file_open 26-Nov-2019 17:55:37 CET PostStreamBeginLumi
+Data is served from grid.hep.ph.ic.ac.uk instead of original site infn.it
+%MSG
+26-Nov-2019 17:55:37 CET  Successfully opened file file:root://xrootd-cms.infn.it//store/data/Run2016B/SingleElectron/MINIAOD/17Jul2018_ver2-v1/00000/3CF8D177-BB8B-E811-986D-A0369F836430.root
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2016/25ns10e33/v2.1.2/HLT/V1'
+>>>   Global tag:    '80X_dataRun2_HLT_v12'
+>>>   Trigger menu did not change. Skipping...
+26-Nov-2019 17:55:42 CET  Closed file file:root://xrootd-cms.infn.it//store/data/Run2016B/SingleElectron/MINIAOD/17Jul2018_ver2-v1/00000/3CF8D177-BB8B-E811-986D-A0369F836430.root
+26-Nov-2019 17:55:42 CET  Initiating request to open file file:root://xrootd-cms.infn.it//store/data/Run2016C/SingleElectron/MINIAOD/17Jul2018-v1/40000/F22B7438-4B8C-E811-A008-0242AC130002.root
+%MSG-w XrdAdaptor:  file_open 26-Nov-2019 17:55:43 CET PostStreamBeginLumi
+Data is served from physik.rwth-aachen.de instead of original site infn.it
+%MSG
+26-Nov-2019 17:55:43 CET  Successfully opened file file:root://xrootd-cms.infn.it//store/data/Run2016C/SingleElectron/MINIAOD/17Jul2018-v1/40000/F22B7438-4B8C-E811-A008-0242AC130002.root
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2016/25ns10e33/v2.1.4/HLT/V2'
+>>>   Global tag:    '80X_dataRun2_HLT_v12'
+>>>   Trigger menu did not change. Skipping...
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2016/25ns10e33/v2.2.0/HLT/V1'
+>>>   Global tag:    '80X_dataRun2_HLT_v12'
+26-Nov-2019 17:55:49 CET  Closed file file:root://xrootd-cms.infn.it//store/data/Run2016C/SingleElectron/MINIAOD/17Jul2018-v1/40000/F22B7438-4B8C-E811-A008-0242AC130002.root
+26-Nov-2019 17:55:49 CET  Initiating request to open file file:root://xrootd-cms.infn.it//store/data/Run2016D/SingleElectron/MINIAOD/17Jul2018-v1/40000/C66CFA48-E18B-E811-A984-3417EBE64B25.root
+%MSG-w XrdAdaptor:  file_open 26-Nov-2019 17:55:52 CET PostStreamBeginLumi
+Data is served from cern.ch instead of original site infn.it
+%MSG
+26-Nov-2019 17:55:52 CET  Successfully opened file file:root://xrootd-cms.infn.it//store/data/Run2016D/SingleElectron/MINIAOD/17Jul2018-v1/40000/C66CFA48-E18B-E811-A984-3417EBE64B25.root
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2016/25ns10e33/v2.2.0/HLT/V13'
+>>>   Global tag:    '80X_dataRun2_HLT_v12'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2016/25ns10e33/v2.2.1/HLT/V3'
+>>>   Global tag:    '80X_dataRun2_HLT_v12'
+>>>   Trigger menu did not change. Skipping...
+26-Nov-2019 17:55:55 CET  Closed file file:root://xrootd-cms.infn.it//store/data/Run2016D/SingleElectron/MINIAOD/17Jul2018-v1/40000/C66CFA48-E18B-E811-A984-3417EBE64B25.root
+26-Nov-2019 17:55:55 CET  Initiating request to open file file:root://xrootd-cms.infn.it//store/data/Run2016E/SingleElectron/MINIAOD/17Jul2018-v1/40000/E0ED4529-9D8B-E811-A5B8-0CC47A4D999A.root
+%MSG-w XrdAdaptor:  file_open 26-Nov-2019 17:55:57 CET PostStreamBeginLumi
+Data is served from cern.ch instead of original site infn.it
+%MSG
+26-Nov-2019 17:55:57 CET  Successfully opened file file:root://xrootd-cms.infn.it//store/data/Run2016E/SingleElectron/MINIAOD/17Jul2018-v1/40000/E0ED4529-9D8B-E811-A5B8-0CC47A4D999A.root
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2016/25ns10e33/v2.2.3/HLT/V2'
+>>>   Global tag:    '80X_dataRun2_HLT_v12'
+26-Nov-2019 17:55:59 CET  Closed file file:root://xrootd-cms.infn.it//store/data/Run2016E/SingleElectron/MINIAOD/17Jul2018-v1/40000/E0ED4529-9D8B-E811-A5B8-0CC47A4D999A.root
+26-Nov-2019 17:55:59 CET  Initiating request to open file file:root://xrootd-cms.infn.it//store/data/Run2016F/SingleElectron/MINIAOD/17Jul2018-v1/50000/5626FF00-1D8B-E811-AA3F-AC1F6B0F6FCE.root
+%MSG-w XrdAdaptor:  file_open 26-Nov-2019 17:56:01 CET PostStreamBeginLumi
+Data is served from cern.ch instead of original site infn.it
+%MSG
+26-Nov-2019 17:56:01 CET  Successfully opened file file:root://xrootd-cms.infn.it//store/data/Run2016F/SingleElectron/MINIAOD/17Jul2018-v1/50000/5626FF00-1D8B-E811-AA3F-AC1F6B0F6FCE.root
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2016/25ns15e33/v3.1.1/HLT/V1'
+>>>   Global tag:    '80X_dataRun2_HLT_v12'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2016/25ns15e33/v3.1.1/HLT/V2'
+>>>   Global tag:    '80X_dataRun2_HLT_v12'
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2016/25ns15e33/v3.1.2/HLT/V1'
+>>>   Global tag:    '80X_dataRun2_HLT_v12'
+26-Nov-2019 17:56:07 CET  Closed file file:root://xrootd-cms.infn.it//store/data/Run2016F/SingleElectron/MINIAOD/17Jul2018-v1/50000/5626FF00-1D8B-E811-AA3F-AC1F6B0F6FCE.root
+26-Nov-2019 17:56:07 CET  Initiating request to open file file:root://xrootd-cms.infn.it//store/data/Run2016G/SingleElectron/MINIAOD/17Jul2018-v1/50000/02DC57F5-A48B-E811-A98E-0CC47AF9B496.root
+%MSG-w XrdAdaptor:  file_open 26-Nov-2019 17:56:09 CET PostStreamBeginLumi
+Data is served from cern.ch instead of original site infn.it
+%MSG
+26-Nov-2019 17:56:09 CET  Successfully opened file file:root://xrootd-cms.infn.it//store/data/Run2016G/SingleElectron/MINIAOD/17Jul2018-v1/50000/02DC57F5-A48B-E811-A98E-0CC47AF9B496.root
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2016/25ns15e33/v3.1.5/HLT/V2'
+>>>   Global tag:    '80X_dataRun2_HLT_v12'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2016/25ns15e33/v3.1.6/HLT/V1'
+>>>   Global tag:    '80X_dataRun2_HLT_v12'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2016/25ns15e33/v3.1.6/HLT/V2'
+>>>   Global tag:    '80X_dataRun2_HLT_v12'
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2016/25ns15e33/v3.1.7/HLT/V1'
+>>>   Global tag:    '80X_dataRun2_HLT_v12'
+26-Nov-2019 17:56:14 CET  Closed file file:root://xrootd-cms.infn.it//store/data/Run2016G/SingleElectron/MINIAOD/17Jul2018-v1/50000/02DC57F5-A48B-E811-A98E-0CC47AF9B496.root
+26-Nov-2019 17:56:14 CET  Initiating request to open file file:root://xrootd-cms.infn.it//store/data/Run2016H/SingleElectron/MINIAOD/17Jul2018-v1/00000/D0FB608B-5F8A-E811-8FBF-003048FFD7A4.root
+%MSG-w XrdAdaptor:  file_open 26-Nov-2019 17:56:17 CET PostStreamBeginLumi
+Data is served from brunel.ac.uk instead of original site infn.it
+%MSG
+26-Nov-2019 17:56:17 CET  Successfully opened file file:root://xrootd-cms.infn.it//store/data/Run2016H/SingleElectron/MINIAOD/17Jul2018-v1/00000/D0FB608B-5F8A-E811-8FBF-003048FFD7A4.root
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2016/25ns15e33/v4.1.3/HLT/V1'
+>>>   Global tag:    '80X_dataRun2_HLT_v12'
+%MSG-w XrdAdaptor:  (NoModuleName) 26-Nov-2019 17:56:22 CET pre-events
+Data is now served from brunel.ac.uk, grid.hep.ph.ic.ac.uk instead of previous brunel.ac.uk
+%MSG
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2016/25ns15e33/v4.1.6/HLT/V1'
+>>>   Global tag:    '80X_dataRun2_HLT_v12'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2016/25ns15e33/v4.2.1/HLT/V1'
+>>>   Global tag:    '80X_dataRun2_HLT_v12'
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+26-Nov-2019 17:56:25 CET  Closed file file:root://xrootd-cms.infn.it//store/data/Run2016H/SingleElectron/MINIAOD/17Jul2018-v1/00000/D0FB608B-5F8A-E811-8FBF-003048FFD7A4.root
+26-Nov-2019 17:56:25 CET  Initiating request to open file file:root://xrootd-cms.infn.it//store/data/Run2017B/SingleElectron/MINIAOD/31Mar2018-v1/60000/66EAEA69-3E37-E811-BC12-008CFAC91CD4.root
+%MSG-w XrdAdaptor:  file_open 26-Nov-2019 17:56:26 CET PostStreamBeginLumi
+Data is served from desy.de instead of original site infn.it
+%MSG
+26-Nov-2019 17:56:26 CET  Successfully opened file file:root://xrootd-cms.infn.it//store/data/Run2017B/SingleElectron/MINIAOD/31Mar2018-v1/60000/66EAEA69-3E37-E811-BC12-008CFAC91CD4.root
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2017/2e34/v1.1.4/HLT/V3'
+>>>   Global tag:    '92X_dataRun2_HLT_v4'
+>>>   Trigger menu did not change. Skipping...
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2017/2e34/v1.1.5/HLT/V1'
+>>>   Global tag:    '92X_dataRun2_HLT_v4'
+>>>   Trigger menu did not change. Skipping...
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2017/2e34/v1.2.5/HLT/V2'
+>>>   Global tag:    '92X_dataRun2_HLT_v4'
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+26-Nov-2019 17:56:32 CET  Closed file file:root://xrootd-cms.infn.it//store/data/Run2017B/SingleElectron/MINIAOD/31Mar2018-v1/60000/66EAEA69-3E37-E811-BC12-008CFAC91CD4.root
+26-Nov-2019 17:56:32 CET  Initiating request to open file file:root://xrootd-cms.infn.it//store/data/Run2017C/SingleElectron/MINIAOD/31Mar2018-v1/90000/4075BED6-9D37-E811-9EE6-0025905B85CC.root
+%MSG-w XrdAdaptor:  file_open 26-Nov-2019 17:56:34 CET PostStreamBeginLumi
+Data is served from cern.ch instead of original site infn.it
+%MSG
+26-Nov-2019 17:56:34 CET  Successfully opened file file:root://xrootd-cms.infn.it//store/data/Run2017C/SingleElectron/MINIAOD/31Mar2018-v1/90000/4075BED6-9D37-E811-9EE6-0025905B85CC.root
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2017/2e34/v2.1.1/HLT/V1'
+>>>   Global tag:    '92X_dataRun2_HLT_v4'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2017/2e34/v2.1.3/HLT/V1'
+>>>   Global tag:    '92X_dataRun2_HLT_v4'
+26-Nov-2019 17:56:37 CET  Closed file file:root://xrootd-cms.infn.it//store/data/Run2017C/SingleElectron/MINIAOD/31Mar2018-v1/90000/4075BED6-9D37-E811-9EE6-0025905B85CC.root
+26-Nov-2019 17:56:37 CET  Initiating request to open file file:root://xrootd-cms.infn.it//store/data/Run2017D/SingleElectron/MINIAOD/31Mar2018-v1/80000/C0051DB1-EE38-E811-AE60-E0071B74AC10.root
+%MSG-w XrdAdaptor:  file_open 26-Nov-2019 17:56:39 CET PostStreamBeginLumi
+Data is served from desy.de instead of original site infn.it
+%MSG
+26-Nov-2019 17:56:39 CET  Successfully opened file file:root://xrootd-cms.infn.it//store/data/Run2017D/SingleElectron/MINIAOD/31Mar2018-v1/80000/C0051DB1-EE38-E811-AE60-E0071B74AC10.root
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2017/2e34/v3.0.0/HLT/V1'
+>>>   Global tag:    '92X_dataRun2_HLT_v7'
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2017/2e34/v3.0.0/HLT/V4'
+>>>   Global tag:    '92X_dataRun2_HLT_v7'
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2017/2e34/v3.1.0/HLT/V1'
+>>>   Global tag:    '92X_dataRun2_HLT_v7'
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+26-Nov-2019 17:56:43 CET  Closed file file:root://xrootd-cms.infn.it//store/data/Run2017D/SingleElectron/MINIAOD/31Mar2018-v1/80000/C0051DB1-EE38-E811-AE60-E0071B74AC10.root
+26-Nov-2019 17:56:43 CET  Initiating request to open file file:root://xrootd-cms.infn.it//store/data/Run2017E/SingleElectron/MINIAOD/31Mar2018-v1/90000/24DC3796-C338-E811-BA7E-00266CFFBEB4.root
+%MSG-w XrdAdaptor:  file_open 26-Nov-2019 17:56:46 CET PostStreamBeginLumi
+Data is served from in2p3.fr instead of original site infn.it
+%MSG
+26-Nov-2019 17:56:46 CET  Successfully opened file file:root://xrootd-cms.infn.it//store/data/Run2017E/SingleElectron/MINIAOD/31Mar2018-v1/90000/24DC3796-C338-E811-BA7E-00266CFFBEB4.root
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2017/2e34/v3.1.0/HLT/V2'
+>>>   Global tag:    '92X_dataRun2_HLT_v7'
+26-Nov-2019 17:56:48 CET  Closed file file:root://xrootd-cms.infn.it//store/data/Run2017E/SingleElectron/MINIAOD/31Mar2018-v1/90000/24DC3796-C338-E811-BA7E-00266CFFBEB4.root
+26-Nov-2019 17:56:48 CET  Initiating request to open file file:root://xrootd-cms.infn.it//store/data/Run2017F/SingleElectron/MINIAOD/31Mar2018-v1/100000/C05D396F-A437-E811-A49D-0025905A6118.root
+%MSG-w XrdAdaptor:  file_open 26-Nov-2019 17:56:50 CET PostStreamBeginLumi
+Data is served from cern.ch instead of original site infn.it
+%MSG
+26-Nov-2019 17:56:50 CET  Successfully opened file file:root://xrootd-cms.infn.it//store/data/Run2017F/SingleElectron/MINIAOD/31Mar2018-v1/100000/C05D396F-A437-E811-A49D-0025905A6118.root
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2017/2e34/v3.2.2/HLT/V6'
+>>>   Global tag:    '92X_dataRun2_HLT_v7'
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+26-Nov-2019 17:56:52 CET  Closed file file:root://xrootd-cms.infn.it//store/data/Run2017F/SingleElectron/MINIAOD/31Mar2018-v1/100000/C05D396F-A437-E811-A49D-0025905A6118.root
+26-Nov-2019 17:56:52 CET  Initiating request to open file file:root://xrootd-cms.infn.it//store/data/Run2018A/EGamma/MINIAOD/17Sep2018-v2/120000/D0C18EBB-8DD7-EC4F-9C1B-CA3EAD44D993.root
+%MSG-w XrdAdaptor:  file_open 26-Nov-2019 17:56:54 CET PostStreamBeginLumi
+Data is served from in2p3.fr instead of original site infn.it
+%MSG
+26-Nov-2019 17:56:54 CET  Successfully opened file file:root://xrootd-cms.infn.it//store/data/Run2018A/EGamma/MINIAOD/17Sep2018-v2/120000/D0C18EBB-8DD7-EC4F-9C1B-CA3EAD44D993.root
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2018/2e34/v1.2.0/HLT/V3'
+>>>   Global tag:    '101X_dataRun2_HLT_v7'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2018/2e34/v1.2.3/HLT/V2'
+>>>   Global tag:    '101X_dataRun2_HLT_v7'
+>>>   Trigger menu did not change. Skipping...
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2018/2e34/v2.1.2/HLT/V1'
+>>>   Global tag:    '101X_dataRun2_HLT_v7'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2018/2e34/v2.1.4/HLT/V3'
+>>>   Global tag:    '101X_dataRun2_HLT_v7'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2018/2e34/v2.1.5/HLT/V2'
+>>>   Global tag:    '101X_dataRun2_HLT_v7'
+>>>   Trigger menu did not change. Skipping...
+26-Nov-2019 17:57:00 CET  Closed file file:root://xrootd-cms.infn.it//store/data/Run2018A/EGamma/MINIAOD/17Sep2018-v2/120000/D0C18EBB-8DD7-EC4F-9C1B-CA3EAD44D993.root
+26-Nov-2019 17:57:00 CET  Initiating request to open file file:root://xrootd-cms.infn.it//store/data/Run2018B/EGamma/MINIAOD/17Sep2018-v1/00000/ADB4BB53-A766-E546-80C7-E2E0058062CD.root
+%MSG-w XrdAdaptor:  file_open 26-Nov-2019 17:57:02 CET PostStreamBeginLumi
+Data is served from cern.ch instead of original site infn.it
+%MSG
+26-Nov-2019 17:57:03 CET  Successfully opened file file:root://xrootd-cms.infn.it//store/data/Run2018B/EGamma/MINIAOD/17Sep2018-v1/00000/ADB4BB53-A766-E546-80C7-E2E0058062CD.root
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2018/2e34/v2.1.5/HLT/V5'
+>>>   Global tag:    '101X_dataRun2_HLT_v7'
+>>>   Trigger menu did not change. Skipping...
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2018/2e34/v2.2.2/HLT/V2'
+>>>   Global tag:    '101X_dataRun2_HLT_v7'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2018/2e34/v2.2.3/HLT/V2'
+>>>   Global tag:    '101X_dataRun2_HLT_v7'
+26-Nov-2019 17:57:06 CET  Closed file file:root://xrootd-cms.infn.it//store/data/Run2018B/EGamma/MINIAOD/17Sep2018-v1/00000/ADB4BB53-A766-E546-80C7-E2E0058062CD.root
+26-Nov-2019 17:57:06 CET  Initiating request to open file file:root://xrootd-cms.infn.it//store/data/Run2018C/EGamma/MINIAOD/17Sep2018-v1/110000/16D0608A-36CE-7543-93A4-DD42EA7A417B.root
+%MSG-w XrdAdaptor:  file_open 26-Nov-2019 17:57:09 CET PostStreamBeginLumi
+Data is served from cern.ch instead of original site infn.it
+%MSG
+26-Nov-2019 17:57:09 CET  Successfully opened file file:root://xrootd-cms.infn.it//store/data/Run2018C/EGamma/MINIAOD/17Sep2018-v1/110000/16D0608A-36CE-7543-93A4-DD42EA7A417B.root
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2018/2e34/v3.1.0/HLT/V1'
+>>>   Global tag:    '101X_dataRun2_HLT_v7'
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+26-Nov-2019 17:57:11 CET  Closed file file:root://xrootd-cms.infn.it//store/data/Run2018C/EGamma/MINIAOD/17Sep2018-v1/110000/16D0608A-36CE-7543-93A4-DD42EA7A417B.root
+26-Nov-2019 17:57:11 CET  Initiating request to open file file:root://xrootd-cms.infn.it//store/data/Run2018C/EGamma/MINIAOD/17Sep2018-v1/110000/492125B7-444F-844F-A6CD-87045AC0487E.root
+%MSG-w XrdAdaptor:  file_open 26-Nov-2019 17:57:13 CET PostStreamBeginLumi
+Data is served from cern.ch instead of original site infn.it
+%MSG
+26-Nov-2019 17:57:13 CET  Successfully opened file file:root://xrootd-cms.infn.it//store/data/Run2018C/EGamma/MINIAOD/17Sep2018-v1/110000/492125B7-444F-844F-A6CD-87045AC0487E.root
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+26-Nov-2019 17:57:15 CET  Closed file file:root://xrootd-cms.infn.it//store/data/Run2018C/EGamma/MINIAOD/17Sep2018-v1/110000/492125B7-444F-844F-A6CD-87045AC0487E.root
+26-Nov-2019 17:57:15 CET  Initiating request to open file file:root://xrootd-cms.infn.it//store/data/Run2018D/EGamma/MINIAOD/PromptReco-v2/000/320/500/00000/703D2061-0096-E811-A12F-FA163EBDCF4F.root
+%MSG-w XrdAdaptor:  file_open 26-Nov-2019 17:57:17 CET PostStreamBeginLumi
+Data is served from cern.ch instead of original site infn.it
+%MSG
+26-Nov-2019 17:57:17 CET  Successfully opened file file:root://xrootd-cms.infn.it//store/data/Run2018D/EGamma/MINIAOD/PromptReco-v2/000/320/500/00000/703D2061-0096-E811-A12F-FA163EBDCF4F.root
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2018/2e34/v3.3.0/HLT/V7'
+>>>   Global tag:    '101X_dataRun2_HLT_v7'
+26-Nov-2019 17:57:22 CET  Closed file file:root://xrootd-cms.infn.it//store/data/Run2018D/EGamma/MINIAOD/PromptReco-v2/000/320/500/00000/703D2061-0096-E811-A12F-FA163EBDCF4F.root
+
+  **** Summary of trigger menus ****************************
+  *                                                        *
+  *   80X_mcRun2_asymptotic_2016_TrancheIV_v6              *
+  *     /frozen/2016/25ns15e33/v4.0/HLT/V2                 *
+  *                                                        *
+  *   94X_mc2017_realistic_v10                             *
+  *     /frozen/2017/2e34/v4.0/HLT/V5                      *
+  *                                                        *
+  *   102X_upgrade2018_realistic_v15                       *
+  *     /frozen/2018/2e34/v3.2/HLT/V1                      *
+  *                                                        *
+  *   80X_dataRun2_HLT_v12                                 *
+  *     /cdaq/physics/Run2016/25ns10e33/v1.0.1/HLT/V4      *
+  *     /cdaq/physics/Run2016/25ns10e33/v2.1.2/HLT/V1      *
+  *     /cdaq/physics/Run2016/25ns10e33/v2.1.4/HLT/V2      *
+  *     /cdaq/physics/Run2016/25ns10e33/v2.2.0/HLT/V1      *
+  *     /cdaq/physics/Run2016/25ns10e33/v2.2.0/HLT/V13     *
+  *     /cdaq/physics/Run2016/25ns10e33/v2.2.1/HLT/V3      *
+  *     /cdaq/physics/Run2016/25ns10e33/v2.2.3/HLT/V2      *
+  *     /cdaq/physics/Run2016/25ns15e33/v3.1.1/HLT/V1      *
+  *     /cdaq/physics/Run2016/25ns15e33/v3.1.1/HLT/V2      *
+  *     /cdaq/physics/Run2016/25ns15e33/v3.1.2/HLT/V1      *
+  *     /cdaq/physics/Run2016/25ns15e33/v3.1.5/HLT/V2      *
+  *     /cdaq/physics/Run2016/25ns15e33/v3.1.6/HLT/V1      *
+  *     /cdaq/physics/Run2016/25ns15e33/v3.1.6/HLT/V2      *
+  *     /cdaq/physics/Run2016/25ns15e33/v3.1.7/HLT/V1      *
+  *     /cdaq/physics/Run2016/25ns15e33/v4.1.3/HLT/V1      *
+  *     /cdaq/physics/Run2016/25ns15e33/v4.1.6/HLT/V1      *
+  *     /cdaq/physics/Run2016/25ns15e33/v4.2.1/HLT/V1      *
+  *                                                        *
+  *   92X_dataRun2_HLT_v4                                  *
+  *     /cdaq/physics/Run2017/2e34/v1.1.4/HLT/V3           *
+  *     /cdaq/physics/Run2017/2e34/v1.1.5/HLT/V1           *
+  *     /cdaq/physics/Run2017/2e34/v1.2.5/HLT/V2           *
+  *     /cdaq/physics/Run2017/2e34/v2.1.1/HLT/V1           *
+  *     /cdaq/physics/Run2017/2e34/v2.1.3/HLT/V1           *
+  *                                                        *
+  *   92X_dataRun2_HLT_v7                                  *
+  *     /cdaq/physics/Run2017/2e34/v3.0.0/HLT/V1           *
+  *     /cdaq/physics/Run2017/2e34/v3.0.0/HLT/V4           *
+  *     /cdaq/physics/Run2017/2e34/v3.1.0/HLT/V1           *
+  *     /cdaq/physics/Run2017/2e34/v3.1.0/HLT/V2           *
+  *     /cdaq/physics/Run2017/2e34/v3.2.2/HLT/V6           *
+  *                                                        *
+  *   101X_dataRun2_HLT_v7                                 *
+  *     /cdaq/physics/Run2018/2e34/v1.2.0/HLT/V3           *
+  *     /cdaq/physics/Run2018/2e34/v1.2.3/HLT/V2           *
+  *     /cdaq/physics/Run2018/2e34/v2.1.2/HLT/V1           *
+  *     /cdaq/physics/Run2018/2e34/v2.1.4/HLT/V3           *
+  *     /cdaq/physics/Run2018/2e34/v2.1.5/HLT/V2           *
+  *     /cdaq/physics/Run2018/2e34/v2.1.5/HLT/V5           *
+  *     /cdaq/physics/Run2018/2e34/v2.2.2/HLT/V2           *
+  *     /cdaq/physics/Run2018/2e34/v2.2.3/HLT/V2           *
+  *     /cdaq/physics/Run2018/2e34/v3.1.0/HLT/V1           *
+  *     /cdaq/physics/Run2018/2e34/v3.3.0/HLT/V7           *
+  *                                                        *
+  **********************************************************
+
+  **** Summary of filters per trigger in '80X_mcRun2_asymptotic_2016_TrancheIV_v6' ***********
+  *                                                                                          *
+  *   HLT_Ele105_CaloIdVT_GsfTrkIdT                                                          *
+  *     -> hltEgammaCandidates (P)                                                           *
+  *     -> hltEle105CaloIdVTGsfTrkIdTGsfDetaFilter (F)                                       *
+  *     -> hltEle105CaloIdVTGsfTrkIdTGsfDphiFilter (F)                                       *
+  *     -> hltEle105CaloIdVTPixelMatchFilter (F)                                             *
+  *     hltEle105CaloIdVTGsfTrkIdTGsfDphiFilter                                              *
+  *                                                                                          *
+  *   HLT_Ele115_CaloIdVT_GsfTrkIdT                                                          *
+  *     -> hltEgammaCandidates (P)                                                           *
+  *     -> hltEle115CaloIdVTGsfTrkIdTGsfDetaFilter (F)                                       *
+  *     -> hltEle115CaloIdVTGsfTrkIdTGsfDphiFilter (F)                                       *
+  *     -> hltEle115CaloIdVTPixelMatchFilter (F)                                             *
+  *     hltEle115CaloIdVTGsfTrkIdTGsfDphiFilter                                              *
+  *                                                                                          *
+  *   HLT_Ele25_eta2p1_WPTight_Gsf                                                           *
+  *     -> hltEgammaCandidates (P)                                                           *
+  *     -> hltEle25erWPTightPixelMatchFilter (F)                                             *
+  *     hltEle25erWPTightGsfTrackIsoFilter                                                   *
+  *                                                                                          *
+  *   HLT_Ele27_WPTight_Gsf                                                                  *
+  *     -> hltEgammaCandidates (P)                                                           *
+  *     -> hltEle27WPTightPixelMatchFilter (F)                                               *
+  *     hltEle27WPTightGsfTrackIsoFilter                                                     *
+  *                                                                                          *
+  *   HLT_Ele32_WPTight_Gsf                                                                  *
+  *     -> hltEgammaCandidates (P)                                                           *
+  *     -> hltEle32noerWPTightPixelMatchFilter (F)                                           *
+  *     hltEle32noerWPTightGsfTrackIsoFilter                                                 *
+  *                                                                                          *
+  *   HLT_Ele45_CaloIdVT_GsfTrkIdT_PFJet200_PFJet50                                          *
+  *     -> hltEgammaCandidates (P)                                                           *
+  *     -> hltEle45CaloIdVTGsfTrkIdTGsfDetaFilter (F)                                        *
+  *     -> hltEle45CaloIdVTGsfTrkIdTGsfDphiFilter (F)                                        *
+  *     -> hltEle45CaloIdVTPixelMatchFilter (F)                                              *
+  *     -> hltL3MuonCandidates (P)                                                           *
+  *     hltEle45CaloIdVTGsfTrkIdTCentralPFJet200EleCleaned                                   *
+  *                                                                                          *
+  *   HLT_Ele45_WPLoose_Gsf_L1JetTauSeeded                                                   *
+  *     -> hltEgammaCandidates (P)                                                           *
+  *     hltEle45WPLooseGsfTrackIsoL1TauJetSeededFilter                                       *
+  *                                                                                          *
+  *   HLT_Ele50_CaloIdVT_GsfTrkIdT_PFJet165                                                  *
+  *     -> hltEgammaCandidates (P)                                                           *
+  *     -> hltEle50CaloIdVTGsfTrkIdTGsfDetaFilter (F)                                        *
+  *     -> hltEle50CaloIdVTGsfTrkIdTGsfDphiFilter (F)                                        *
+  *     -> hltEle50CaloIdVTPixelMatchFilter (F)                                              *
+  *     -> hltL3MuonCandidates (P)                                                           *
+  *     hltEle50CaloIdVTGsfTrkIdTCentralPFJet165EleCleaned                                   *
+  *                                                                                          *
+  *   HLT_Photon175                                                                          *
+  *     -> hltEgammaCandidates (P)                                                           *
+  *     hltEG175HEFilter                                                                     *
+  *                                                                                          *
+  ********************************************************************************************
+
+  **** Summary of filters per trigger in '94X_mc2017_realistic_v10' **************************
+  *                                                                                          *
+  *   HLT_Ele115_CaloIdVT_GsfTrkIdT                                                          *
+  *     -> hltEgammaCandidates (P)                                                           *
+  *     -> hltEle115CaloIdVTGsfTrkIdTGsfDetaFilter (F)                                       *
+  *     -> hltEle115CaloIdVTGsfTrkIdTGsfDphiFilter (F)                                       *
+  *     -> hltEle115CaloIdVTPixelMatchFilter (F)                                             *
+  *     hltEle115CaloIdVTGsfTrkIdTGsfDphiFilter                                              *
+  *                                                                                          *
+  *   HLT_Ele27_WPTight_Gsf                                                                  *
+  *     -> hltEgammaCandidates (P)                                                           *
+  *     -> hltEle27WPTightPixelMatchFilter (F)                                               *
+  *     hltEle27WPTightGsfTrackIsoFilter                                                     *
+  *                                                                                          *
+  *   HLT_Ele32_WPTight_Gsf                                                                  *
+  *     -> hltEgammaCandidates (P)                                                           *
+  *     -> hltEle32WPTightPixelMatchFilter (F)                                               *
+  *     hltEle32WPTightGsfTrackIsoFilter                                                     *
+  *                                                                                          *
+  *   HLT_Ele32_WPTight_Gsf_L1DoubleEG                                                       *
+  *     -> hltEgammaCandidates (P)                                                           *
+  *     -> hltEle32L1DoubleEGWPTightPixelMatchFilter (F)                                     *
+  *     hltEle32L1DoubleEGWPTightGsfTrackIsoFilter                                           *
+  *                                                                                          *
+  *   HLT_Ele35_WPTight_Gsf                                                                  *
+  *     -> hltEgammaCandidates (P)                                                           *
+  *     -> hltEle35noerWPTightPixelMatchFilter (F)                                           *
+  *     hltEle35noerWPTightGsfTrackIsoFilter                                                 *
+  *                                                                                          *
+  *   HLT_Ele50_CaloIdVT_GsfTrkIdT_PFJet165                                                  *
+  *     -> hltEgammaCandidates (P)                                                           *
+  *     -> hltEle50CaloIdVTGsfTrkIdTGsfDetaFilter (F)                                        *
+  *     -> hltEle50CaloIdVTGsfTrkIdTGsfDphiFilter (F)                                        *
+  *     -> hltEle50CaloIdVTPixelMatchFilter (F)                                              *
+  *     -> hltIterL3MuonCandidates (P)                                                       *
+  *     -> hltIterL3OIL3MuonCandidates (P)                                                   *
+  *     hltEle50CaloIdVTGsfTrkIdTCentralPFJet165EleCleaned                                   *
+  *                                                                                          *
+  *   HLT_Photon175                                                                          *
+  *     -> hltEgammaCandidates (P)                                                           *
+  *     hltEG175HEFilter                                                                     *
+  *                                                                                          *
+  *   HLT_Photon200                                                                          *
+  *     -> hltEgammaCandidates (P)                                                           *
+  *     hltEG200HEFilter                                                                     *
+  *                                                                                          *
+  ********************************************************************************************
+
+  **** Summary of filters per trigger in '102X_upgrade2018_realistic_v15' ********************
+  *                                                                                          *
+  *   HLT_Ele115_CaloIdVT_GsfTrkIdT                                                          *
+  *     -> hltEgammaCandidates (P)                                                           *
+  *     -> hltEle115CaloIdVTGsfTrkIdTGsfDetaFilter (F)                                       *
+  *     -> hltEle115CaloIdVTGsfTrkIdTGsfDphiFilter (F)                                       *
+  *     -> hltEle115CaloIdVTPixelMatchFilter (F)                                             *
+  *     hltEle115CaloIdVTGsfTrkIdTGsfDphiFilter                                              *
+  *                                                                                          *
+  *   HLT_Ele27_WPTight_Gsf                                                                  *
+  *     -> hltEgammaCandidates (P)                                                           *
+  *     -> hltEle27WPTightPixelMatchFilter (F)                                               *
+  *     hltEle27WPTightGsfTrackIsoFilter                                                     *
+  *                                                                                          *
+  *   HLT_Ele32_WPTight_Gsf                                                                  *
+  *     -> hltEgammaCandidates (P)                                                           *
+  *     -> hltEle32WPTightPixelMatchFilter (F)                                               *
+  *     hltEle32WPTightGsfTrackIsoFilter                                                     *
+  *                                                                                          *
+  *   HLT_Ele32_WPTight_Gsf_L1DoubleEG                                                       *
+  *     -> hltEgammaCandidates (P)                                                           *
+  *     -> hltEle32L1DoubleEGWPTightPixelMatchFilter (F)                                     *
+  *     hltEle32L1DoubleEGWPTightGsfTrackIsoFilter                                           *
+  *                                                                                          *
+  *   HLT_Ele35_WPTight_Gsf                                                                  *
+  *     -> hltEgammaCandidates (P)                                                           *
+  *     -> hltEle35noerWPTightPixelMatchFilter (F)                                           *
+  *     hltEle35noerWPTightGsfTrackIsoFilter                                                 *
+  *                                                                                          *
+  *   HLT_Ele50_CaloIdVT_GsfTrkIdT_PFJet165                                                  *
+  *     -> hltEgammaCandidates (P)                                                           *
+  *     -> hltEle50CaloIdVTGsfTrkIdTGsfDetaFilter (F)                                        *
+  *     -> hltEle50CaloIdVTGsfTrkIdTGsfDphiFilter (F)                                        *
+  *     -> hltEle50CaloIdVTPixelMatchFilter (F)                                              *
+  *     -> hltIterL3MuonCandidates (P)                                                       *
+  *     -> hltIterL3OIL3MuonCandidates (P)                                                   *
+  *     hltEle50CaloIdVTGsfTrkIdTCentralPFJet165EleCleaned                                   *
+  *                                                                                          *
+  *   HLT_Photon175                                                                          *
+  *     -> hltEgammaCandidates (P)                                                           *
+  *     hltEG175HEFilter                                                                     *
+  *                                                                                          *
+  *   HLT_Photon200                                                                          *
+  *     -> hltEgammaCandidates (P)                                                           *
+  *     hltEG200HEFilter                                                                     *
+  *                                                                                          *
+  ********************************************************************************************
+
+  **** Summary of filters per trigger in '80X_dataRun2_HLT_v12' ******************************
+  *                                                                                          *
+  *   HLT_Ele105_CaloIdVT_GsfTrkIdT                                                          *
+  *     -> hltEgammaCandidates (P)                                                           *
+  *     -> hltEle105CaloIdVTGsfTrkIdTGsfDetaFilter (F)                                       *
+  *     -> hltEle105CaloIdVTGsfTrkIdTGsfDphiFilter (F)                                       *
+  *     -> hltEle105CaloIdVTPixelMatchFilter (F)                                             *
+  *     hltEle105CaloIdVTGsfTrkIdTGsfDphiFilter                                              *
+  *                                                                                          *
+  *   HLT_Ele115_CaloIdVT_GsfTrkIdT                                                          *
+  *     -> hltEgammaCandidates (P)                                                           *
+  *     -> hltEle115CaloIdVTGsfTrkIdTGsfDetaFilter (F)                                       *
+  *     -> hltEle115CaloIdVTGsfTrkIdTGsfDphiFilter (F)                                       *
+  *     -> hltEle115CaloIdVTPixelMatchFilter (F)                                             *
+  *     hltEle115CaloIdVTGsfTrkIdTGsfDphiFilter                                              *
+  *                                                                                          *
+  *   HLT_Ele25_eta2p1_WPTight_Gsf                                                           *
+  *     -> hltEgammaCandidates (P)                                                           *
+  *     -> hltEle25erWPTightPixelMatchFilter (F)                                             *
+  *     hltEle25erWPTightGsfTrackIsoFilter                                                   *
+  *                                                                                          *
+  *   HLT_Ele27_WPTight_Gsf                                                                  *
+  *     -> hltEgammaCandidates (P)                                                           *
+  *     -> hltEle27WPTightPixelMatchFilter (F)                                               *
+  *     hltEle27WPTightGsfTrackIsoFilter                                                     *
+  *                                                                                          *
+  *   HLT_Ele32_WPTight_Gsf                                                                  *
+  *     -> hltEgammaCandidates (P)                                                           *
+  *     -> hltEle32noerWPTightPixelMatchFilter (F)                                           *
+  *     hltEle32noerWPTightGsfTrackIsoFilter                                                 *
+  *                                                                                          *
+  *   HLT_Ele45_CaloIdVT_GsfTrkIdT_PFJet200_PFJet50                                          *
+  *     -> hltEgammaCandidates (P)                                                           *
+  *     -> hltEle45CaloIdVTGsfTrkIdTGsfDetaFilter (F)                                        *
+  *     -> hltEle45CaloIdVTGsfTrkIdTGsfDphiFilter (F)                                        *
+  *     -> hltEle45CaloIdVTPixelMatchFilter (F)                                              *
+  *     -> hltL3MuonCandidates (P)                                                           *
+  *     hltEle45CaloIdVTGsfTrkIdTCentralPFJet200EleCleaned                                   *
+  *                                                                                          *
+  *   HLT_Ele50_CaloIdVT_GsfTrkIdT_PFJet165                                                  *
+  *     -> hltEgammaCandidates (P)                                                           *
+  *     -> hltEle50CaloIdVTGsfTrkIdTGsfDetaFilter (F)                                        *
+  *     -> hltEle50CaloIdVTGsfTrkIdTGsfDphiFilter (F)                                        *
+  *     -> hltEle50CaloIdVTPixelMatchFilter (F)                                              *
+  *     -> hltL3MuonCandidates (P)                                                           *
+  *     hltEle50CaloIdVTGsfTrkIdTCentralPFJet165EleCleaned                                   *
+  *                                                                                          *
+  *   HLT_Photon175                                                                          *
+  *     -> hltEgammaCandidates (P)                                                           *
+  *     hltEG175HEFilter                                                                     *
+  *                                                                                          *
+  ********************************************************************************************
+
+  **** Summary of filters per trigger in '92X_dataRun2_HLT_v4' *******************************
+  *                                                                                          *
+  *   HLT_Ele115_CaloIdVT_GsfTrkIdT                                                          *
+  *     -> hltEgammaCandidates (P)                                                           *
+  *     -> hltEle115CaloIdVTGsfTrkIdTGsfDetaFilter (F)                                       *
+  *     -> hltEle115CaloIdVTGsfTrkIdTGsfDphiFilter (F)                                       *
+  *     -> hltEle115CaloIdVTPixelMatchFilter (F)                                             *
+  *     hltEle115CaloIdVTGsfTrkIdTGsfDphiFilter                                              *
+  *                                                                                          *
+  *   HLT_Ele27_WPTight_Gsf                                                                  *
+  *     -> hltEgammaCandidates (P)                                                           *
+  *     -> hltEle27WPTightPixelMatchFilter (F)                                               *
+  *     hltEle27WPTightGsfTrackIsoFilter                                                     *
+  *                                                                                          *
+  *   HLT_Ele32_WPTight_Gsf_L1DoubleEG                                                       *
+  *     -> hltEgammaCandidates (P)                                                           *
+  *     -> hltEle32L1DoubleEGWPTightPixelMatchFilter (F)                                     *
+  *     hltEle32L1DoubleEGWPTightGsfTrackIsoFilter                                           *
+  *                                                                                          *
+  *   HLT_Ele35_WPTight_Gsf                                                                  *
+  *     -> hltEgammaCandidates (P)                                                           *
+  *     -> hltEle35noerWPTightPixelMatchFilter (F)                                           *
+  *     hltEle35noerWPTightGsfTrackIsoFilter                                                 *
+  *                                                                                          *
+  *   HLT_Ele50_CaloIdVT_GsfTrkIdT_PFJet165                                                  *
+  *     -> hltEgammaCandidates (P)                                                           *
+  *     -> hltEle50CaloIdVTGsfTrkIdTGsfDetaFilter (F)                                        *
+  *     -> hltEle50CaloIdVTGsfTrkIdTGsfDphiFilter (F)                                        *
+  *     -> hltEle50CaloIdVTPixelMatchFilter (F)                                              *
+  *     -> hltIterL3MuonCandidates (P)                                                       *
+  *     -> hltIterL3OIL3MuonCandidates (P)                                                   *
+  *     hltEle50CaloIdVTGsfTrkIdTCentralPFJet165EleCleaned                                   *
+  *                                                                                          *
+  *   HLT_Photon175                                                                          *
+  *     -> hltEgammaCandidates (P)                                                           *
+  *     hltEG175HEFilter                                                                     *
+  *                                                                                          *
+  *   HLT_Photon200                                                                          *
+  *     -> hltEgammaCandidates (P)                                                           *
+  *     hltEG200HEFilter                                                                     *
+  *                                                                                          *
+  ********************************************************************************************
+
+  **** Summary of filters per trigger in '92X_dataRun2_HLT_v7' *******************************
+  *                                                                                          *
+  *   HLT_Ele115_CaloIdVT_GsfTrkIdT                                                          *
+  *     -> hltEgammaCandidates (P)                                                           *
+  *     -> hltEle115CaloIdVTGsfTrkIdTGsfDetaFilter (F)                                       *
+  *     -> hltEle115CaloIdVTGsfTrkIdTGsfDphiFilter (F)                                       *
+  *     -> hltEle115CaloIdVTPixelMatchFilter (F)                                             *
+  *     hltEle115CaloIdVTGsfTrkIdTGsfDphiFilter                                              *
+  *                                                                                          *
+  *   HLT_Ele27_WPTight_Gsf                                                                  *
+  *     -> hltEgammaCandidates (P)                                                           *
+  *     -> hltEle27WPTightPixelMatchFilter (F)                                               *
+  *     hltEle27WPTightGsfTrackIsoFilter                                                     *
+  *                                                                                          *
+  *   HLT_Ele32_WPTight_Gsf                                                                  *
+  *     -> hltEgammaCandidates (P)                                                           *
+  *     -> hltEle32WPTightPixelMatchFilter (F)                                               *
+  *     hltEle32WPTightGsfTrackIsoFilter                                                     *
+  *                                                                                          *
+  *   HLT_Ele32_WPTight_Gsf_L1DoubleEG                                                       *
+  *     -> hltEgammaCandidates (P)                                                           *
+  *     -> hltEle32L1DoubleEGWPTightPixelMatchFilter (F)                                     *
+  *     hltEle32L1DoubleEGWPTightGsfTrackIsoFilter                                           *
+  *                                                                                          *
+  *   HLT_Ele35_WPTight_Gsf                                                                  *
+  *     -> hltEgammaCandidates (P)                                                           *
+  *     -> hltEle35noerWPTightPixelMatchFilter (F)                                           *
+  *     hltEle35noerWPTightGsfTrackIsoFilter                                                 *
+  *                                                                                          *
+  *   HLT_Ele50_CaloIdVT_GsfTrkIdT_PFJet165                                                  *
+  *     -> hltEgammaCandidates (P)                                                           *
+  *     -> hltEle50CaloIdVTGsfTrkIdTGsfDetaFilter (F)                                        *
+  *     -> hltEle50CaloIdVTGsfTrkIdTGsfDphiFilter (F)                                        *
+  *     -> hltEle50CaloIdVTPixelMatchFilter (F)                                              *
+  *     -> hltIterL3MuonCandidates (P)                                                       *
+  *     -> hltIterL3OIL3MuonCandidates (P)                                                   *
+  *     hltEle50CaloIdVTGsfTrkIdTCentralPFJet165EleCleaned                                   *
+  *                                                                                          *
+  *   HLT_Photon175                                                                          *
+  *     -> hltEgammaCandidates (P)                                                           *
+  *     hltEG175HEFilter                                                                     *
+  *                                                                                          *
+  *   HLT_Photon200                                                                          *
+  *     -> hltEgammaCandidates (P)                                                           *
+  *     hltEG200HEFilter                                                                     *
+  *                                                                                          *
+  ********************************************************************************************
+
+  **** Summary of filters per trigger in '101X_dataRun2_HLT_v7' ******************************
+  *                                                                                          *
+  *   HLT_Ele115_CaloIdVT_GsfTrkIdT                                                          *
+  *     -> hltEgammaCandidates (P)                                                           *
+  *     -> hltEle115CaloIdVTGsfTrkIdTGsfDetaFilter (F)                                       *
+  *     -> hltEle115CaloIdVTGsfTrkIdTGsfDphiFilter (F)                                       *
+  *     -> hltEle115CaloIdVTPixelMatchFilter (F)                                             *
+  *     hltEle115CaloIdVTGsfTrkIdTGsfDphiFilter                                              *
+  *                                                                                          *
+  *   HLT_Ele27_WPTight_Gsf                                                                  *
+  *     -> hltEgammaCandidates (P)                                                           *
+  *     -> hltEle27WPTightPixelMatchFilter (F)                                               *
+  *     hltEle27WPTightGsfTrackIsoFilter                                                     *
+  *                                                                                          *
+  *   HLT_Ele32_WPTight_Gsf                                                                  *
+  *     -> hltEgammaCandidates (P)                                                           *
+  *     -> hltEle32WPTightPixelMatchFilter (F)                                               *
+  *     hltEle32WPTightGsfTrackIsoFilter                                                     *
+  *                                                                                          *
+  *   HLT_Ele32_WPTight_Gsf_L1DoubleEG                                                       *
+  *     -> hltEgammaCandidates (P)                                                           *
+  *     -> hltEle32L1DoubleEGWPTightPixelMatchFilter (F)                                     *
+  *     hltEle32L1DoubleEGWPTightGsfTrackIsoFilter                                           *
+  *                                                                                          *
+  *   HLT_Ele35_WPTight_Gsf                                                                  *
+  *     -> hltEgammaCandidates (P)                                                           *
+  *     -> hltEle35noerWPTightPixelMatchFilter (F)                                           *
+  *     hltEle35noerWPTightGsfTrackIsoFilter                                                 *
+  *                                                                                          *
+  *   HLT_Ele50_CaloIdVT_GsfTrkIdT_PFJet165                                                  *
+  *     -> hltEgammaCandidates (P)                                                           *
+  *     -> hltEle50CaloIdVTGsfTrkIdTGsfDetaFilter (F)                                        *
+  *     -> hltEle50CaloIdVTGsfTrkIdTGsfDphiFilter (F)                                        *
+  *     -> hltEle50CaloIdVTPixelMatchFilter (F)                                              *
+  *     -> hltIterL3MuonCandidates (P)                                                       *
+  *     -> hltIterL3OIL3MuonCandidates (P)                                                   *
+  *     hltEle50CaloIdVTGsfTrkIdTCentralPFJet165EleCleaned                                   *
+  *                                                                                          *
+  *   HLT_Photon175                                                                          *
+  *     -> hltEgammaCandidates (P)                                                           *
+  *     hltEG175HEFilter                                                                     *
+  *                                                                                          *
+  *   HLT_Photon200                                                                          *
+  *     -> hltEgammaCandidates (P)                                                           *
+  *     hltEG200HEFilter                                                                     *
+  *                                                                                          *
+  ********************************************************************************************
+
+  **** Summary of filters per trigger in 'All' ***********************************************
+  *                                                                                          *
+  *   HLT_Ele105_CaloIdVT_GsfTrkIdT                                                          *
+  *     -> hltEgammaCandidates (P)                                                           *
+  *     -> hltEle105CaloIdVTGsfTrkIdTGsfDetaFilter (F)                                       *
+  *     -> hltEle105CaloIdVTGsfTrkIdTGsfDphiFilter (F)                                       *
+  *     -> hltEle105CaloIdVTPixelMatchFilter (F)                                             *
+  *     hltEle105CaloIdVTGsfTrkIdTGsfDphiFilter                                              *
+  *                                                                                          *
+  *   HLT_Ele115_CaloIdVT_GsfTrkIdT                                                          *
+  *     -> hltEgammaCandidates (P)                                                           *
+  *     -> hltEle115CaloIdVTGsfTrkIdTGsfDetaFilter (F)                                       *
+  *     -> hltEle115CaloIdVTGsfTrkIdTGsfDphiFilter (F)                                       *
+  *     -> hltEle115CaloIdVTPixelMatchFilter (F)                                             *
+  *     hltEle115CaloIdVTGsfTrkIdTGsfDphiFilter                                              *
+  *                                                                                          *
+  *   HLT_Ele25_eta2p1_WPTight_Gsf                                                           *
+  *     -> hltEgammaCandidates (P)                                                           *
+  *     -> hltEle25erWPTightPixelMatchFilter (F)                                             *
+  *     hltEle25erWPTightGsfTrackIsoFilter                                                   *
+  *                                                                                          *
+  *   HLT_Ele27_WPTight_Gsf                                                                  *
+  *     -> hltEgammaCandidates (P)                                                           *
+  *     -> hltEle27WPTightPixelMatchFilter (F)                                               *
+  *     hltEle27WPTightGsfTrackIsoFilter                                                     *
+  *                                                                                          *
+  *   HLT_Ele32_WPTight_Gsf                                                                  *
+  *     -> hltEgammaCandidates (P)                                                           *
+  *     -> hltEle32WPTightPixelMatchFilter (F)                                               *
+  *     -> hltEle32noerWPTightPixelMatchFilter (F)                                           *
+  *     hltEle32WPTightGsfTrackIsoFilter                                                     *
+  *     hltEle32noerWPTightGsfTrackIsoFilter                                                 *
+  *                                                                                          *
+  *   HLT_Ele32_WPTight_Gsf_L1DoubleEG                                                       *
+  *     -> hltEgammaCandidates (P)                                                           *
+  *     -> hltEle32L1DoubleEGWPTightPixelMatchFilter (F)                                     *
+  *     hltEle32L1DoubleEGWPTightGsfTrackIsoFilter                                           *
+  *                                                                                          *
+  *   HLT_Ele35_WPTight_Gsf                                                                  *
+  *     -> hltEgammaCandidates (P)                                                           *
+  *     -> hltEle35noerWPTightPixelMatchFilter (F)                                           *
+  *     hltEle35noerWPTightGsfTrackIsoFilter                                                 *
+  *                                                                                          *
+  *   HLT_Ele45_CaloIdVT_GsfTrkIdT_PFJet200_PFJet50                                          *
+  *     -> hltEgammaCandidates (P)                                                           *
+  *     -> hltEle45CaloIdVTGsfTrkIdTGsfDetaFilter (F)                                        *
+  *     -> hltEle45CaloIdVTGsfTrkIdTGsfDphiFilter (F)                                        *
+  *     -> hltEle45CaloIdVTPixelMatchFilter (F)                                              *
+  *     -> hltL3MuonCandidates (P)                                                           *
+  *     hltEle45CaloIdVTGsfTrkIdTCentralPFJet200EleCleaned                                   *
+  *                                                                                          *
+  *   HLT_Ele45_WPLoose_Gsf_L1JetTauSeeded                                                   *
+  *     -> hltEgammaCandidates (P)                                                           *
+  *     hltEle45WPLooseGsfTrackIsoL1TauJetSeededFilter                                       *
+  *                                                                                          *
+  *   HLT_Ele50_CaloIdVT_GsfTrkIdT_PFJet165                                                  *
+  *     -> hltEgammaCandidates (P)                                                           *
+  *     -> hltEle50CaloIdVTGsfTrkIdTGsfDetaFilter (F)                                        *
+  *     -> hltEle50CaloIdVTGsfTrkIdTGsfDphiFilter (F)                                        *
+  *     -> hltEle50CaloIdVTPixelMatchFilter (F)                                              *
+  *     -> hltIterL3MuonCandidates (P)                                                       *
+  *     -> hltIterL3OIL3MuonCandidates (P)                                                   *
+  *     -> hltL3MuonCandidates (P)                                                           *
+  *     hltEle50CaloIdVTGsfTrkIdTCentralPFJet165EleCleaned                                   *
+  *                                                                                          *
+  *   HLT_Photon175                                                                          *
+  *     -> hltEgammaCandidates (P)                                                           *
+  *     hltEG175HEFilter                                                                     *
+  *                                                                                          *
+  *   HLT_Photon200                                                                          *
+  *     -> hltEgammaCandidates (P)                                                           *
+  *     hltEG200HEFilter                                                                     *
+  *                                                                                          *
+  ********************************************************************************************
+
+=============================================
+
+MessageLogger Summary
+
+ type     category        sev    module        subroutine        count    total
+ ---- -------------------- -- ---------------- ----------------  -----    -----
+    1 XrdAdaptor           -w (NoModuleName)                         1        1
+    2 XrdAdaptor           -w file_open                             21       21
+    3 fileAction           -s file_close                            21       21
+    4 fileAction           -s file_open                             42       42
+
+ type    category    Examples: run/evt        run/evt          run/evt
+ ---- -------------------- ---------------- ---------------- ----------------
+    1 XrdAdaptor           pre-events                        
+    2 XrdAdaptor           pre-events       PostStreamBeginL PostStreamBeginL
+    3 fileAction           PostStreamBeginL PostStreamBeginL PostGlobalEndRun
+    4 fileAction           pre-events       pre-events       PostStreamBeginL
+
+Severity    # Occurrences   Total Occurrences
+--------    -------------   -----------------
+Warning                22                  22
+System                 63                  63
+
+dropped waiting message count 0
+%MSG-w XrdAdaptor: 
+Data is now served from cern.ch, T2_ES_IFCA instead of previous cern.ch
+%MSG

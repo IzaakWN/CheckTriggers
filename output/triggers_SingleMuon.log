@@ -1,0 +1,791 @@
+>>> --------------- checkTriggers_cfg.py ---------------------------------
+>>> year     = -1
+>>> dtype    = ''
+>>> verbose  = False
+>>> nlast    = 1
+>>> triggers = ['HLT_IsoMu22', 'HLT_IsoMu22_eta2p1', 'HLT_IsoTkMu22', 'HLT_IsoTkMu22_eta2p1', 'HLT_IsoMu24', 'HLT_IsoMu27', 'HLT_Mu50', 'HLT_TkMu50', 'HLT_Mu100', 'HLT_OldMu100', 'HLT_TkMu100']
+>>> filters  = ['hltEgammaCandidates', '*PixelMatchFilter', 'hltEle*CaloIdVTGsfTrkIdTGsf*Filter', '*RelTrkIso*Filtered0p4', 'hltL3cr*IsoFiltered0p09', 'hltL3f*IsoFiltered0p09', 'hlt*L3MuonCandidates', 'hltHighPtTkMuonCands', 'hlt*TkMuonCands', 'hlt*TrkMuonCands']
+>>> files    = [
+>>>   'file:root://xrootd-cms.infn.it//store/mc/RunIISummer16MiniAODv3/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUMoriond17_94X_mcRun2_asymptotic_v3_ext1-v2/120000/ACDA5D95-3EDF-E811-AC6F-842B2B6AEE8B.root',
+>>>   'file:root://xrootd-cms.infn.it//store/mc/RunIIFall17MiniAODv2/DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/MINIAODSIM/PU2017RECOSIMstep_12Apr2018_94X_mc2017_realistic_v14-v1/70000/0256D125-5A44-E811-8C69-44A842CFD64D.root',
+>>>   'file:root://xrootd-cms.infn.it//store/mc/RunIIAutumn18MiniAOD/DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/MINIAODSIM/102X_upgrade2018_realistic_v15-v1/100000/08540B6C-AA39-3F49-8FFE-8771AD2A8885.root',
+>>>   'file:root://xrootd-cms.infn.it//store/data/Run2016B/SingleMuon/MINIAOD/17Jul2018_ver2-v1/50000/9C3FC3BA-498B-E811-9C58-00259048AC9A.root',
+>>>   'file:root://xrootd-cms.infn.it//store/data/Run2016C/SingleMuon/MINIAOD/17Jul2018-v1/20000/141055DA-4D97-E811-9D21-1CB72C1B64E2.root',
+>>>   'file:root://xrootd-cms.infn.it//store/data/Run2016D/SingleMuon/MINIAOD/17Jul2018-v1/00000/F01191AD-278A-E811-8DE3-D48564594F36.root',
+>>>   'file:root://xrootd-cms.infn.it//store/data/Run2016E/SingleMuon/MINIAOD/17Jul2018-v1/00000/544A3D73-8C8A-E811-8724-001E6865A4D3.root',
+>>>   'file:root://xrootd-cms.infn.it//store/data/Run2016F/SingleMuon/MINIAOD/17Jul2018-v1/00000/BA7804F1-358A-E811-9D05-C0BFC0E56866.root',
+>>>   'file:root://xrootd-cms.infn.it//store/data/Run2016G/SingleMuon/MINIAOD/17Jul2018-v1/50000/0EA07C4F-F78F-E811-981F-3417EBE61338.root',
+>>>   'file:root://xrootd-cms.infn.it//store/data/Run2016H/SingleMuon/MINIAOD/17Jul2018-v1/40000/B6B0E662-668B-E811-9EA1-EC0D9A0B3300.root',
+>>>   'file:root://xrootd-cms.infn.it//store/data/Run2017B/SingleMuon/MINIAOD/31Mar2018-v1/80000/54F30BE9-423C-E811-A315-0CC47A7C3410.root',
+>>>   'file:root://xrootd-cms.infn.it//store/data/Run2017C/SingleMuon/MINIAOD/31Mar2018-v1/100000/FAD1BDFD-8337-E811-9C8E-B499BAAC04AA.root',
+>>>   'file:root://xrootd-cms.infn.it//store/data/Run2017D/SingleMuon/MINIAOD/31Mar2018-v1/80000/1E703527-F436-E811-80A7-E0DB55FC1055.root',
+>>>   'file:root://xrootd-cms.infn.it//store/data/Run2017E/SingleMuon/MINIAOD/31Mar2018-v1/90000/AA13B7F5-A938-E811-82CE-0CC47A7C356A.root',
+>>>   'file:root://xrootd-cms.infn.it//store/data/Run2017F/SingleMuon/MINIAOD/31Mar2018-v1/30000/6CD24B25-CF37-E811-9183-0CC47A2B04DE.root',
+>>>   'file:root://xrootd-cms.infn.it//store/data/Run2018A/SingleMuon/MINIAOD/17Sep2018-v2/00000/11697BCC-C4AB-204B-91A9-87F952F9F2C6.root',
+>>>   'file:root://xrootd-cms.infn.it//store/data/Run2018B/SingleMuon/MINIAOD/17Sep2018-v1/100000/7FA66CD1-3158-F94A-A1E0-27BECABAC34A.root',
+>>>   'file:root://xrootd-cms.infn.it//store/data/Run2018C/SingleMuon/MINIAOD/17Sep2018-v1/110000/8DB2B7A5-F627-2144-8F8F-180A8DA0E90D.root',
+>>>   'file:root://xrootd-cms.infn.it//store/data/Run2018D/SingleMuon/MINIAOD/PromptReco-v2/000/320/569/00000/3C8C28E7-1A96-E811-BA8D-02163E012DD8.root'
+>>> ]
+>>> ----------------------------------------------------------------------
+26-Nov-2019 17:46:41 CET  Initiating request to open file file:root://xrootd-cms.infn.it//store/mc/RunIISummer16MiniAODv3/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUMoriond17_94X_mcRun2_asymptotic_v3_ext1-v2/120000/ACDA5D95-3EDF-E811-AC6F-842B2B6AEE8B.root
+%MSG-w XrdAdaptor:  file_open 26-Nov-2019 17:46:43 CET pre-events
+Data is served from ciemat.es instead of original site T2_IT_Pisa
+%MSG
+26-Nov-2019 17:46:46 CET  Successfully opened file file:root://xrootd-cms.infn.it//store/mc/RunIISummer16MiniAODv3/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUMoriond17_94X_mcRun2_asymptotic_v3_ext1-v2/120000/ACDA5D95-3EDF-E811-AC6F-842B2B6AEE8B.root
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/frozen/2016/25ns15e33/v4.0/HLT/V2[0m'
+>>>   Global tag:    '[1m80X_mcRun2_asymptotic_2016_TrancheIV_v6[0m'
+26-Nov-2019 17:46:49 CET  Closed file file:root://xrootd-cms.infn.it//store/mc/RunIISummer16MiniAODv3/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUMoriond17_94X_mcRun2_asymptotic_v3_ext1-v2/120000/ACDA5D95-3EDF-E811-AC6F-842B2B6AEE8B.root
+26-Nov-2019 17:46:49 CET  Initiating request to open file file:root://xrootd-cms.infn.it//store/mc/RunIIFall17MiniAODv2/DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/MINIAODSIM/PU2017RECOSIMstep_12Apr2018_94X_mc2017_realistic_v14-v1/70000/0256D125-5A44-E811-8C69-44A842CFD64D.root
+%MSG-w XrdAdaptor:  file_open 26-Nov-2019 17:46:52 CET PostStreamBeginLumi
+Data is served from TR-03-METU instead of original site T2_IT_Pisa
+%MSG
+26-Nov-2019 17:46:52 CET  Successfully opened file file:root://xrootd-cms.infn.it//store/mc/RunIIFall17MiniAODv2/DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/MINIAODSIM/PU2017RECOSIMstep_12Apr2018_94X_mc2017_realistic_v14-v1/70000/0256D125-5A44-E811-8C69-44A842CFD64D.root
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/frozen/2017/2e34/v4.0/HLT/V5[0m'
+>>>   Global tag:    '[1m94X_mc2017_realistic_v10[0m'
+26-Nov-2019 17:46:56 CET  Closed file file:root://xrootd-cms.infn.it//store/mc/RunIIFall17MiniAODv2/DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/MINIAODSIM/PU2017RECOSIMstep_12Apr2018_94X_mc2017_realistic_v14-v1/70000/0256D125-5A44-E811-8C69-44A842CFD64D.root
+26-Nov-2019 17:46:56 CET  Initiating request to open file file:root://xrootd-cms.infn.it//store/mc/RunIIAutumn18MiniAOD/DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/MINIAODSIM/102X_upgrade2018_realistic_v15-v1/100000/08540B6C-AA39-3F49-8FFE-8771AD2A8885.root
+%MSG-w XrdAdaptor:  file_open 26-Nov-2019 17:46:57 CET PostStreamBeginLumi
+Data is served from desy.de instead of original site T2_IT_Pisa
+%MSG
+26-Nov-2019 17:46:58 CET  Successfully opened file file:root://xrootd-cms.infn.it//store/mc/RunIIAutumn18MiniAOD/DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/MINIAODSIM/102X_upgrade2018_realistic_v15-v1/100000/08540B6C-AA39-3F49-8FFE-8771AD2A8885.root
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/frozen/2018/2e34/v3.2/HLT/V1[0m'
+>>>   Global tag:    '[1m102X_upgrade2018_realistic_v15[0m'
+26-Nov-2019 17:47:00 CET  Closed file file:root://xrootd-cms.infn.it//store/mc/RunIIAutumn18MiniAOD/DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/MINIAODSIM/102X_upgrade2018_realistic_v15-v1/100000/08540B6C-AA39-3F49-8FFE-8771AD2A8885.root
+26-Nov-2019 17:47:00 CET  Initiating request to open file file:root://xrootd-cms.infn.it//store/data/Run2016B/SingleMuon/MINIAOD/17Jul2018_ver2-v1/50000/9C3FC3BA-498B-E811-9C58-00259048AC9A.root
+%MSG-w XrdAdaptor:  file_open 26-Nov-2019 17:47:02 CET PostStreamBeginLumi
+Data is served from cern.ch instead of original site T2_IT_Pisa
+%MSG
+26-Nov-2019 17:47:02 CET  Successfully opened file file:root://xrootd-cms.infn.it//store/data/Run2016B/SingleMuon/MINIAOD/17Jul2018_ver2-v1/50000/9C3FC3BA-498B-E811-9C58-00259048AC9A.root
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2016/25ns10e33/v1.1.1/HLT/V3[0m'
+>>>   Global tag:    '[1m80X_dataRun2_HLT_v12[0m'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2016/25ns10e33/v1.1.1/HLT/V12[0m'
+>>>   Global tag:    '[1m80X_dataRun2_HLT_v12[0m'
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2016/25ns10e33/v1.2.1/HLT/V15[0m'
+>>>   Global tag:    '[1m80X_dataRun2_HLT_v12[0m'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2016/25ns10e33/v1.2.2/HLT/V2[0m'
+>>>   Global tag:    '[1m80X_dataRun2_HLT_v12[0m'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2016/25ns10e33/v1.2.2/HLT/V6[0m'
+>>>   Global tag:    '[1m80X_dataRun2_HLT_v12[0m'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2016/25ns10e33/v1.2.2/HLT/V9[0m'
+>>>   Global tag:    '[1m80X_dataRun2_HLT_v12[0m'
+>>>   Trigger menu did not change. Skipping...
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2016/25ns10e33/v1.2.4/HLT/V1[0m'
+>>>   Global tag:    '[1m80X_dataRun2_HLT_v12[0m'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2016/25ns10e33/v1.2.5/HLT/V3[0m'
+>>>   Global tag:    '[1m80X_dataRun2_HLT_v12[0m'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2016/25ns10e33/v1.2.5/HLT/V6[0m'
+>>>   Global tag:    '[1m80X_dataRun2_HLT_v12[0m'
+26-Nov-2019 17:47:08 CET  Closed file file:root://xrootd-cms.infn.it//store/data/Run2016B/SingleMuon/MINIAOD/17Jul2018_ver2-v1/50000/9C3FC3BA-498B-E811-9C58-00259048AC9A.root
+26-Nov-2019 17:47:08 CET  Initiating request to open file file:root://xrootd-cms.infn.it//store/data/Run2016C/SingleMuon/MINIAOD/17Jul2018-v1/20000/141055DA-4D97-E811-9D21-1CB72C1B64E2.root
+%MSG-w XrdAdaptor:  file_open 26-Nov-2019 17:47:09 CET PostStreamBeginLumi
+Data is served from grid.hep.ph.ic.ac.uk instead of original site T2_IT_Pisa
+%MSG
+26-Nov-2019 17:47:10 CET  Successfully opened file file:root://xrootd-cms.infn.it//store/data/Run2016C/SingleMuon/MINIAOD/17Jul2018-v1/20000/141055DA-4D97-E811-9D21-1CB72C1B64E2.root
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2016/25ns10e33/v2.1.4/HLT/V2[0m'
+>>>   Global tag:    '[1m80X_dataRun2_HLT_v12[0m'
+26-Nov-2019 17:47:12 CET  Closed file file:root://xrootd-cms.infn.it//store/data/Run2016C/SingleMuon/MINIAOD/17Jul2018-v1/20000/141055DA-4D97-E811-9D21-1CB72C1B64E2.root
+26-Nov-2019 17:47:12 CET  Initiating request to open file file:root://xrootd-cms.infn.it//store/data/Run2016D/SingleMuon/MINIAOD/17Jul2018-v1/00000/F01191AD-278A-E811-8DE3-D48564594F36.root
+%MSG-w XrdAdaptor:  file_open 26-Nov-2019 17:47:14 CET PostStreamBeginLumi
+Data is served from cern.ch instead of original site T2_IT_Pisa
+%MSG
+26-Nov-2019 17:47:14 CET  Successfully opened file file:root://xrootd-cms.infn.it//store/data/Run2016D/SingleMuon/MINIAOD/17Jul2018-v1/00000/F01191AD-278A-E811-8DE3-D48564594F36.root
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2016/25ns10e33/v2.2.0/HLT/V2[0m'
+>>>   Global tag:    '[1m80X_dataRun2_HLT_v12[0m'
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2016/25ns10e33/v2.2.0/HLT/V13[0m'
+>>>   Global tag:    '[1m80X_dataRun2_HLT_v12[0m'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2016/25ns10e33/v2.2.1/HLT/V3[0m'
+>>>   Global tag:    '[1m80X_dataRun2_HLT_v12[0m'
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2016/25ns10e33/v2.2.2/HLT/V1[0m'
+>>>   Global tag:    '[1m80X_dataRun2_HLT_v12[0m'
+26-Nov-2019 17:47:17 CET  Closed file file:root://xrootd-cms.infn.it//store/data/Run2016D/SingleMuon/MINIAOD/17Jul2018-v1/00000/F01191AD-278A-E811-8DE3-D48564594F36.root
+26-Nov-2019 17:47:17 CET  Initiating request to open file file:root://xrootd-cms.infn.it//store/data/Run2016E/SingleMuon/MINIAOD/17Jul2018-v1/00000/544A3D73-8C8A-E811-8724-001E6865A4D3.root
+%MSG-w XrdAdaptor:  file_open 26-Nov-2019 17:47:19 CET PostStreamBeginLumi
+Data is served from cern.ch instead of original site T2_IT_Pisa
+%MSG
+26-Nov-2019 17:47:20 CET  Successfully opened file file:root://xrootd-cms.infn.it//store/data/Run2016E/SingleMuon/MINIAOD/17Jul2018-v1/00000/544A3D73-8C8A-E811-8724-001E6865A4D3.root
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2016/25ns10e33/v2.2.3/HLT/V2[0m'
+>>>   Global tag:    '[1m80X_dataRun2_HLT_v12[0m'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2016/25ns15e33/v3.0/HLT/V6[0m'
+>>>   Global tag:    '[1m80X_dataRun2_HLT_v12[0m'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2016/25ns15e33/v3.0/HLT/V7[0m'
+>>>   Global tag:    '[1m80X_dataRun2_HLT_v12[0m'
+>>>   Trigger menu did not change. Skipping...
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2016/25ns15e33/v3.0.1/HLT/V2[0m'
+>>>   Global tag:    '[1m80X_dataRun2_HLT_v12[0m'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2016/25ns15e33/v3.0.1/HLT/V3[0m'
+>>>   Global tag:    '[1m80X_dataRun2_HLT_v12[0m'
+>>>   Trigger menu did not change. Skipping...
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2016/25ns15e33/v3.0.1/HLT/V4[0m'
+>>>   Global tag:    '[1m80X_dataRun2_HLT_v12[0m'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2016/25ns15e33/v3.0.1/HLT/V6[0m'
+>>>   Global tag:    '[1m80X_dataRun2_HLT_v12[0m'
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+26-Nov-2019 17:47:25 CET  Closed file file:root://xrootd-cms.infn.it//store/data/Run2016E/SingleMuon/MINIAOD/17Jul2018-v1/00000/544A3D73-8C8A-E811-8724-001E6865A4D3.root
+26-Nov-2019 17:47:25 CET  Initiating request to open file file:root://xrootd-cms.infn.it//store/data/Run2016F/SingleMuon/MINIAOD/17Jul2018-v1/00000/BA7804F1-358A-E811-9D05-C0BFC0E56866.root
+%MSG-w XrdAdaptor:  file_open 26-Nov-2019 17:47:27 CET PostStreamBeginLumi
+Data is served from cern.ch instead of original site T2_IT_Pisa
+%MSG
+26-Nov-2019 17:47:27 CET  Successfully opened file file:root://xrootd-cms.infn.it//store/data/Run2016F/SingleMuon/MINIAOD/17Jul2018-v1/00000/BA7804F1-358A-E811-9D05-C0BFC0E56866.root
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2016/25ns15e33/v3.0.3/HLT/V4[0m'
+>>>   Global tag:    '[1m80X_dataRun2_HLT_v12[0m'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2016/25ns15e33/v3.0.3/HLT/V4[0m'
+>>>   Global tag:    '[1m80X_dataRun2_HLT_v12[0m'
+>>>   Trigger menu did not change. Skipping...
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2016/25ns15e33/v3.1.1/HLT/V1[0m'
+>>>   Global tag:    '[1m80X_dataRun2_HLT_v12[0m'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2016/25ns15e33/v3.1.1/HLT/V2[0m'
+>>>   Global tag:    '[1m80X_dataRun2_HLT_v12[0m'
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+26-Nov-2019 17:47:30 CET  Closed file file:root://xrootd-cms.infn.it//store/data/Run2016F/SingleMuon/MINIAOD/17Jul2018-v1/00000/BA7804F1-358A-E811-9D05-C0BFC0E56866.root
+26-Nov-2019 17:47:30 CET  Initiating request to open file file:root://xrootd-cms.infn.it//store/data/Run2016G/SingleMuon/MINIAOD/17Jul2018-v1/50000/0EA07C4F-F78F-E811-981F-3417EBE61338.root
+%MSG-w XrdAdaptor:  file_open 26-Nov-2019 17:47:32 CET PostStreamBeginLumi
+Data is served from cern.ch instead of original site T2_IT_Pisa
+%MSG
+26-Nov-2019 17:47:32 CET  Successfully opened file file:root://xrootd-cms.infn.it//store/data/Run2016G/SingleMuon/MINIAOD/17Jul2018-v1/50000/0EA07C4F-F78F-E811-981F-3417EBE61338.root
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2016/25ns15e33/v3.1.3/HLT/V15[0m'
+>>>   Global tag:    '[1m80X_dataRun2_HLT_v12[0m'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2016/25ns15e33/v3.1.4/HLT/V1[0m'
+>>>   Global tag:    '[1m80X_dataRun2_HLT_v12[0m'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2016/25ns15e33/v3.1.5/HLT/V1[0m'
+>>>   Global tag:    '[1m80X_dataRun2_HLT_v12[0m'
+>>>   Trigger menu did not change. Skipping...
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2016/LowPU25ns/v1.1/HLT/V2[0m'
+>>>   Global tag:    '[1m80X_dataRun2_HLT_v12[0m'
+>>>   Trigger menu did not change. Skipping...
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2016/25ns15e33/v3.1.6/HLT/V1[0m'
+>>>   Global tag:    '[1m80X_dataRun2_HLT_v12[0m'
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2016/25ns15e33/v3.1.6/HLT/V2[0m'
+>>>   Global tag:    '[1m80X_dataRun2_HLT_v12[0m'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2016/25ns15e33/v3.1.7/HLT/V4[0m'
+>>>   Global tag:    '[1m80X_dataRun2_HLT_v12[0m'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2016/25ns15e33/v3.1.8/HLT/V1[0m'
+>>>   Global tag:    '[1m80X_dataRun2_HLT_v12[0m'
+>>>   Trigger menu did not change. Skipping...
+26-Nov-2019 17:47:37 CET  Closed file file:root://xrootd-cms.infn.it//store/data/Run2016G/SingleMuon/MINIAOD/17Jul2018-v1/50000/0EA07C4F-F78F-E811-981F-3417EBE61338.root
+26-Nov-2019 17:47:37 CET  Initiating request to open file file:root://xrootd-cms.infn.it//store/data/Run2016H/SingleMuon/MINIAOD/17Jul2018-v1/40000/B6B0E662-668B-E811-9EA1-EC0D9A0B3300.root
+%MSG-w XrdAdaptor:  file_open 26-Nov-2019 17:47:39 CET PostStreamBeginLumi
+Data is served from lnl.infn.it instead of original site T2_IT_Pisa
+%MSG
+26-Nov-2019 17:47:39 CET  Successfully opened file file:root://xrootd-cms.infn.it//store/data/Run2016H/SingleMuon/MINIAOD/17Jul2018-v1/40000/B6B0E662-668B-E811-9EA1-EC0D9A0B3300.root
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2016/25ns15e33/v4.2.1/HLT/V1[0m'
+>>>   Global tag:    '[1m80X_dataRun2_HLT_v12[0m'
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2016/25ns15e33/v4.2.2/HLT/V1[0m'
+>>>   Global tag:    '[1m80X_dataRun2_HLT_v12[0m'
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+26-Nov-2019 17:47:43 CET  Closed file file:root://xrootd-cms.infn.it//store/data/Run2016H/SingleMuon/MINIAOD/17Jul2018-v1/40000/B6B0E662-668B-E811-9EA1-EC0D9A0B3300.root
+26-Nov-2019 17:47:43 CET  Initiating request to open file file:root://xrootd-cms.infn.it//store/data/Run2017B/SingleMuon/MINIAOD/31Mar2018-v1/80000/54F30BE9-423C-E811-A315-0CC47A7C3410.root
+%MSG-w XrdAdaptor:  file_open 26-Nov-2019 17:47:45 CET PostStreamBeginLumi
+Data is served from cern.ch instead of original site T2_IT_Pisa
+%MSG
+26-Nov-2019 17:47:45 CET  Successfully opened file file:root://xrootd-cms.infn.it//store/data/Run2017B/SingleMuon/MINIAOD/31Mar2018-v1/80000/54F30BE9-423C-E811-A315-0CC47A7C3410.root
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2017/2e34/v1.1.5/HLT/V1[0m'
+>>>   Global tag:    '[1m92X_dataRun2_HLT_v4[0m'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2017/2e34/v1.2.1/HLT/V1[0m'
+>>>   Global tag:    '[1m92X_dataRun2_HLT_v4[0m'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2017/2e34/v1.2.4/HLT/V2[0m'
+>>>   Global tag:    '[1m92X_dataRun2_HLT_v4[0m'
+26-Nov-2019 17:47:47 CET  Closed file file:root://xrootd-cms.infn.it//store/data/Run2017B/SingleMuon/MINIAOD/31Mar2018-v1/80000/54F30BE9-423C-E811-A315-0CC47A7C3410.root
+26-Nov-2019 17:47:47 CET  Initiating request to open file file:root://xrootd-cms.infn.it//store/data/Run2017C/SingleMuon/MINIAOD/31Mar2018-v1/100000/FAD1BDFD-8337-E811-9C8E-B499BAAC04AA.root
+[2019-11-26 17:48:33.873899 +0100][Error  ][AsyncSock         ] [ds-203-06-09.cr.cnaf.infn.it:1094 #0.0] Socket error while handshaking: [ERROR] Socket timeout
+[2019-11-26 17:48:33.874083 +0100][Error  ][PostMaster        ] [ds-203-06-09.cr.cnaf.infn.it:1094 #0] elapsed = 45, pConnectionWindow = 31 seconds.
+[2019-11-26 17:49:18.935770 +0100][Error  ][AsyncSock         ] [ds-203-06-09.cr.cnaf.infn.it:1094 #0.0] Socket error while handshaking: [ERROR] Socket timeout
+[2019-11-26 17:49:18.935864 +0100][Error  ][PostMaster        ] [ds-203-06-09.cr.cnaf.infn.it:1094 #0] elapsed = 45, pConnectionWindow = 31 seconds.
+[2019-11-26 17:49:18.936045 +0100][Error  ][PostMaster        ] [ds-203-06-09.cr.cnaf.infn.it:1094 #0] Unable to recover: [ERROR] Socket timeout.
+[2019-11-26 17:49:18.936067 +0100][Error  ][XRootD            ] [ds-203-06-09.cr.cnaf.infn.it:1094] Impossible to send message kXR_open (file: /store/data/Run2017C/SingleMuon/MINIAOD/31Mar2018-v1/100000/FAD1BDFD-8337-E811-9C8E-B499BAAC04AA.root, mode: 0660, flags: kXR_open_read kXR_async kXR_retstat ). Trying to recover.
+%MSG-w XrdAdaptor:  file_open 26-Nov-2019 17:49:19 CET PostStreamBeginLumi
+Data is served from grid.hep.ph.ic.ac.uk instead of original site T2_IT_Pisa
+%MSG
+26-Nov-2019 17:49:19 CET  Successfully opened file file:root://xrootd-cms.infn.it//store/data/Run2017C/SingleMuon/MINIAOD/31Mar2018-v1/100000/FAD1BDFD-8337-E811-9C8E-B499BAAC04AA.root
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2017/2e34/v2.1.0/HLT/V2[0m'
+>>>   Global tag:    '[1m92X_dataRun2_HLT_v4[0m'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2017/2e34/v2.1.3/HLT/V1[0m'
+>>>   Global tag:    '[1m92X_dataRun2_HLT_v4[0m'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2017/2e34/v2.1.2/HLT/V1[0m'
+>>>   Global tag:    '[1m92X_dataRun2_HLT_v4[0m'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2017/2e34/v2.1.3/HLT/V1[0m'
+>>>   Global tag:    '[1m92X_dataRun2_HLT_v4[0m'
+>>>   Trigger menu did not change. Skipping...
+26-Nov-2019 17:49:28 CET  Closed file file:root://xrootd-cms.infn.it//store/data/Run2017C/SingleMuon/MINIAOD/31Mar2018-v1/100000/FAD1BDFD-8337-E811-9C8E-B499BAAC04AA.root
+26-Nov-2019 17:49:28 CET  Initiating request to open file file:root://xrootd-cms.infn.it//store/data/Run2017D/SingleMuon/MINIAOD/31Mar2018-v1/80000/1E703527-F436-E811-80A7-E0DB55FC1055.root
+%MSG-w XrdAdaptor:  file_open 26-Nov-2019 17:49:30 CET PostStreamBeginLumi
+Data is served from recas.ba.infn.it instead of original site T2_IT_Pisa
+%MSG
+26-Nov-2019 17:49:31 CET  Successfully opened file file:root://xrootd-cms.infn.it//store/data/Run2017D/SingleMuon/MINIAOD/31Mar2018-v1/80000/1E703527-F436-E811-80A7-E0DB55FC1055.root
+%MSG-w XrdAdaptor:  (NoModuleName) 26-Nov-2019 17:49:35 CET pre-events
+Data is now served from recas.ba.infn.it, desy.de instead of previous recas.ba.infn.it
+%MSG
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2017/2e34/v3.0.0/HLT/V1[0m'
+>>>   Global tag:    '[1m92X_dataRun2_HLT_v7[0m'
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2017/2e34/v3.0.0/HLT/V4[0m'
+>>>   Global tag:    '[1m92X_dataRun2_HLT_v7[0m'
+>>>   Trigger menu did not change. Skipping...
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2017/2e34/v3.1.0/HLT/V1[0m'
+>>>   Global tag:    '[1m92X_dataRun2_HLT_v7[0m'
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+26-Nov-2019 17:49:39 CET  Closed file file:root://xrootd-cms.infn.it//store/data/Run2017D/SingleMuon/MINIAOD/31Mar2018-v1/80000/1E703527-F436-E811-80A7-E0DB55FC1055.root
+26-Nov-2019 17:49:39 CET  Initiating request to open file file:root://xrootd-cms.infn.it//store/data/Run2017E/SingleMuon/MINIAOD/31Mar2018-v1/90000/AA13B7F5-A938-E811-82CE-0CC47A7C356A.root
+%MSG-w XrdAdaptor:  file_open 26-Nov-2019 17:49:40 CET PostStreamBeginLumi
+Data is served from desy.de instead of original site T2_IT_Pisa
+%MSG
+26-Nov-2019 17:49:41 CET  Successfully opened file file:root://xrootd-cms.infn.it//store/data/Run2017E/SingleMuon/MINIAOD/31Mar2018-v1/90000/AA13B7F5-A938-E811-82CE-0CC47A7C356A.root
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2017/2e34/v3.1.0/HLT/V2[0m'
+>>>   Global tag:    '[1m92X_dataRun2_HLT_v7[0m'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2017/2e34/v3.1.3/HLT/V1[0m'
+>>>   Global tag:    '[1m92X_dataRun2_HLT_v7[0m'
+26-Nov-2019 17:49:45 CET  Closed file file:root://xrootd-cms.infn.it//store/data/Run2017E/SingleMuon/MINIAOD/31Mar2018-v1/90000/AA13B7F5-A938-E811-82CE-0CC47A7C356A.root
+26-Nov-2019 17:49:45 CET  Initiating request to open file file:root://xrootd-cms.infn.it//store/data/Run2017F/SingleMuon/MINIAOD/31Mar2018-v1/30000/6CD24B25-CF37-E811-9183-0CC47A2B04DE.root
+%MSG-w XrdAdaptor:  file_open 26-Nov-2019 17:49:47 CET PostStreamBeginLumi
+Data is served from cern.ch instead of original site T2_IT_Pisa
+%MSG
+26-Nov-2019 17:49:47 CET  Successfully opened file file:root://xrootd-cms.infn.it//store/data/Run2017F/SingleMuon/MINIAOD/31Mar2018-v1/30000/6CD24B25-CF37-E811-9183-0CC47A2B04DE.root
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2017/2e34/v4.0.2/HLT/V1[0m'
+>>>   Global tag:    '[1m92X_dataRun2_HLT_v7[0m'
+26-Nov-2019 17:49:49 CET  Closed file file:root://xrootd-cms.infn.it//store/data/Run2017F/SingleMuon/MINIAOD/31Mar2018-v1/30000/6CD24B25-CF37-E811-9183-0CC47A2B04DE.root
+26-Nov-2019 17:49:49 CET  Initiating request to open file file:root://xrootd-cms.infn.it//store/data/Run2018A/SingleMuon/MINIAOD/17Sep2018-v2/00000/11697BCC-C4AB-204B-91A9-87F952F9F2C6.root
+%MSG-w XrdAdaptor:  file_open 26-Nov-2019 17:49:51 CET PostStreamBeginLumi
+Data is served from cern.ch instead of original site T2_IT_Pisa
+%MSG
+26-Nov-2019 17:49:51 CET  Successfully opened file file:root://xrootd-cms.infn.it//store/data/Run2018A/SingleMuon/MINIAOD/17Sep2018-v2/00000/11697BCC-C4AB-204B-91A9-87F952F9F2C6.root
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2018/2e34/v1.2.0/HLT/V1[0m'
+>>>   Global tag:    '[1m100X_dataRun2_HLT_v3[0m'
+%MSG-w XrdAdaptor:  (NoModuleName) 26-Nov-2019 17:49:57 CET pre-events
+Data is now served from cern.ch, T2_EE_Estonia instead of previous cern.ch
+%MSG
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2018/2e34/v1.2.0/HLT/V3[0m'
+>>>   Global tag:    '[1m101X_dataRun2_HLT_v7[0m'
+>>>   Trigger menu did not change. Skipping...
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2018/2e34/v1.2.3/HLT/V2[0m'
+>>>   Global tag:    '[1m101X_dataRun2_HLT_v7[0m'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2018/2e34/v2.0.3/HLT/V1[0m'
+>>>   Global tag:    '[1m101X_dataRun2_HLT_v7[0m'
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2018/2e34/v2.1.1/HLT/V1[0m'
+>>>   Global tag:    '[1m101X_dataRun2_HLT_v7[0m'
+26-Nov-2019 17:50:01 CET  Closed file file:root://xrootd-cms.infn.it//store/data/Run2018A/SingleMuon/MINIAOD/17Sep2018-v2/00000/11697BCC-C4AB-204B-91A9-87F952F9F2C6.root
+26-Nov-2019 17:50:01 CET  Initiating request to open file file:root://xrootd-cms.infn.it//store/data/Run2018B/SingleMuon/MINIAOD/17Sep2018-v1/100000/7FA66CD1-3158-F94A-A1E0-27BECABAC34A.root
+%MSG-w XrdAdaptor:  file_open 26-Nov-2019 17:50:03 CET PostStreamBeginLumi
+Data is served from cern.ch instead of original site T2_IT_Pisa
+%MSG
+26-Nov-2019 17:50:03 CET  Successfully opened file file:root://xrootd-cms.infn.it//store/data/Run2018B/SingleMuon/MINIAOD/17Sep2018-v1/100000/7FA66CD1-3158-F94A-A1E0-27BECABAC34A.root
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2018/2e34/v2.1.5/HLT/V5[0m'
+>>>   Global tag:    '[1m101X_dataRun2_HLT_v7[0m'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2018/2e34/v2.2.2/HLT/V2[0m'
+>>>   Global tag:    '[1m101X_dataRun2_HLT_v7[0m'
+26-Nov-2019 17:50:08 CET  Closed file file:root://xrootd-cms.infn.it//store/data/Run2018B/SingleMuon/MINIAOD/17Sep2018-v1/100000/7FA66CD1-3158-F94A-A1E0-27BECABAC34A.root
+26-Nov-2019 17:50:08 CET  Initiating request to open file file:root://xrootd-cms.infn.it//store/data/Run2018C/SingleMuon/MINIAOD/17Sep2018-v1/110000/8DB2B7A5-F627-2144-8F8F-180A8DA0E90D.root
+%MSG-w XrdAdaptor:  file_open 26-Nov-2019 17:50:10 CET PostStreamBeginLumi
+Data is served from cern.ch instead of original site T2_IT_Pisa
+%MSG
+26-Nov-2019 17:50:10 CET  Successfully opened file file:root://xrootd-cms.infn.it//store/data/Run2018C/SingleMuon/MINIAOD/17Sep2018-v1/110000/8DB2B7A5-F627-2144-8F8F-180A8DA0E90D.root
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2018/2e34/v2.2.3/HLT/V2[0m'
+>>>   Global tag:    '[1m101X_dataRun2_HLT_v7[0m'
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+26-Nov-2019 17:50:13 CET  Closed file file:root://xrootd-cms.infn.it//store/data/Run2018C/SingleMuon/MINIAOD/17Sep2018-v1/110000/8DB2B7A5-F627-2144-8F8F-180A8DA0E90D.root
+26-Nov-2019 17:50:13 CET  Initiating request to open file file:root://xrootd-cms.infn.it//store/data/Run2018D/SingleMuon/MINIAOD/PromptReco-v2/000/320/569/00000/3C8C28E7-1A96-E811-BA8D-02163E012DD8.root
+%MSG-w XrdAdaptor:  file_open 26-Nov-2019 17:50:15 CET PostStreamBeginLumi
+Data is served from cern.ch instead of original site T2_IT_Pisa
+%MSG
+26-Nov-2019 17:50:15 CET  Successfully opened file file:root://xrootd-cms.infn.it//store/data/Run2018D/SingleMuon/MINIAOD/PromptReco-v2/000/320/569/00000/3C8C28E7-1A96-E811-BA8D-02163E012DD8.root
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2018/2e34/v3.3.0/HLT/V8[0m'
+>>>   Global tag:    '[1m101X_dataRun2_HLT_v7[0m'
+26-Nov-2019 17:50:23 CET  Closed file file:root://xrootd-cms.infn.it//store/data/Run2018D/SingleMuon/MINIAOD/PromptReco-v2/000/320/569/00000/3C8C28E7-1A96-E811-BA8D-02163E012DD8.root
+
+  **** Summary of trigger menus ****************************
+  *                                                        *
+  *   [1m80X_mcRun2_asymptotic_2016_TrancheIV_v6              [0m*
+  *     /frozen/2016/25ns15e33/v4.0/HLT/V2                 *
+  *                                                        *
+  *   [1m94X_mc2017_realistic_v10                             [0m*
+  *     /frozen/2017/2e34/v4.0/HLT/V5                      *
+  *                                                        *
+  *   [1m102X_upgrade2018_realistic_v15                       [0m*
+  *     /frozen/2018/2e34/v3.2/HLT/V1                      *
+  *                                                        *
+  *   [1m80X_dataRun2_HLT_v12                                 [0m*
+  *     /cdaq/physics/Run2016/25ns10e33/v1.1.1/HLT/V12     *
+  *     /cdaq/physics/Run2016/25ns10e33/v1.1.1/HLT/V3      *
+  *     /cdaq/physics/Run2016/25ns10e33/v1.2.1/HLT/V15     *
+  *     /cdaq/physics/Run2016/25ns10e33/v1.2.2/HLT/V2      *
+  *     /cdaq/physics/Run2016/25ns10e33/v1.2.2/HLT/V6      *
+  *     /cdaq/physics/Run2016/25ns10e33/v1.2.2/HLT/V9      *
+  *     /cdaq/physics/Run2016/25ns10e33/v1.2.4/HLT/V1      *
+  *     /cdaq/physics/Run2016/25ns10e33/v1.2.5/HLT/V3      *
+  *     /cdaq/physics/Run2016/25ns10e33/v1.2.5/HLT/V6      *
+  *     /cdaq/physics/Run2016/25ns10e33/v2.1.4/HLT/V2      *
+  *     /cdaq/physics/Run2016/25ns10e33/v2.2.0/HLT/V13     *
+  *     /cdaq/physics/Run2016/25ns10e33/v2.2.0/HLT/V2      *
+  *     /cdaq/physics/Run2016/25ns10e33/v2.2.1/HLT/V3      *
+  *     /cdaq/physics/Run2016/25ns10e33/v2.2.2/HLT/V1      *
+  *     /cdaq/physics/Run2016/25ns10e33/v2.2.3/HLT/V2      *
+  *     /cdaq/physics/Run2016/25ns15e33/v3.0.1/HLT/V2      *
+  *     /cdaq/physics/Run2016/25ns15e33/v3.0.1/HLT/V3      *
+  *     /cdaq/physics/Run2016/25ns15e33/v3.0.1/HLT/V4      *
+  *     /cdaq/physics/Run2016/25ns15e33/v3.0.1/HLT/V6      *
+  *     /cdaq/physics/Run2016/25ns15e33/v3.0.3/HLT/V4      *
+  *     /cdaq/physics/Run2016/25ns15e33/v3.0/HLT/V6        *
+  *     /cdaq/physics/Run2016/25ns15e33/v3.0/HLT/V7        *
+  *     /cdaq/physics/Run2016/25ns15e33/v3.1.1/HLT/V1      *
+  *     /cdaq/physics/Run2016/25ns15e33/v3.1.1/HLT/V2      *
+  *     /cdaq/physics/Run2016/25ns15e33/v3.1.3/HLT/V15     *
+  *     /cdaq/physics/Run2016/25ns15e33/v3.1.4/HLT/V1      *
+  *     /cdaq/physics/Run2016/25ns15e33/v3.1.5/HLT/V1      *
+  *     /cdaq/physics/Run2016/25ns15e33/v3.1.6/HLT/V1      *
+  *     /cdaq/physics/Run2016/25ns15e33/v3.1.6/HLT/V2      *
+  *     /cdaq/physics/Run2016/25ns15e33/v3.1.7/HLT/V4      *
+  *     /cdaq/physics/Run2016/25ns15e33/v3.1.8/HLT/V1      *
+  *     /cdaq/physics/Run2016/25ns15e33/v4.2.1/HLT/V1      *
+  *     /cdaq/physics/Run2016/25ns15e33/v4.2.2/HLT/V1      *
+  *     /cdaq/physics/Run2016/LowPU25ns/v1.1/HLT/V2        *
+  *                                                        *
+  *   [1m92X_dataRun2_HLT_v4                                  [0m*
+  *     /cdaq/physics/Run2017/2e34/v1.1.5/HLT/V1           *
+  *     /cdaq/physics/Run2017/2e34/v1.2.1/HLT/V1           *
+  *     /cdaq/physics/Run2017/2e34/v1.2.4/HLT/V2           *
+  *     /cdaq/physics/Run2017/2e34/v2.1.0/HLT/V2           *
+  *     /cdaq/physics/Run2017/2e34/v2.1.2/HLT/V1           *
+  *     /cdaq/physics/Run2017/2e34/v2.1.3/HLT/V1           *
+  *                                                        *
+  *   [1m92X_dataRun2_HLT_v7                                  [0m*
+  *     /cdaq/physics/Run2017/2e34/v3.0.0/HLT/V1           *
+  *     /cdaq/physics/Run2017/2e34/v3.0.0/HLT/V4           *
+  *     /cdaq/physics/Run2017/2e34/v3.1.0/HLT/V1           *
+  *     /cdaq/physics/Run2017/2e34/v3.1.0/HLT/V2           *
+  *     /cdaq/physics/Run2017/2e34/v3.1.3/HLT/V1           *
+  *     /cdaq/physics/Run2017/2e34/v4.0.2/HLT/V1           *
+  *                                                        *
+  *   [1m100X_dataRun2_HLT_v3                                 [0m*
+  *     /cdaq/physics/Run2018/2e34/v1.2.0/HLT/V1           *
+  *                                                        *
+  *   [1m101X_dataRun2_HLT_v7                                 [0m*
+  *     /cdaq/physics/Run2018/2e34/v1.2.0/HLT/V3           *
+  *     /cdaq/physics/Run2018/2e34/v1.2.3/HLT/V2           *
+  *     /cdaq/physics/Run2018/2e34/v2.0.3/HLT/V1           *
+  *     /cdaq/physics/Run2018/2e34/v2.1.1/HLT/V1           *
+  *     /cdaq/physics/Run2018/2e34/v2.1.5/HLT/V5           *
+  *     /cdaq/physics/Run2018/2e34/v2.2.2/HLT/V2           *
+  *     /cdaq/physics/Run2018/2e34/v2.2.3/HLT/V2           *
+  *     /cdaq/physics/Run2018/2e34/v3.3.0/HLT/V8           *
+  *                                                        *
+  **********************************************************
+
+  **** Summary of filters per trigger in '[1m80X_mcRun2_asymptotic_2016_TrancheIV_v6[0m' ***********
+  *                                                                                          *
+  *   HLT_IsoMu22                                                                            *
+  *     -> hltL3MuonCandidates (P)                                                           *
+  *     -> hltL3crIsoL1sMu20L1f0L2f10QL3f22QL3trkIsoFiltered0p09 (F)                         *
+  *     hltL3crIsoL1sMu20L1f0L2f10QL3f22QL3trkIsoFiltered0p09                                *
+  *                                                                                          *
+  *   HLT_IsoMu22_eta2p1                                                                     *
+  *     -> hltL3MuonCandidates (P)                                                           *
+  *     -> hltL3crIsoL1sSingleMu20erL1f0L2f10QL3f22QL3trkIsoFiltered0p09 (F)                 *
+  *     hltL3crIsoL1sSingleMu20erL1f0L2f10QL3f22QL3trkIsoFiltered0p09                        *
+  *                                                                                          *
+  *   HLT_IsoMu24                                                                            *
+  *     -> hltL3MuonCandidates (P)                                                           *
+  *     -> hltL3crIsoL1sMu22L1f0L2f10QL3f24QL3trkIsoFiltered0p09 (F)                         *
+  *     hltL3crIsoL1sMu22L1f0L2f10QL3f24QL3trkIsoFiltered0p09                                *
+  *                                                                                          *
+  *   HLT_IsoMu27                                                                            *
+  *     -> hltL3MuonCandidates (P)                                                           *
+  *     -> hltL3crIsoL1sMu22Or25L1f0L2f10QL3f27QL3trkIsoFiltered0p09 (F)                     *
+  *     hltL3crIsoL1sMu22Or25L1f0L2f10QL3f27QL3trkIsoFiltered0p09                            *
+  *                                                                                          *
+  *   HLT_IsoTkMu22                                                                          *
+  *     -> hltHighPtTkMuonCands (P)                                                          *
+  *     -> hltL3fL1sMu20L1f0Tkf22QL3trkIsoFiltered0p09 (F)                                   *
+  *     hltL3fL1sMu20L1f0Tkf22QL3trkIsoFiltered0p09                                          *
+  *                                                                                          *
+  *   HLT_IsoTkMu22_eta2p1                                                                   *
+  *     -> hltHighPtTkMuonCands (P)                                                          *
+  *     -> hltL3fL1sMu20erL1f0Tkf22QL3trkIsoFiltered0p09 (F)                                 *
+  *     hltL3fL1sMu20erL1f0Tkf22QL3trkIsoFiltered0p09                                        *
+  *                                                                                          *
+  *   HLT_Mu50                                                                               *
+  *     -> hltL3MuonCandidates (P)                                                           *
+  *     hltL3fL1sMu22Or25L1f0L2f10QL3Filtered50Q                                             *
+  *                                                                                          *
+  *   HLT_TkMu50                                                                             *
+  *     -> hltHighPtTkMuonCands (P)                                                          *
+  *     hltL3fL1sMu25f0TkFiltered50Q                                                         *
+  *                                                                                          *
+  ********************************************************************************************
+
+  **** Summary of filters per trigger in '[1m94X_mc2017_realistic_v10[0m' **************************
+  *                                                                                          *
+  *   HLT_IsoMu24                                                                            *
+  *     -> hltIterL3MuonCandidates (P)                                                       *
+  *     -> hltIterL3OIL3MuonCandidates (P)                                                   *
+  *     hltL3crIsoL1sSingleMu22L1f0L2f10QL3f24QL3trkIsoFiltered0p07                          *
+  *                                                                                          *
+  *   HLT_IsoMu27                                                                            *
+  *     -> hltIterL3MuonCandidates (P)                                                       *
+  *     -> hltIterL3OIL3MuonCandidates (P)                                                   *
+  *     hltL3crIsoL1sMu22Or25L1f0L2f10QL3f27QL3trkIsoFiltered0p07                            *
+  *                                                                                          *
+  *   HLT_Mu50                                                                               *
+  *     -> hltIterL3MuonCandidates (P)                                                       *
+  *     -> hltIterL3OIL3MuonCandidates (P)                                                   *
+  *     hltL3fL1sMu22Or25L1f0L2f10QL3Filtered50Q                                             *
+  *                                                                                          *
+  *   HLT_OldMu100                                                                           *
+  *     -> hltOldL3MuonCandidates (P)                                                        *
+  *     hltL3fL1sMu22Or25L1f0L2f10QL3Filtered100Q                                            *
+  *                                                                                          *
+  *   HLT_TkMu100                                                                            *
+  *     -> hltHighPtTkMuonCands (P)                                                          *
+  *     hltL3fL1sMu25f0TkFiltered100Q                                                        *
+  *                                                                                          *
+  ********************************************************************************************
+
+  **** Summary of filters per trigger in '[1m102X_upgrade2018_realistic_v15[0m' ********************
+  *                                                                                          *
+  *   HLT_IsoMu24                                                                            *
+  *     -> hltIterL3MuonCandidates (P)                                                       *
+  *     -> hltIterL3OIL3MuonCandidates (P)                                                   *
+  *     hltL3crIsoL1sSingleMu22L1f0L2f10QL3f24QL3trkIsoFiltered0p07                          *
+  *                                                                                          *
+  *   HLT_IsoMu27                                                                            *
+  *     -> hltIterL3MuonCandidates (P)                                                       *
+  *     -> hltIterL3OIL3MuonCandidates (P)                                                   *
+  *     hltL3crIsoL1sMu22Or25L1f0L2f10QL3f27QL3trkIsoFiltered0p07                            *
+  *                                                                                          *
+  *   HLT_Mu50                                                                               *
+  *     -> hltIterL3MuonCandidates (P)                                                       *
+  *     -> hltIterL3OIL3MuonCandidates (P)                                                   *
+  *     hltL3fL1sMu22Or25L1f0L2f10QL3Filtered50Q                                             *
+  *                                                                                          *
+  *   HLT_OldMu100                                                                           *
+  *     -> hltOldL3MuonCandidates (P)                                                        *
+  *     hltL3fL1sMu22Or25L1f0L2f10QL3Filtered100Q                                            *
+  *                                                                                          *
+  *   HLT_TkMu100                                                                            *
+  *     -> hltHighPtTkMuonCands (P)                                                          *
+  *     hltL3fL1sMu25f0TkFiltered100Q                                                        *
+  *                                                                                          *
+  ********************************************************************************************
+
+  **** Summary of filters per trigger in '[1m80X_dataRun2_HLT_v12[0m' ******************************
+  *                                                                                          *
+  *   HLT_IsoMu22                                                                            *
+  *     -> hltL3MuonCandidates (P)                                                           *
+  *     -> hltL3crIsoL1sMu20L1f0L2f10QL3f22QL3trkIsoFiltered0p09 (F)                         *
+  *     hltL3crIsoL1sMu20L1f0L2f10QL3f22QL3trkIsoFiltered0p09                                *
+  *                                                                                          *
+  *   HLT_IsoMu22_eta2p1                                                                     *
+  *     -> hltL3MuonCandidates (P)                                                           *
+  *     -> hltL3crIsoL1sSingleMu20erL1f0L2f10QL3f22QL3trkIsoFiltered0p09 (F)                 *
+  *     hltL3crIsoL1sSingleMu20erL1f0L2f10QL3f22QL3trkIsoFiltered0p09                        *
+  *                                                                                          *
+  *   HLT_IsoMu24                                                                            *
+  *     -> hltL3MuonCandidates (P)                                                           *
+  *     -> hltL3crIsoL1sMu22L1f0L2f10QL3f24QL3trkIsoFiltered0p09 (F)                         *
+  *     hltL3crIsoL1sMu22L1f0L2f10QL3f24QL3trkIsoFiltered0p09                                *
+  *                                                                                          *
+  *   HLT_IsoMu27                                                                            *
+  *     -> hltL3MuonCandidates (P)                                                           *
+  *     -> hltL3crIsoL1sMu22Or25L1f0L2f10QL3f27QL3trkIsoFiltered0p09 (F)                     *
+  *     hltL3crIsoL1sMu22Or25L1f0L2f10QL3f27QL3trkIsoFiltered0p09                            *
+  *                                                                                          *
+  *   HLT_IsoTkMu22                                                                          *
+  *     -> hltHighPtTkMuonCands (P)                                                          *
+  *     -> hltL3fL1sMu20L1f0Tkf22QL3trkIsoFiltered0p09 (F)                                   *
+  *     hltL3fL1sMu20L1f0Tkf22QL3trkIsoFiltered0p09                                          *
+  *                                                                                          *
+  *   HLT_IsoTkMu22_eta2p1                                                                   *
+  *     -> hltHighPtTkMuonCands (P)                                                          *
+  *     -> hltL3fL1sMu20erL1f0Tkf22QL3trkIsoFiltered0p09 (F)                                 *
+  *     hltL3fL1sMu20erL1f0Tkf22QL3trkIsoFiltered0p09                                        *
+  *                                                                                          *
+  *   HLT_Mu50                                                                               *
+  *     -> hltL3MuonCandidates (P)                                                           *
+  *     hltL3fL1sMu22Or25L1f0L2f10QL3Filtered50Q                                             *
+  *                                                                                          *
+  *   HLT_TkMu50                                                                             *
+  *     -> hltHighPtTkMuonCands (P)                                                          *
+  *     hltL3fL1sMu25f0TkFiltered50Q                                                         *
+  *                                                                                          *
+  ********************************************************************************************
+
+  **** Summary of filters per trigger in '[1m92X_dataRun2_HLT_v4[0m' *******************************
+  *                                                                                          *
+  *   HLT_IsoMu24                                                                            *
+  *     -> hltIterL3MuonCandidates (P)                                                       *
+  *     -> hltIterL3OIL3MuonCandidates (P)                                                   *
+  *     hltL3crIsoL1sSingleMu22L1f0L2f10QL3f24QL3trkIsoFiltered0p07                          *
+  *                                                                                          *
+  *   HLT_IsoMu27                                                                            *
+  *     -> hltIterL3MuonCandidates (P)                                                       *
+  *     -> hltIterL3OIL3MuonCandidates (P)                                                   *
+  *     hltL3crIsoL1sMu22Or25L1f0L2f10QL3f27QL3trkIsoFiltered0p07                            *
+  *                                                                                          *
+  *   HLT_Mu50                                                                               *
+  *     -> hltIterL3MuonCandidates (P)                                                       *
+  *     -> hltIterL3OIL3MuonCandidates (P)                                                   *
+  *     hltL3fL1sMu22Or25L1f0L2f10QL3Filtered50Q                                             *
+  *                                                                                          *
+  *   HLT_OldMu100                                                                           *
+  *     -> hltOldL3MuonCandidates (P)                                                        *
+  *     hltL3fL1sMu22Or25L1f0L2f10QL3Filtered100Q                                            *
+  *                                                                                          *
+  *   HLT_TkMu100                                                                            *
+  *     -> hltHighPtTkMuonCands (P)                                                          *
+  *     hltL3fL1sMu25f0TkFiltered100Q                                                        *
+  *                                                                                          *
+  ********************************************************************************************
+
+  **** Summary of filters per trigger in '[1m92X_dataRun2_HLT_v7[0m' *******************************
+  *                                                                                          *
+  *   HLT_IsoMu24                                                                            *
+  *     -> hltIterL3MuonCandidates (P)                                                       *
+  *     -> hltIterL3OIL3MuonCandidates (P)                                                   *
+  *     hltL3crIsoL1sSingleMu22L1f0L2f10QL3f24QL3trkIsoFiltered0p07                          *
+  *                                                                                          *
+  *   HLT_IsoMu27                                                                            *
+  *     -> hltIterL3MuonCandidates (P)                                                       *
+  *     -> hltIterL3OIL3MuonCandidates (P)                                                   *
+  *     hltL3crIsoL1sMu22Or25L1f0L2f10QL3f27QL3trkIsoFiltered0p07                            *
+  *                                                                                          *
+  *   HLT_Mu50                                                                               *
+  *     -> hltIterL3MuonCandidates (P)                                                       *
+  *     -> hltIterL3OIL3MuonCandidates (P)                                                   *
+  *     hltL3fL1sMu22Or25L1f0L2f10QL3Filtered50Q                                             *
+  *                                                                                          *
+  *   HLT_OldMu100                                                                           *
+  *     -> hltOldL3MuonCandidates (P)                                                        *
+  *     hltL3fL1sMu22Or25L1f0L2f10QL3Filtered100Q                                            *
+  *                                                                                          *
+  *   HLT_TkMu100                                                                            *
+  *     -> hltHighPtTkMuonCands (P)                                                          *
+  *     hltL3fL1sMu25f0TkFiltered100Q                                                        *
+  *                                                                                          *
+  ********************************************************************************************
+
+  **** Summary of filters per trigger in '[1m100X_dataRun2_HLT_v3[0m' ******************************
+  *                                                                                          *
+  *   HLT_IsoMu24                                                                            *
+  *     -> hltIterL3MuonCandidates (P)                                                       *
+  *     -> hltIterL3OIL3MuonCandidates (P)                                                   *
+  *     hltL3crIsoL1sSingleMu22L1f0L2f10QL3f24QL3trkIsoFiltered0p07                          *
+  *                                                                                          *
+  *   HLT_IsoMu27                                                                            *
+  *     -> hltIterL3MuonCandidates (P)                                                       *
+  *     -> hltIterL3OIL3MuonCandidates (P)                                                   *
+  *     hltL3crIsoL1sMu22Or25L1f0L2f10QL3f27QL3trkIsoFiltered0p07                            *
+  *                                                                                          *
+  *   HLT_Mu50                                                                               *
+  *     -> hltIterL3MuonCandidates (P)                                                       *
+  *     -> hltIterL3OIL3MuonCandidates (P)                                                   *
+  *     hltL3fL1sMu22Or25L1f0L2f10QL3Filtered50Q                                             *
+  *                                                                                          *
+  *   HLT_OldMu100                                                                           *
+  *     -> hltOldL3MuonCandidates (P)                                                        *
+  *     hltL3fL1sMu22Or25L1f0L2f10QL3Filtered100Q                                            *
+  *                                                                                          *
+  *   HLT_TkMu100                                                                            *
+  *     -> hltHighPtTkMuonCands (P)                                                          *
+  *     hltL3fL1sMu25f0TkFiltered100Q                                                        *
+  *                                                                                          *
+  ********************************************************************************************
+
+  **** Summary of filters per trigger in '[1m101X_dataRun2_HLT_v7[0m' ******************************
+  *                                                                                          *
+  *   HLT_IsoMu24                                                                            *
+  *     -> hltIterL3MuonCandidates (P)                                                       *
+  *     -> hltIterL3OIL3MuonCandidates (P)                                                   *
+  *     hltL3crIsoL1sSingleMu22L1f0L2f10QL3f24QL3trkIsoFiltered0p07                          *
+  *                                                                                          *
+  *   HLT_IsoMu27                                                                            *
+  *     -> hltIterL3MuonCandidates (P)                                                       *
+  *     -> hltIterL3OIL3MuonCandidates (P)                                                   *
+  *     hltL3crIsoL1sMu22Or25L1f0L2f10QL3f27QL3trkIsoFiltered0p07                            *
+  *                                                                                          *
+  *   HLT_Mu50                                                                               *
+  *     -> hltIterL3MuonCandidates (P)                                                       *
+  *     -> hltIterL3OIL3MuonCandidates (P)                                                   *
+  *     hltL3fL1sMu22Or25L1f0L2f10QL3Filtered50Q                                             *
+  *                                                                                          *
+  *   HLT_OldMu100                                                                           *
+  *     -> hltOldL3MuonCandidates (P)                                                        *
+  *     hltL3fL1sMu22Or25L1f0L2f10QL3Filtered100Q                                            *
+  *                                                                                          *
+  *   HLT_TkMu100                                                                            *
+  *     -> hltHighPtTkMuonCands (P)                                                          *
+  *     hltL3fL1sMu25f0TkFiltered100Q                                                        *
+  *                                                                                          *
+  ********************************************************************************************
+
+  **** Summary of filters per trigger in '[1mAll[0m' ***********************************************
+  *                                                                                          *
+  *   HLT_IsoMu22                                                                            *
+  *     -> hltL3MuonCandidates (P)                                                           *
+  *     -> hltL3crIsoL1sMu20L1f0L2f10QL3f22QL3trkIsoFiltered0p09 (F)                         *
+  *     hltL3crIsoL1sMu20L1f0L2f10QL3f22QL3trkIsoFiltered0p09                                *
+  *                                                                                          *
+  *   HLT_IsoMu22_eta2p1                                                                     *
+  *     -> hltL3MuonCandidates (P)                                                           *
+  *     -> hltL3crIsoL1sSingleMu20erL1f0L2f10QL3f22QL3trkIsoFiltered0p09 (F)                 *
+  *     hltL3crIsoL1sSingleMu20erL1f0L2f10QL3f22QL3trkIsoFiltered0p09                        *
+  *                                                                                          *
+  *   HLT_IsoMu24                                                                            *
+  *     -> hltIterL3MuonCandidates (P)                                                       *
+  *     -> hltIterL3OIL3MuonCandidates (P)                                                   *
+  *     -> hltL3MuonCandidates (P)                                                           *
+  *     -> hltL3crIsoL1sMu22L1f0L2f10QL3f24QL3trkIsoFiltered0p09 (F)                         *
+  *     hltL3crIsoL1sMu22L1f0L2f10QL3f24QL3trkIsoFiltered0p09                                *
+  *     hltL3crIsoL1sSingleMu22L1f0L2f10QL3f24QL3trkIsoFiltered0p07                          *
+  *                                                                                          *
+  *   HLT_IsoMu27                                                                            *
+  *     -> hltIterL3MuonCandidates (P)                                                       *
+  *     -> hltIterL3OIL3MuonCandidates (P)                                                   *
+  *     -> hltL3MuonCandidates (P)                                                           *
+  *     -> hltL3crIsoL1sMu22Or25L1f0L2f10QL3f27QL3trkIsoFiltered0p09 (F)                     *
+  *     hltL3crIsoL1sMu22Or25L1f0L2f10QL3f27QL3trkIsoFiltered0p07                            *
+  *     hltL3crIsoL1sMu22Or25L1f0L2f10QL3f27QL3trkIsoFiltered0p09                            *
+  *                                                                                          *
+  *   HLT_IsoTkMu22                                                                          *
+  *     -> hltHighPtTkMuonCands (P)                                                          *
+  *     -> hltL3fL1sMu20L1f0Tkf22QL3trkIsoFiltered0p09 (F)                                   *
+  *     hltL3fL1sMu20L1f0Tkf22QL3trkIsoFiltered0p09                                          *
+  *                                                                                          *
+  *   HLT_IsoTkMu22_eta2p1                                                                   *
+  *     -> hltHighPtTkMuonCands (P)                                                          *
+  *     -> hltL3fL1sMu20erL1f0Tkf22QL3trkIsoFiltered0p09 (F)                                 *
+  *     hltL3fL1sMu20erL1f0Tkf22QL3trkIsoFiltered0p09                                        *
+  *                                                                                          *
+  *   HLT_Mu50                                                                               *
+  *     -> hltIterL3MuonCandidates (P)                                                       *
+  *     -> hltIterL3OIL3MuonCandidates (P)                                                   *
+  *     -> hltL3MuonCandidates (P)                                                           *
+  *     hltL3fL1sMu22Or25L1f0L2f10QL3Filtered50Q                                             *
+  *                                                                                          *
+  *   HLT_OldMu100                                                                           *
+  *     -> hltOldL3MuonCandidates (P)                                                        *
+  *     hltL3fL1sMu22Or25L1f0L2f10QL3Filtered100Q                                            *
+  *                                                                                          *
+  *   HLT_TkMu100                                                                            *
+  *     -> hltHighPtTkMuonCands (P)                                                          *
+  *     hltL3fL1sMu25f0TkFiltered100Q                                                        *
+  *                                                                                          *
+  *   HLT_TkMu50                                                                             *
+  *     -> hltHighPtTkMuonCands (P)                                                          *
+  *     hltL3fL1sMu25f0TkFiltered50Q                                                         *
+  *                                                                                          *
+  ********************************************************************************************
+
+=============================================
+
+MessageLogger Summary
+
+ type     category        sev    module        subroutine        count    total
+ ---- -------------------- -- ---------------- ----------------  -----    -----
+    1 XrdAdaptor           -w (NoModuleName)                         2        2
+    2 XrdAdaptor           -w file_open                             19       19
+    3 fileAction           -s file_close                            19       19
+    4 fileAction           -s file_open                             38       38
+
+ type    category    Examples: run/evt        run/evt          run/evt
+ ---- -------------------- ---------------- ---------------- ----------------
+    1 XrdAdaptor           pre-events       pre-events       
+    2 XrdAdaptor           pre-events       PostStreamBeginL PostStreamBeginL
+    3 fileAction           PostStreamBeginL PostStreamBeginL PostGlobalEndRun
+    4 fileAction           pre-events       pre-events       PostStreamBeginL
+
+Severity    # Occurrences   Total Occurrences
+--------    -------------   -----------------
+Warning                21                  21
+System                 57                  57
+
+dropped waiting message count 0
