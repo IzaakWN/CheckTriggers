@@ -8,10 +8,8 @@
  *   https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideHLTAnalysis
  *   https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideHighLevelTrigger#Access_to_the_HLT_configuration
  *   https://github.com/cms-sw/cmssw/blob/master/HLTrigger/HLTcore/interface/HLTConfigProvider.h
+ *   https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideGlobalHLT#Using_frozen_Run_1_or_Run_2_trig
  *
- *   to check:
- *     https://github.com/cms-sw/cmssw/blob/CMSSW_5_3_X/HLTrigger/HLTfilters/python/hltSummaryFilter_cfi.py
- *     https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideGlobalHLT#Using_frozen_Run_1_or_Run_2_trig
  */
 
 #include <iostream>
@@ -51,6 +49,7 @@ class TriggerChecks
     virtual void endJob() override;
     bool selectTrigger(const std::string&);
     bool selectFilter(const std::string&);
+    std::string getTypelabel(const std::string&);
     bool verbose_ = false;
     int nlast_ = 1; // number of last filters
     HLTConfigProvider hltConfig_;
@@ -126,12 +125,14 @@ void TriggerChecks::beginRun(const edm::Run& iRun, const edm::EventSetup& iSetup
           if(checkFilters_.size()>0){
             for(auto const& filter: filters){
               if(selectFilter(filter)){
-                if(verbose_) std::cout << ">>>     \e[1m" << filter << "\e[0m" << std::endl;
-                std::string newfilter = "-> "+filter;
+                std::string type = getTypelabel(filter);
+                if(verbose_) std::cout << ">>>     \e[1m" << filter << " " << type << "\e[0m" << std::endl;
+                std::string newfilter = "-> "+filter+" "+type;
                 trigFilters[shortname].insert(newfilter);
                 trigFilters_["All"][shortname].insert(newfilter);
               }else if(verbose_){
-                std::cout << ">>>     " << filter << std::endl;
+                std::string type = getTypelabel(filter);
+                std::cout << ">>>     " << filter << " " << type << std::endl;
               }
             }
           }else if(verbose_){
@@ -212,6 +213,17 @@ void TriggerChecks::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 }
 
 
+std::string TriggerChecks::getTypelabel(const std::string& filter){
+  std::string type = hltConfig_.moduleEDMType(filter);
+  if(type=="EDFilter"){
+    return "(F)";
+  }else if(type=="EDProducer"){
+    return "(P)";
+  }
+  return "("+type+")";
+}
+
+
 bool TriggerChecks::selectTrigger(const std::string& path){
   for(auto const& trigname: trigNames_){
     if(trigname.find("*")!=std::string::npos){
@@ -228,6 +240,7 @@ bool TriggerChecks::selectTrigger(const std::string& path){
   }
   return false;
 }
+
 
 bool TriggerChecks::selectFilter(const std::string& path){
   for(auto const& filter: checkFilters_){
