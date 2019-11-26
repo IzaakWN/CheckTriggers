@@ -82,3 +82,10 @@ The filter associated with some HLT path can be found using [`plugin/TriggerChec
 The definition of the filter bits for the trigger objects can be found in the [nanoAOD documentation](https://cms-nanoaod-integration.web.cern.ch/integration/master-102X/data102X_doc.html#TrigObj) and [`PhysicsTools/NanoAOD/python/triggerObjects_cff.py`](https://github.com/cms-sw/cmssw/blob/master/PhysicsTools/NanoAOD/python/triggerObjects_cff.py).
 
 This JSON file can be read in by a class that handles trigger tau object matching (see [`python/matchTauTriggersNanoAOD.py`](#match-trigger-objects-in-nanoaod)).
+
+
+
+## Notes
+
+The full database can be accessed with the ConfDB GUI, see [this page](https://twiki.cern.ch/twiki/bin/viewauth/CMS/EvfConfDBGUI).
+
