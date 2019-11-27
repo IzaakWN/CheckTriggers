@@ -19,63 +19,95 @@ year     = options.year
 dtype    = options.dtype
 #trigtype = options.trigtype
 triggers = options.trigger.split(',') if options.trigger else [
+#   
+#   # SINGLE MUON
+#   'HLT_IsoMu22',
+#   'HLT_IsoMu22_eta2p1',
+#   'HLT_IsoTkMu22',
+#   'HLT_IsoTkMu22_eta2p1',
+#   'HLT_IsoMu24',
+#   'HLT_IsoMu27',
+#   'HLT_Mu50',
+#   'HLT_TkMu50',
+#   'HLT_Mu100',
+#   'HLT_OldMu100',
+#   'HLT_TkMu100',
+#   ###'HLT_*Mu50*',
+#   ###'HLT_*Mu100*',
+#   
+#   # SINGLE ELECTRON
+#   'HLT_Ele25_eta2p1_WPTight_Gsf',
+#   'HLT_Ele27_WPTight_Gsf',
+#   'HLT_Ele45_WPLoose_Gsf_L1JetTauSeeded',
+#   'HLT_Ele35_WPTight_Gsf',
+#   'HLT_Ele32_WPTight_Gsf',
+#   'HLT_Ele32_WPTight_Gsf_L1DoubleEG',
+#   'HLT_Ele45_CaloIdVT_GsfTrkIdT_PFJet200_PFJet50',
+#   'HLT_Ele50_CaloIdVT_GsfTrkIdT_PFJet165',
+#   ###'HLT_Ele50*',
+#   'HLT_Ele105_CaloIdVT_GsfTrkIdT',
+#   'HLT_Ele115_CaloIdVT_GsfTrkIdT',
+#   'HLT_Photon175',
+#   'HLT_Photon200',
   
-  # SINGLE MUON
-  'HLT_IsoMu22',
-  'HLT_IsoMu22_eta2p1',
-  'HLT_IsoTkMu22',
-  'HLT_IsoTkMu22_eta2p1',
-  'HLT_IsoMu24',
-  'HLT_IsoMu27',
-  'HLT_Mu50',
-  'HLT_TkMu50',
-  'HLT_Mu100',
-  'HLT_OldMu100',
-  'HLT_TkMu100',
-  ###'HLT_*Mu50*',
-  ###'HLT_*Mu100*',
+  # MULTI LEPTON
+#   'HLT_*Mu17*IsoVVL*Mu8*IsoVVL*', # 2mu-0e
+#   'HLT_DoubleMu*',                # 2mu-0e
+#   'HLT_*TripleMu*',               # 3mu-0e
+#   'HLT_Mu*Ele*',                  # 1mu-1e
+#   'HLT_DoubleMu*Photon*',         # 2mu-1e
+#   'HLT_DiMu*Ele*',                # 2mu-1e
+#   'HLT_DoubleEle*',               # 0mu-2e
+#   'HLT_*Ele*Ele*',                # 0mu-2e
+#   'HLT_DiEle*',                   # 0mu-2e
+#   'HLT_Mu*DiEle*',                # 1mu-2e
+  'HLT_DoubleMu*DoubleEle*',      # 2mu-2e
+#   'HLT_Ele*Ele*Ele*',             # 0mu-3e
+#   'HLT_TriplePhoton*',            # 0mu-3e
+#   
+#   # TAU 2016
+#   'HLT_Ele24_eta2p1_WPLoose_Gsf_LooseIsoPFTau20_SingleL1',
+#   'HLT_Ele24_eta2p1_WPLoose_Gsf_LooseIsoPFTau20',
+#   'HLT_Ele24_eta2p1_WPLoose_Gsf_LooseIsoPFTau30',
+#   'HLT_IsoMu19_eta2p1_LooseIsoPFTau20_SingleL1',
+#   'HLT_IsoMu19_eta2p1_LooseIsoPFTau20',
+#   'HLT_DoubleMediumIsoPFTau35_Trk1_eta2p1_Reg',
+#   'HLT_DoubleMediumCombinedIsoPFTau35_Trk1_eta2p1_Reg',
+#   
+#   # TAU 2017
+#   'HLT_Ele24_eta2p1_WPTight_Gsf_LooseChargedIsoPFTau30_eta2p1_CrossL1',
+#   'HLT_IsoMu20_eta2p1_LooseChargedIsoPFTau27_eta2p1_CrossL1',
+#   'HLT_DoubleTightChargedIsoPFTau35_Trk1_TightID_eta2p1_Reg',
+#   'HLT_DoubleTightChargedIsoPFTau40_Trk1_eta2p1_Reg',
+#   'HLT_DoubleMediumChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg',
+#   
+#   # TAU 2018
+#   'HLT_Ele24_eta2p1_WPTight_Gsf_LooseChargedIsoPFTau30_eta2p1_CrossL1',    # data only
+#   'HLT_Ele24_eta2p1_WPTight_Gsf_LooseChargedIsoPFTauHPS30_eta2p1_CrossL1',
+#   'HLT_IsoMu20_eta2p1_LooseChargedIsoPFTau27_eta2p1_CrossL1',              # data only
+#   'HLT_IsoMu20_eta2p1_LooseChargedIsoPFTauHPS27_eta2p1_CrossL1',
+#   'HLT_DoubleMediumChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg',             # data only
+#   'HLT_DoubleTightChargedIsoPFTau40_Trk1_eta2p1_Reg',                      # data only
+#   'HLT_DoubleTightChargedIsoPFTau35_Trk1_TightID_eta2p1_Reg',              # data only
+#   'HLT_DoubleMediumChargedIsoPFTauHPS35_Trk1_eta2p1_Reg',
   
-  # SINGLE ELECTRON
-  'HLT_Ele25_eta2p1_WPTight_Gsf',
-  'HLT_Ele27_WPTight_Gsf',
-  'HLT_Ele45_WPLoose_Gsf_L1JetTauSeeded',
-  'HLT_Ele35_WPTight_Gsf',
-  'HLT_Ele32_WPTight_Gsf',
-  'HLT_Ele32_WPTight_Gsf_L1DoubleEG',
-  'HLT_Ele45_CaloIdVT_GsfTrkIdT_PFJet200_PFJet50',
-  'HLT_Ele50_CaloIdVT_GsfTrkIdT_PFJet165',
-  ###'HLT_Ele50*',
-  'HLT_Ele105_CaloIdVT_GsfTrkIdT',
-  'HLT_Ele115_CaloIdVT_GsfTrkIdT',
-  'HLT_Photon175',
-  'HLT_Photon200',
-  
-  # TAU 2016
-  'HLT_Ele24_eta2p1_WPLoose_Gsf_LooseIsoPFTau20_SingleL1',
-  'HLT_Ele24_eta2p1_WPLoose_Gsf_LooseIsoPFTau20',
-  'HLT_Ele24_eta2p1_WPLoose_Gsf_LooseIsoPFTau30',
-  'HLT_IsoMu19_eta2p1_LooseIsoPFTau20_SingleL1',
-  'HLT_IsoMu19_eta2p1_LooseIsoPFTau20',
-  'HLT_DoubleMediumIsoPFTau35_Trk1_eta2p1_Reg',
-  'HLT_DoubleMediumCombinedIsoPFTau35_Trk1_eta2p1_Reg',
-  
-  # TAU 2017
-  'HLT_Ele24_eta2p1_WPTight_Gsf_LooseChargedIsoPFTau30_eta2p1_CrossL1',
-  'HLT_IsoMu20_eta2p1_LooseChargedIsoPFTau27_eta2p1_CrossL1',
-  'HLT_DoubleTightChargedIsoPFTau35_Trk1_TightID_eta2p1_Reg',
-  'HLT_DoubleTightChargedIsoPFTau40_Trk1_eta2p1_Reg',
-  'HLT_DoubleMediumChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg',
-  
-  # TAU 2018
-  'HLT_Ele24_eta2p1_WPTight_Gsf_LooseChargedIsoPFTau30_eta2p1_CrossL1',    # data only
-  'HLT_Ele24_eta2p1_WPTight_Gsf_LooseChargedIsoPFTauHPS30_eta2p1_CrossL1',
-  'HLT_IsoMu20_eta2p1_LooseChargedIsoPFTau27_eta2p1_CrossL1',              # data only
-  'HLT_IsoMu20_eta2p1_LooseChargedIsoPFTauHPS27_eta2p1_CrossL1',
-  'HLT_DoubleMediumChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg',             # data only
-  'HLT_DoubleTightChargedIsoPFTau40_Trk1_eta2p1_Reg',                      # data only
-  'HLT_DoubleTightChargedIsoPFTau35_Trk1_TightID_eta2p1_Reg',              # data only
-  'HLT_DoubleMediumChargedIsoPFTauHPS35_Trk1_eta2p1_Reg',
-  
+]
+vetoTriggers = [
+  #"HLT_*NoFilters*",
+  #"HLT_*PFHT*",
+  #"HLT_*PFMET*",
+  #"HLT_DoubleMu0",
+  #'HLT_Mu*DiEle*',
+  #"HLT_*Mu*",
+  #"HLT_*Ele*",
+  #"HLT_*Ele*Ele*Ele*",
+  #"HLT_*Photon*",
+  #"HLT_*Tau*",
+  #"HLT_*Jpsi*",
+  #"HLT_*Psi*",
+  #"HLT_*_Bs*",
+  #"HLT_*Upsilon*",
+  #"HLT_*Jet*",
 ]
 filters = options.filter.split(',') if options.filter else [
   'hltEgammaCandidates',
@@ -84,12 +116,26 @@ filters = options.filter.split(',') if options.filter else [
   '*RelTrkIso*Filtered0p4',
   'hltL3cr*IsoFiltered0p09',
   'hltL3f*IsoFiltered0p09',
-  #'hltIterL3MuonCandidates',
-  #'hltOldL3MuonCandidates',
-  'hlt*L3MuonCandidates',
+  'hlt*L3MuonCandidates', #'hltIterL3MuonCandidates', 'hltOldL3MuonCandidates',
   'hltHighPtTkMuonCands',
   'hlt*TkMuonCands',
   'hlt*TrkMuonCands',
+  'hltEle*Ele*CaloIdLTrackIdLIsoVL*Filter',
+  'hltMu*TrkIsoVVL*Ele*CaloIdLTrackIdLIsoVL*Filter*',
+  'hltOverlapFilterIsoEle*PFTau*',
+  'hltEle*Ele*Ele*CaloIdLTrackIdLDphiLeg*Filter',
+  'hltL3fL1Mu*DoubleEG*Filtered*',
+  'hltMu*DiEle*CaloIdLTrackIdLElectronleg*Filter',
+  'hltL3fL1DoubleMu*EG*Filter*',
+  'hltDiMu*Ele*CaloIdLTrackIdLElectronleg*Filter',
+  'hltEle32L1DoubleEGWPTightGsfTrackIsoFilter',
+  'hltEGL1SingleEGOrFilter',
+  'hltDiMuon*Filtered*',
+  'hltOverlapFilterIsoMu*PFTau*',
+  'hltL3fL1TripleMu*',
+  'hltL3fL1DoubleMu*EG*Filtered*',
+]
+vetoFilters = [
 ]
 
 # INPUT FILES
@@ -170,21 +216,23 @@ files = [
   #director+'/store/data/Run2018D/Tau/MINIAOD/PromptReco-v2/000/320/654/00000/FE8DA6C7-9896-E811-8CD8-FA163EA5E58D.root',
   
 ]
-if   year==2016: files = filter(lambda f: '/RunIISummer16' in f or '/Run2016' in f,files)
-elif year==2017: files = filter(lambda f: '/RunIIFall17'   in f or '/Run2017' in f,files)
-elif year==2018: files = filter(lambda f: '/RunIIAutumn'   in f or '/Run2018' in f,files)
+if   year==2016:    files = filter(lambda f: '/RunIISummer16' in f or '/Run2016' in f,files)
+elif year==2017:    files = filter(lambda f: '/RunIIFall17'   in f or '/Run2017' in f,files)
+elif year==2018:    files = filter(lambda f: '/RunIIAutumn'   in f or '/Run2018' in f,files)
 if   dtype=='data': files = filter(lambda f: '/store/mc/'   not in f,files)
 elif dtype=='mc':   files = filter(lambda f: '/store/data/' not in f,files)
 
 # PRINT
 print ">>> %s checkTriggers_cfg.py %s"%('-'*15,'-'*36)
-print ">>> year     = %s"%year
-print ">>> dtype    = '%s'"%dtype
-print ">>> verbose  = %s"%verbose
-print ">>> nlast    = %s"%nlast
-print ">>> triggers = %s"%triggers
-print ">>> filters  = %s"%filters
-print ">>> files    = [\n>>>   '%s"%("',\n>>>   '".join(files))+"'"
+print ">>> year         = %s"%year
+print ">>> dtype        = '%s'"%dtype
+print ">>> verbose      = %s"%verbose
+print ">>> nlast        = %s"%nlast
+print ">>> triggers     = %s"%triggers
+print ">>> filters      = %s"%filters
+print ">>> vetoTriggers = %s"%vetoTriggers
+print ">>> vetoFilters  = %s"%vetoFilters
+print ">>> files        = [\n>>>   '%s"%("',\n>>>   '".join(files))+"'"
 print ">>> ]"
 print ">>> "+'-'*70
 
@@ -202,6 +250,8 @@ process.source = cms.Source('PoolSource',
 process.check = cms.EDAnalyzer('TriggerChecks',
   triggers     = cms.untracked.vstring(*triggers),
   checkFilters = cms.untracked.vstring(*filters),
+  vetoTriggers = cms.untracked.vstring(*vetoTriggers),
+  vetoFilters  = cms.untracked.vstring(*vetoFilters),
   verbose      = cms.untracked.bool(verbose),
   nlast        = cms.untracked.int32(nlast)
 )

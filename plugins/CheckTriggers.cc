@@ -39,7 +39,10 @@ class TriggerChecks
   public:
     explicit TriggerChecks(const edm::ParameterSet&);
     ~TriggerChecks() { }
-    std::string removeVersionLabel(const std::string&);
+    bool selectTrigger(const std::string&);
+    bool selectFilter(const std::string&);
+    bool vetoTrigger(const std::string&);
+    bool vetoFilter(const std::string&);
   
   private:
     virtual void beginJob() override { }
@@ -47,8 +50,9 @@ class TriggerChecks
     virtual void analyze(const edm::Event&, const edm::EventSetup&) override;
     virtual void endRun(const edm::Run&, const edm::EventSetup&) override { }
     virtual void endJob() override;
-    bool selectTrigger(const std::string&);
-    bool selectFilter(const std::string&);
+    bool select(const std::string&, const std::vector<std::string>);
+    void preparePatterns(std::vector<std::string>&, const std::string);
+    std::string removeVersionLabel(const std::string&);
     std::string getTypelabel(const std::string&);
     bool verbose_ = false;
     int nlast_ = 1; // number of last filters
@@ -57,9 +61,8 @@ class TriggerChecks
     std::map<std::string,std::set<std::string>> trigTables_;
     std::map<std::string,std::set<std::string>> trigFiltersAll_;
     std::map<std::string,std::map<std::string,std::set<std::string>>> trigFilters_;
-    std::vector<std::string> checkFilters_;
     std::vector<std::string> globalTags_;
-    std::vector<std::string> trigNames_ = {
+    std::vector<std::string> triggers_ = {
       "HLT_Iso*Mu22*",
       "HLT_IsoMu24",
       "HLT_IsoMu27",
@@ -74,6 +77,9 @@ class TriggerChecks
       "HLT_IsoMu20_eta2p1_LooseChargedIsoPFTau27_eta2p1_CrossL1",
       "HLT_DoubleMediumChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg",
     };
+    std::vector<std::string> vetoFilters_;
+    std::vector<std::string> vetoTriggers_;
+    std::vector<std::string> checkFilters_;
 };
 
 
@@ -85,16 +91,16 @@ TriggerChecks::TriggerChecks(const edm::ParameterSet& iConfig)
 {
   verbose_           = iConfig.getUntrackedParameter<bool>("verbose",verbose_);
   nlast_             = std::max(iConfig.getUntrackedParameter<int>("nlast",nlast_),1);
-  trigNames_         = iConfig.getUntrackedParameter<std::vector<std::string>>("triggers",trigNames_);
+  triggers_          = iConfig.getUntrackedParameter<std::vector<std::string>>("triggers",triggers_);
+  vetoTriggers_      = iConfig.getUntrackedParameter<std::vector<std::string>>("vetoTriggers",vetoTriggers_);
+  vetoFilters_       = iConfig.getUntrackedParameter<std::vector<std::string>>("vetoFilters",vetoFilters_);
   checkFilters_      = iConfig.getUntrackedParameter<std::vector<std::string>>("checkFilters",checkFilters_);
   trigTables_["All"] = { };
   
-  std::smatch match;
-  std::regex wilcardexp("\\*");
-  for(std::size_t i=0; i<trigNames_.size(); ++i)
-    trigNames_[i] = std::regex_replace(trigNames_[i],wilcardexp,".*")+"_v";
-  for(std::size_t i=0; i<checkFilters_.size(); ++i)
-    checkFilters_[i] = std::regex_replace(checkFilters_[i],wilcardexp,".*");
+  preparePatterns(triggers_,"_v");
+  preparePatterns(vetoTriggers_,"_v");
+  preparePatterns(checkFilters_,"");
+  preparePatterns(vetoFilters_,"");
 }
 
 
@@ -119,12 +125,13 @@ void TriggerChecks::beginRun(const edm::Run& iRun, const edm::EventSetup& iSetup
         const std::vector<std::string>& trignames = hltConfig_.triggerNames();
         for(auto const& trigname: trignames){
           if(!selectTrigger(trigname)) continue;
+          if(vetoTrigger(trigname)) continue;
           if(verbose_) std::cout << ">>>   \e[1m" << trigname << "\e[0m" << std::endl;
           std::vector<std::string> filters = hltConfig_.moduleLabels(trigname);
           std::string shortname  = removeVersionLabel(trigname);
           if(checkFilters_.size()>0){
             for(auto const& filter: filters){
-              if(selectFilter(filter)){
+              if(selectFilter(filter) and !vetoFilter(filter)){
                 std::string type = getTypelabel(filter);
                 if(verbose_) std::cout << ">>>     \e[1m" << filter << " " << type << "\e[0m" << std::endl;
                 std::string newfilter = "-> "+filter+" "+type;
@@ -224,35 +231,42 @@ std::string TriggerChecks::getTypelabel(const std::string& filter){
 }
 
 
-bool TriggerChecks::selectTrigger(const std::string& path){
-  for(auto const& trigname: trigNames_){
-    if(trigname.find("*")!=std::string::npos){
-      //std::string wilcardstr  = "(?<!\\.)\\*";
-      //std::regex wilcardexp("\\*");
-      //std::string trigexp = std::regex_replace(trigname,wilcardexp,".*")+"_v";
-      //std::cout << ">>> " << trigexp << std::endl;
+
+bool TriggerChecks::select(const std::string& path, const std::vector<std::string> patterns){
+  for(auto const& pattern: patterns){
+    if(pattern.find("*")!=std::string::npos){
       std::smatch match;
-      std::regex pattern(trigname);
-      if(std::regex_search(path,match,pattern)) return true;
+      std::regex patternregexp(pattern);
+      if(std::regex_search(path,match,patternregexp)) return true;
     }else{
-      if(path.find(trigname)!=std::string::npos) return true;
+      if(path.find(pattern)!=std::string::npos) return true;
     }
   }
   return false;
 }
 
 
+bool TriggerChecks::selectTrigger(const std::string& path){
+  bool selected = select(path,triggers_);
+  return selected;
+}
+
+
 bool TriggerChecks::selectFilter(const std::string& path){
-  for(auto const& filter: checkFilters_){
-    if(filter.find("*")!=std::string::npos){
-      std::smatch match;
-      std::regex pattern(filter);
-      if(std::regex_search(path,match,pattern)) return true;
-    }else{
-      if(path.find(filter)!=std::string::npos) return true;
-    }
-  }
-  return false;
+  bool selected = select(path,checkFilters_);
+  return selected;
+}
+
+
+bool TriggerChecks::vetoTrigger(const std::string& path){
+  bool veto = select(path,vetoTriggers_);
+  return veto;
+}
+
+
+bool TriggerChecks::vetoFilter(const std::string& path){
+  bool veto = select(path,vetoFilters_);
+  return veto;
 }
 
 
@@ -260,6 +274,13 @@ std::string TriggerChecks::removeVersionLabel(const std::string& path){
   std::regex pattern("_v\\d+$");
   std::string newpath = std::regex_replace(path,pattern,"");
   return newpath;
+}
+
+
+void TriggerChecks::preparePatterns(std::vector<std::string>& patterns, const std::string tag){
+  std::regex wilcardexp("\\*");
+  for(std::size_t i=0; i<patterns.size(); ++i)
+    patterns[i] = std::regex_replace(patterns[i],wilcardexp,".*")+tag;
 }
 
 
