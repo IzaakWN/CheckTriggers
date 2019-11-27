@@ -1,0 +1,651 @@
+>>> --------------- checkTriggers_cfg.py ------------------------------------
+>>> year         = -1
+>>> dtype        = ''
+>>> verbose      = False
+>>> nlast        = 1
+>>> triggers     = ['HLT_DoubleMu*DoubleEle*']
+>>> filters      = ['hltEgammaCandidates', '*PixelMatchFilter', 'hltEle*CaloIdVTGsfTrkIdTGsf*Filter', '*RelTrkIso*Filtered0p4', 'hltL3cr*IsoFiltered0p09', 'hltL3f*IsoFiltered0p09', 'hlt*L3MuonCandidates', 'hltHighPtTkMuonCands', 'hlt*TkMuonCands', 'hlt*TrkMuonCands', 'hltEle*Ele*CaloIdLTrackIdLIsoVL*Filter', 'hltMu*TrkIsoVVL*Ele*CaloIdLTrackIdLIsoVL*Filter*', 'hltOverlapFilterIsoEle*PFTau*', 'hltEle*Ele*Ele*CaloIdLTrackIdLDphiLeg*Filter', 'hltL3fL1Mu*DoubleEG*Filtered*', 'hltMu*DiEle*CaloIdLTrackIdLElectronleg*Filter', 'hltL3fL1DoubleMu*EG*Filter*', 'hltDiMu*Ele*CaloIdLTrackIdLElectronleg*Filter', 'hltEle32L1DoubleEGWPTightGsfTrackIsoFilter', 'hltEGL1SingleEGOrFilter', 'hltDiMuon*Filtered*', 'hltOverlapFilterIsoMu*PFTau*', 'hltL3fL1TripleMu*', 'hltL3fL1DoubleMu*EG*Filtered*']
+>>> vetoTriggers = ['HLT_*Tau*']
+>>> vetoFilters  = []
+>>> files        = [
+>>>   'file:root://xrootd-cms.infn.it//store/mc/RunIISummer16MiniAODv3/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUMoriond17_94X_mcRun2_asymptotic_v3_ext1-v2/120000/ACDA5D95-3EDF-E811-AC6F-842B2B6AEE8B.root',
+>>>   'file:root://xrootd-cms.infn.it//store/mc/RunIIFall17MiniAODv2/DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/MINIAODSIM/PU2017RECOSIMstep_12Apr2018_94X_mc2017_realistic_v14-v1/70000/0256D125-5A44-E811-8C69-44A842CFD64D.root',
+>>>   'file:root://xrootd-cms.infn.it//store/mc/RunIIAutumn18MiniAOD/DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/MINIAODSIM/102X_upgrade2018_realistic_v15-v1/100000/08540B6C-AA39-3F49-8FFE-8771AD2A8885.root',
+>>>   'file:root://xrootd-cms.infn.it//store/data/Run2016B/SingleMuon/MINIAOD/17Jul2018_ver2-v1/50000/9C3FC3BA-498B-E811-9C58-00259048AC9A.root',
+>>>   'file:root://xrootd-cms.infn.it//store/data/Run2016C/SingleMuon/MINIAOD/17Jul2018-v1/20000/141055DA-4D97-E811-9D21-1CB72C1B64E2.root',
+>>>   'file:root://xrootd-cms.infn.it//store/data/Run2016D/SingleMuon/MINIAOD/17Jul2018-v1/00000/F01191AD-278A-E811-8DE3-D48564594F36.root',
+>>>   'file:root://xrootd-cms.infn.it//store/data/Run2016E/SingleMuon/MINIAOD/17Jul2018-v1/00000/544A3D73-8C8A-E811-8724-001E6865A4D3.root',
+>>>   'file:root://xrootd-cms.infn.it//store/data/Run2016F/SingleMuon/MINIAOD/17Jul2018-v1/00000/BA7804F1-358A-E811-9D05-C0BFC0E56866.root',
+>>>   'file:root://xrootd-cms.infn.it//store/data/Run2016G/SingleMuon/MINIAOD/17Jul2018-v1/50000/0EA07C4F-F78F-E811-981F-3417EBE61338.root',
+>>>   'file:root://xrootd-cms.infn.it//store/data/Run2016H/SingleMuon/MINIAOD/17Jul2018-v1/40000/B6B0E662-668B-E811-9EA1-EC0D9A0B3300.root',
+>>>   'file:root://xrootd-cms.infn.it//store/data/Run2017B/SingleMuon/MINIAOD/31Mar2018-v1/80000/54F30BE9-423C-E811-A315-0CC47A7C3410.root',
+>>>   'file:root://xrootd-cms.infn.it//store/data/Run2017C/SingleMuon/MINIAOD/31Mar2018-v1/100000/FAD1BDFD-8337-E811-9C8E-B499BAAC04AA.root',
+>>>   'file:root://xrootd-cms.infn.it//store/data/Run2017D/SingleMuon/MINIAOD/31Mar2018-v1/80000/1E703527-F436-E811-80A7-E0DB55FC1055.root',
+>>>   'file:root://xrootd-cms.infn.it//store/data/Run2017E/SingleMuon/MINIAOD/31Mar2018-v1/90000/AA13B7F5-A938-E811-82CE-0CC47A7C356A.root',
+>>>   'file:root://xrootd-cms.infn.it//store/data/Run2017F/SingleMuon/MINIAOD/31Mar2018-v1/30000/6CD24B25-CF37-E811-9183-0CC47A2B04DE.root',
+>>>   'file:root://xrootd-cms.infn.it//store/data/Run2018A/SingleMuon/MINIAOD/17Sep2018-v2/00000/11697BCC-C4AB-204B-91A9-87F952F9F2C6.root',
+>>>   'file:root://xrootd-cms.infn.it//store/data/Run2018B/SingleMuon/MINIAOD/17Sep2018-v1/100000/7FA66CD1-3158-F94A-A1E0-27BECABAC34A.root',
+>>>   'file:root://xrootd-cms.infn.it//store/data/Run2018C/SingleMuon/MINIAOD/17Sep2018-v1/110000/8DB2B7A5-F627-2144-8F8F-180A8DA0E90D.root',
+>>>   'file:root://xrootd-cms.infn.it//store/data/Run2018D/SingleMuon/MINIAOD/PromptReco-v2/000/320/569/00000/3C8C28E7-1A96-E811-BA8D-02163E012DD8.root'
+>>> ]
+>>> ----------------------------------------------------------------------
+27-Nov-2019 18:28:09 CET  Initiating request to open file file:root://xrootd-cms.infn.it//store/mc/RunIISummer16MiniAODv3/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUMoriond17_94X_mcRun2_asymptotic_v3_ext1-v2/120000/ACDA5D95-3EDF-E811-AC6F-842B2B6AEE8B.root
+[2019-11-27 18:28:55.100839 +0100][Error  ][AsyncSock         ] [xrootd-cms.infn.it:1094 #0.0] Socket error while handshaking: [ERROR] Socket timeout
+[2019-11-27 18:28:55.101004 +0100][Error  ][PostMaster        ] [xrootd-cms.infn.it:1094 #0] elapsed = 45, pConnectionWindow = 31 seconds.
+%MSG-w XrdAdaptor:  file_open 27-Nov-2019 18:28:55 CET pre-events
+Data is served from desy.de instead of original site infn.it
+%MSG
+27-Nov-2019 18:28:57 CET  Successfully opened file file:root://xrootd-cms.infn.it//store/mc/RunIISummer16MiniAODv3/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUMoriond17_94X_mcRun2_asymptotic_v3_ext1-v2/120000/ACDA5D95-3EDF-E811-AC6F-842B2B6AEE8B.root
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/frozen/2016/25ns15e33/v4.0/HLT/V2'
+>>>   Global tag:    '80X_mcRun2_asymptotic_2016_TrancheIV_v6'
+27-Nov-2019 18:29:05 CET  Closed file file:root://xrootd-cms.infn.it//store/mc/RunIISummer16MiniAODv3/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUMoriond17_94X_mcRun2_asymptotic_v3_ext1-v2/120000/ACDA5D95-3EDF-E811-AC6F-842B2B6AEE8B.root
+27-Nov-2019 18:29:05 CET  Initiating request to open file file:root://xrootd-cms.infn.it//store/mc/RunIIFall17MiniAODv2/DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/MINIAODSIM/PU2017RECOSIMstep_12Apr2018_94X_mc2017_realistic_v14-v1/70000/0256D125-5A44-E811-8C69-44A842CFD64D.root
+%MSG-w XrdAdaptor:  file_open 27-Nov-2019 18:29:06 CET PostStreamBeginLumi
+Data is served from desy.de instead of original site infn.it
+%MSG
+27-Nov-2019 18:29:07 CET  Successfully opened file file:root://xrootd-cms.infn.it//store/mc/RunIIFall17MiniAODv2/DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/MINIAODSIM/PU2017RECOSIMstep_12Apr2018_94X_mc2017_realistic_v14-v1/70000/0256D125-5A44-E811-8C69-44A842CFD64D.root
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/frozen/2017/2e34/v4.0/HLT/V5'
+>>>   Global tag:    '94X_mc2017_realistic_v10'
+27-Nov-2019 18:29:09 CET  Closed file file:root://xrootd-cms.infn.it//store/mc/RunIIFall17MiniAODv2/DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/MINIAODSIM/PU2017RECOSIMstep_12Apr2018_94X_mc2017_realistic_v14-v1/70000/0256D125-5A44-E811-8C69-44A842CFD64D.root
+27-Nov-2019 18:29:09 CET  Initiating request to open file file:root://xrootd-cms.infn.it//store/mc/RunIIAutumn18MiniAOD/DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/MINIAODSIM/102X_upgrade2018_realistic_v15-v1/100000/08540B6C-AA39-3F49-8FFE-8771AD2A8885.root
+%MSG-w XrdAdaptor:  file_open 27-Nov-2019 18:29:10 CET PostStreamBeginLumi
+Data is served from desy.de instead of original site infn.it
+%MSG
+27-Nov-2019 18:29:11 CET  Successfully opened file file:root://xrootd-cms.infn.it//store/mc/RunIIAutumn18MiniAOD/DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/MINIAODSIM/102X_upgrade2018_realistic_v15-v1/100000/08540B6C-AA39-3F49-8FFE-8771AD2A8885.root
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/frozen/2018/2e34/v3.2/HLT/V1'
+>>>   Global tag:    '102X_upgrade2018_realistic_v15'
+27-Nov-2019 18:29:13 CET  Closed file file:root://xrootd-cms.infn.it//store/mc/RunIIAutumn18MiniAOD/DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/MINIAODSIM/102X_upgrade2018_realistic_v15-v1/100000/08540B6C-AA39-3F49-8FFE-8771AD2A8885.root
+27-Nov-2019 18:29:13 CET  Initiating request to open file file:root://xrootd-cms.infn.it//store/data/Run2016B/SingleMuon/MINIAOD/17Jul2018_ver2-v1/50000/9C3FC3BA-498B-E811-9C58-00259048AC9A.root
+%MSG-w XrdAdaptor:  file_open 27-Nov-2019 18:29:14 CET PostStreamBeginLumi
+Data is served from desy.de instead of original site infn.it
+%MSG
+27-Nov-2019 18:29:14 CET  Successfully opened file file:root://xrootd-cms.infn.it//store/data/Run2016B/SingleMuon/MINIAOD/17Jul2018_ver2-v1/50000/9C3FC3BA-498B-E811-9C58-00259048AC9A.root
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2016/25ns10e33/v1.1.1/HLT/V3'
+>>>   Global tag:    '80X_dataRun2_HLT_v12'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2016/25ns10e33/v1.1.1/HLT/V12'
+>>>   Global tag:    '80X_dataRun2_HLT_v12'
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2016/25ns10e33/v1.2.1/HLT/V15'
+>>>   Global tag:    '80X_dataRun2_HLT_v12'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2016/25ns10e33/v1.2.2/HLT/V2'
+>>>   Global tag:    '80X_dataRun2_HLT_v12'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2016/25ns10e33/v1.2.2/HLT/V6'
+>>>   Global tag:    '80X_dataRun2_HLT_v12'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2016/25ns10e33/v1.2.2/HLT/V9'
+>>>   Global tag:    '80X_dataRun2_HLT_v12'
+>>>   Trigger menu did not change. Skipping...
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2016/25ns10e33/v1.2.4/HLT/V1'
+>>>   Global tag:    '80X_dataRun2_HLT_v12'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2016/25ns10e33/v1.2.5/HLT/V3'
+>>>   Global tag:    '80X_dataRun2_HLT_v12'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2016/25ns10e33/v1.2.5/HLT/V6'
+>>>   Global tag:    '80X_dataRun2_HLT_v12'
+27-Nov-2019 18:29:21 CET  Closed file file:root://xrootd-cms.infn.it//store/data/Run2016B/SingleMuon/MINIAOD/17Jul2018_ver2-v1/50000/9C3FC3BA-498B-E811-9C58-00259048AC9A.root
+27-Nov-2019 18:29:21 CET  Initiating request to open file file:root://xrootd-cms.infn.it//store/data/Run2016C/SingleMuon/MINIAOD/17Jul2018-v1/20000/141055DA-4D97-E811-9D21-1CB72C1B64E2.root
+%MSG-w XrdAdaptor:  file_open 27-Nov-2019 18:29:22 CET PostStreamBeginLumi
+Data is served from desy.de instead of original site infn.it
+%MSG
+27-Nov-2019 18:29:22 CET  Successfully opened file file:root://xrootd-cms.infn.it//store/data/Run2016C/SingleMuon/MINIAOD/17Jul2018-v1/20000/141055DA-4D97-E811-9D21-1CB72C1B64E2.root
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2016/25ns10e33/v2.1.4/HLT/V2'
+>>>   Global tag:    '80X_dataRun2_HLT_v12'
+27-Nov-2019 18:29:25 CET  Closed file file:root://xrootd-cms.infn.it//store/data/Run2016C/SingleMuon/MINIAOD/17Jul2018-v1/20000/141055DA-4D97-E811-9D21-1CB72C1B64E2.root
+27-Nov-2019 18:29:25 CET  Initiating request to open file file:root://xrootd-cms.infn.it//store/data/Run2016D/SingleMuon/MINIAOD/17Jul2018-v1/00000/F01191AD-278A-E811-8DE3-D48564594F36.root
+%MSG-w XrdAdaptor:  file_open 27-Nov-2019 18:29:26 CET PostStreamBeginLumi
+Data is served from desy.de instead of original site infn.it
+%MSG
+27-Nov-2019 18:29:26 CET  Successfully opened file file:root://xrootd-cms.infn.it//store/data/Run2016D/SingleMuon/MINIAOD/17Jul2018-v1/00000/F01191AD-278A-E811-8DE3-D48564594F36.root
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2016/25ns10e33/v2.2.0/HLT/V2'
+>>>   Global tag:    '80X_dataRun2_HLT_v12'
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2016/25ns10e33/v2.2.0/HLT/V13'
+>>>   Global tag:    '80X_dataRun2_HLT_v12'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2016/25ns10e33/v2.2.1/HLT/V3'
+>>>   Global tag:    '80X_dataRun2_HLT_v12'
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2016/25ns10e33/v2.2.2/HLT/V1'
+>>>   Global tag:    '80X_dataRun2_HLT_v12'
+27-Nov-2019 18:29:30 CET  Closed file file:root://xrootd-cms.infn.it//store/data/Run2016D/SingleMuon/MINIAOD/17Jul2018-v1/00000/F01191AD-278A-E811-8DE3-D48564594F36.root
+27-Nov-2019 18:29:30 CET  Initiating request to open file file:root://xrootd-cms.infn.it//store/data/Run2016E/SingleMuon/MINIAOD/17Jul2018-v1/00000/544A3D73-8C8A-E811-8724-001E6865A4D3.root
+%MSG-w XrdAdaptor:  file_open 27-Nov-2019 18:29:31 CET PostStreamBeginLumi
+Data is served from desy.de instead of original site infn.it
+%MSG
+27-Nov-2019 18:29:31 CET  Successfully opened file file:root://xrootd-cms.infn.it//store/data/Run2016E/SingleMuon/MINIAOD/17Jul2018-v1/00000/544A3D73-8C8A-E811-8724-001E6865A4D3.root
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2016/25ns10e33/v2.2.3/HLT/V2'
+>>>   Global tag:    '80X_dataRun2_HLT_v12'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2016/25ns15e33/v3.0/HLT/V6'
+>>>   Global tag:    '80X_dataRun2_HLT_v12'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2016/25ns15e33/v3.0/HLT/V7'
+>>>   Global tag:    '80X_dataRun2_HLT_v12'
+>>>   Trigger menu did not change. Skipping...
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2016/25ns15e33/v3.0.1/HLT/V2'
+>>>   Global tag:    '80X_dataRun2_HLT_v12'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2016/25ns15e33/v3.0.1/HLT/V3'
+>>>   Global tag:    '80X_dataRun2_HLT_v12'
+>>>   Trigger menu did not change. Skipping...
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2016/25ns15e33/v3.0.1/HLT/V4'
+>>>   Global tag:    '80X_dataRun2_HLT_v12'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2016/25ns15e33/v3.0.1/HLT/V6'
+>>>   Global tag:    '80X_dataRun2_HLT_v12'
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+27-Nov-2019 18:29:37 CET  Closed file file:root://xrootd-cms.infn.it//store/data/Run2016E/SingleMuon/MINIAOD/17Jul2018-v1/00000/544A3D73-8C8A-E811-8724-001E6865A4D3.root
+27-Nov-2019 18:29:37 CET  Initiating request to open file file:root://xrootd-cms.infn.it//store/data/Run2016F/SingleMuon/MINIAOD/17Jul2018-v1/00000/BA7804F1-358A-E811-9D05-C0BFC0E56866.root
+%MSG-w XrdAdaptor:  file_open 27-Nov-2019 18:29:38 CET PostStreamBeginLumi
+Data is served from desy.de instead of original site infn.it
+%MSG
+27-Nov-2019 18:29:38 CET  Successfully opened file file:root://xrootd-cms.infn.it//store/data/Run2016F/SingleMuon/MINIAOD/17Jul2018-v1/00000/BA7804F1-358A-E811-9D05-C0BFC0E56866.root
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2016/25ns15e33/v3.0.3/HLT/V4'
+>>>   Global tag:    '80X_dataRun2_HLT_v12'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2016/25ns15e33/v3.0.3/HLT/V4'
+>>>   Global tag:    '80X_dataRun2_HLT_v12'
+>>>   Trigger menu did not change. Skipping...
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2016/25ns15e33/v3.1.1/HLT/V1'
+>>>   Global tag:    '80X_dataRun2_HLT_v12'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2016/25ns15e33/v3.1.1/HLT/V2'
+>>>   Global tag:    '80X_dataRun2_HLT_v12'
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+27-Nov-2019 18:29:42 CET  Closed file file:root://xrootd-cms.infn.it//store/data/Run2016F/SingleMuon/MINIAOD/17Jul2018-v1/00000/BA7804F1-358A-E811-9D05-C0BFC0E56866.root
+27-Nov-2019 18:29:42 CET  Initiating request to open file file:root://xrootd-cms.infn.it//store/data/Run2016G/SingleMuon/MINIAOD/17Jul2018-v1/50000/0EA07C4F-F78F-E811-981F-3417EBE61338.root
+%MSG-w XrdAdaptor:  file_open 27-Nov-2019 18:29:43 CET PostStreamBeginLumi
+Data is served from desy.de instead of original site infn.it
+%MSG
+27-Nov-2019 18:29:43 CET  Successfully opened file file:root://xrootd-cms.infn.it//store/data/Run2016G/SingleMuon/MINIAOD/17Jul2018-v1/50000/0EA07C4F-F78F-E811-981F-3417EBE61338.root
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2016/25ns15e33/v3.1.3/HLT/V15'
+>>>   Global tag:    '80X_dataRun2_HLT_v12'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2016/25ns15e33/v3.1.4/HLT/V1'
+>>>   Global tag:    '80X_dataRun2_HLT_v12'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2016/25ns15e33/v3.1.5/HLT/V1'
+>>>   Global tag:    '80X_dataRun2_HLT_v12'
+>>>   Trigger menu did not change. Skipping...
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2016/LowPU25ns/v1.1/HLT/V2'
+>>>   Global tag:    '80X_dataRun2_HLT_v12'
+>>>   Trigger menu did not change. Skipping...
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2016/25ns15e33/v3.1.6/HLT/V1'
+>>>   Global tag:    '80X_dataRun2_HLT_v12'
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2016/25ns15e33/v3.1.6/HLT/V2'
+>>>   Global tag:    '80X_dataRun2_HLT_v12'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2016/25ns15e33/v3.1.7/HLT/V4'
+>>>   Global tag:    '80X_dataRun2_HLT_v12'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2016/25ns15e33/v3.1.8/HLT/V1'
+>>>   Global tag:    '80X_dataRun2_HLT_v12'
+>>>   Trigger menu did not change. Skipping...
+27-Nov-2019 18:29:50 CET  Closed file file:root://xrootd-cms.infn.it//store/data/Run2016G/SingleMuon/MINIAOD/17Jul2018-v1/50000/0EA07C4F-F78F-E811-981F-3417EBE61338.root
+27-Nov-2019 18:29:50 CET  Initiating request to open file file:root://xrootd-cms.infn.it//store/data/Run2016H/SingleMuon/MINIAOD/17Jul2018-v1/40000/B6B0E662-668B-E811-9EA1-EC0D9A0B3300.root
+%MSG-w XrdAdaptor:  file_open 27-Nov-2019 18:29:53 CET PostStreamBeginLumi
+Data is served from ncg.ingrid.pt instead of original site infn.it
+%MSG
+27-Nov-2019 18:29:53 CET  Successfully opened file file:root://xrootd-cms.infn.it//store/data/Run2016H/SingleMuon/MINIAOD/17Jul2018-v1/40000/B6B0E662-668B-E811-9EA1-EC0D9A0B3300.root
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2016/25ns15e33/v4.2.1/HLT/V1'
+>>>   Global tag:    '80X_dataRun2_HLT_v12'
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2016/25ns15e33/v4.2.2/HLT/V1'
+>>>   Global tag:    '80X_dataRun2_HLT_v12'
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+27-Nov-2019 18:29:57 CET  Closed file file:root://xrootd-cms.infn.it//store/data/Run2016H/SingleMuon/MINIAOD/17Jul2018-v1/40000/B6B0E662-668B-E811-9EA1-EC0D9A0B3300.root
+27-Nov-2019 18:29:57 CET  Initiating request to open file file:root://xrootd-cms.infn.it//store/data/Run2017B/SingleMuon/MINIAOD/31Mar2018-v1/80000/54F30BE9-423C-E811-A315-0CC47A7C3410.root
+%MSG-w XrdAdaptor:  file_open 27-Nov-2019 18:30:04 CET PostStreamBeginLumi
+Data is served from physik.rwth-aachen.de instead of original site infn.it
+%MSG
+27-Nov-2019 18:30:04 CET  Successfully opened file file:root://xrootd-cms.infn.it//store/data/Run2017B/SingleMuon/MINIAOD/31Mar2018-v1/80000/54F30BE9-423C-E811-A315-0CC47A7C3410.root
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2017/2e34/v1.1.5/HLT/V1'
+>>>   Global tag:    '92X_dataRun2_HLT_v4'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2017/2e34/v1.2.1/HLT/V1'
+>>>   Global tag:    '92X_dataRun2_HLT_v4'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2017/2e34/v1.2.4/HLT/V2'
+>>>   Global tag:    '92X_dataRun2_HLT_v4'
+27-Nov-2019 18:30:06 CET  Closed file file:root://xrootd-cms.infn.it//store/data/Run2017B/SingleMuon/MINIAOD/31Mar2018-v1/80000/54F30BE9-423C-E811-A315-0CC47A7C3410.root
+27-Nov-2019 18:30:06 CET  Initiating request to open file file:root://xrootd-cms.infn.it//store/data/Run2017C/SingleMuon/MINIAOD/31Mar2018-v1/100000/FAD1BDFD-8337-E811-9C8E-B499BAAC04AA.root
+%MSG-w XrdAdaptor:  file_open 27-Nov-2019 18:30:07 CET PostStreamBeginLumi
+Data is served from desy.de instead of original site infn.it
+%MSG
+27-Nov-2019 18:30:08 CET  Successfully opened file file:root://xrootd-cms.infn.it//store/data/Run2017C/SingleMuon/MINIAOD/31Mar2018-v1/100000/FAD1BDFD-8337-E811-9C8E-B499BAAC04AA.root
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2017/2e34/v2.1.0/HLT/V2'
+>>>   Global tag:    '92X_dataRun2_HLT_v4'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2017/2e34/v2.1.3/HLT/V1'
+>>>   Global tag:    '92X_dataRun2_HLT_v4'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2017/2e34/v2.1.2/HLT/V1'
+>>>   Global tag:    '92X_dataRun2_HLT_v4'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2017/2e34/v2.1.3/HLT/V1'
+>>>   Global tag:    '92X_dataRun2_HLT_v4'
+>>>   Trigger menu did not change. Skipping...
+27-Nov-2019 18:30:12 CET  Closed file file:root://xrootd-cms.infn.it//store/data/Run2017C/SingleMuon/MINIAOD/31Mar2018-v1/100000/FAD1BDFD-8337-E811-9C8E-B499BAAC04AA.root
+27-Nov-2019 18:30:12 CET  Initiating request to open file file:root://xrootd-cms.infn.it//store/data/Run2017D/SingleMuon/MINIAOD/31Mar2018-v1/80000/1E703527-F436-E811-80A7-E0DB55FC1055.root
+%MSG-w XrdAdaptor:  file_open 27-Nov-2019 18:30:13 CET PostStreamBeginLumi
+Data is served from desy.de instead of original site infn.it
+%MSG
+27-Nov-2019 18:30:13 CET  Successfully opened file file:root://xrootd-cms.infn.it//store/data/Run2017D/SingleMuon/MINIAOD/31Mar2018-v1/80000/1E703527-F436-E811-80A7-E0DB55FC1055.root
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2017/2e34/v3.0.0/HLT/V1'
+>>>   Global tag:    '92X_dataRun2_HLT_v7'
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2017/2e34/v3.0.0/HLT/V4'
+>>>   Global tag:    '92X_dataRun2_HLT_v7'
+>>>   Trigger menu did not change. Skipping...
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2017/2e34/v3.1.0/HLT/V1'
+>>>   Global tag:    '92X_dataRun2_HLT_v7'
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+27-Nov-2019 18:30:17 CET  Closed file file:root://xrootd-cms.infn.it//store/data/Run2017D/SingleMuon/MINIAOD/31Mar2018-v1/80000/1E703527-F436-E811-80A7-E0DB55FC1055.root
+27-Nov-2019 18:30:17 CET  Initiating request to open file file:root://xrootd-cms.infn.it//store/data/Run2017E/SingleMuon/MINIAOD/31Mar2018-v1/90000/AA13B7F5-A938-E811-82CE-0CC47A7C356A.root
+%MSG-w XrdAdaptor:  file_open 27-Nov-2019 18:30:18 CET PostStreamBeginLumi
+Data is served from desy.de instead of original site infn.it
+%MSG
+27-Nov-2019 18:30:18 CET  Successfully opened file file:root://xrootd-cms.infn.it//store/data/Run2017E/SingleMuon/MINIAOD/31Mar2018-v1/90000/AA13B7F5-A938-E811-82CE-0CC47A7C356A.root
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2017/2e34/v3.1.0/HLT/V2'
+>>>   Global tag:    '92X_dataRun2_HLT_v7'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2017/2e34/v3.1.3/HLT/V1'
+>>>   Global tag:    '92X_dataRun2_HLT_v7'
+27-Nov-2019 18:30:21 CET  Closed file file:root://xrootd-cms.infn.it//store/data/Run2017E/SingleMuon/MINIAOD/31Mar2018-v1/90000/AA13B7F5-A938-E811-82CE-0CC47A7C356A.root
+27-Nov-2019 18:30:21 CET  Initiating request to open file file:root://xrootd-cms.infn.it//store/data/Run2017F/SingleMuon/MINIAOD/31Mar2018-v1/30000/6CD24B25-CF37-E811-9183-0CC47A2B04DE.root
+%MSG-w XrdAdaptor:  file_open 27-Nov-2019 18:30:22 CET PostStreamBeginLumi
+Data is served from desy.de instead of original site infn.it
+%MSG
+27-Nov-2019 18:30:22 CET  Successfully opened file file:root://xrootd-cms.infn.it//store/data/Run2017F/SingleMuon/MINIAOD/31Mar2018-v1/30000/6CD24B25-CF37-E811-9183-0CC47A2B04DE.root
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2017/2e34/v4.0.2/HLT/V1'
+>>>   Global tag:    '92X_dataRun2_HLT_v7'
+27-Nov-2019 18:30:26 CET  Closed file file:root://xrootd-cms.infn.it//store/data/Run2017F/SingleMuon/MINIAOD/31Mar2018-v1/30000/6CD24B25-CF37-E811-9183-0CC47A2B04DE.root
+27-Nov-2019 18:30:26 CET  Initiating request to open file file:root://xrootd-cms.infn.it//store/data/Run2018A/SingleMuon/MINIAOD/17Sep2018-v2/00000/11697BCC-C4AB-204B-91A9-87F952F9F2C6.root
+%MSG-w XrdAdaptor:  file_open 27-Nov-2019 18:30:27 CET PostStreamBeginLumi
+Data is served from desy.de instead of original site infn.it
+%MSG
+27-Nov-2019 18:30:27 CET  Successfully opened file file:root://xrootd-cms.infn.it//store/data/Run2018A/SingleMuon/MINIAOD/17Sep2018-v2/00000/11697BCC-C4AB-204B-91A9-87F952F9F2C6.root
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2018/2e34/v1.2.0/HLT/V1'
+>>>   Global tag:    '100X_dataRun2_HLT_v3'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2018/2e34/v1.2.0/HLT/V3'
+>>>   Global tag:    '101X_dataRun2_HLT_v7'
+>>>   Trigger menu did not change. Skipping...
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2018/2e34/v1.2.3/HLT/V2'
+>>>   Global tag:    '101X_dataRun2_HLT_v7'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2018/2e34/v2.0.3/HLT/V1'
+>>>   Global tag:    '101X_dataRun2_HLT_v7'
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2018/2e34/v2.1.1/HLT/V1'
+>>>   Global tag:    '101X_dataRun2_HLT_v7'
+27-Nov-2019 18:30:33 CET  Closed file file:root://xrootd-cms.infn.it//store/data/Run2018A/SingleMuon/MINIAOD/17Sep2018-v2/00000/11697BCC-C4AB-204B-91A9-87F952F9F2C6.root
+27-Nov-2019 18:30:33 CET  Initiating request to open file file:root://xrootd-cms.infn.it//store/data/Run2018B/SingleMuon/MINIAOD/17Sep2018-v1/100000/7FA66CD1-3158-F94A-A1E0-27BECABAC34A.root
+%MSG-w XrdAdaptor:  file_open 27-Nov-2019 18:30:37 CET PostStreamBeginLumi
+Data is served from iihe.ac.be instead of original site infn.it
+%MSG
+27-Nov-2019 18:30:38 CET  Successfully opened file file:root://xrootd-cms.infn.it//store/data/Run2018B/SingleMuon/MINIAOD/17Sep2018-v1/100000/7FA66CD1-3158-F94A-A1E0-27BECABAC34A.root
+%MSG-w XrdAdaptor:  (NoModuleName) 27-Nov-2019 18:30:46 CET pre-events
+Data is now served from iihe.ac.be, desy.de instead of previous iihe.ac.be
+%MSG
+%MSG-w XrdAdaptor:  AfterFile 27-Nov-2019 18:30:50 CET PostStreamBeginLumi
+Data is now served from desy.de instead of previous iihe.ac.be, desy.de
+%MSG
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2018/2e34/v2.1.5/HLT/V5'
+>>>   Global tag:    '101X_dataRun2_HLT_v7'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2018/2e34/v2.2.2/HLT/V2'
+>>>   Global tag:    '101X_dataRun2_HLT_v7'
+27-Nov-2019 18:30:54 CET  Closed file file:root://xrootd-cms.infn.it//store/data/Run2018B/SingleMuon/MINIAOD/17Sep2018-v1/100000/7FA66CD1-3158-F94A-A1E0-27BECABAC34A.root
+27-Nov-2019 18:30:54 CET  Initiating request to open file file:root://xrootd-cms.infn.it//store/data/Run2018C/SingleMuon/MINIAOD/17Sep2018-v1/110000/8DB2B7A5-F627-2144-8F8F-180A8DA0E90D.root
+%MSG-w XrdAdaptor:  file_open 27-Nov-2019 18:30:55 CET PostStreamBeginLumi
+Data is served from desy.de instead of original site infn.it
+%MSG
+27-Nov-2019 18:30:55 CET  Successfully opened file file:root://xrootd-cms.infn.it//store/data/Run2018C/SingleMuon/MINIAOD/17Sep2018-v1/110000/8DB2B7A5-F627-2144-8F8F-180A8DA0E90D.root
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2018/2e34/v2.2.3/HLT/V2'
+>>>   Global tag:    '101X_dataRun2_HLT_v7'
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+27-Nov-2019 18:30:59 CET  Closed file file:root://xrootd-cms.infn.it//store/data/Run2018C/SingleMuon/MINIAOD/17Sep2018-v1/110000/8DB2B7A5-F627-2144-8F8F-180A8DA0E90D.root
+27-Nov-2019 18:30:59 CET  Initiating request to open file file:root://xrootd-cms.infn.it//store/data/Run2018D/SingleMuon/MINIAOD/PromptReco-v2/000/320/569/00000/3C8C28E7-1A96-E811-BA8D-02163E012DD8.root
+%MSG-w XrdAdaptor:  file_open 27-Nov-2019 18:31:03 CET PostStreamBeginLumi
+Data is served from ihep.ac.cn instead of original site infn.it
+%MSG
+27-Nov-2019 18:31:04 CET  Successfully opened file file:root://xrootd-cms.infn.it//store/data/Run2018D/SingleMuon/MINIAOD/PromptReco-v2/000/320/569/00000/3C8C28E7-1A96-E811-BA8D-02163E012DD8.root
+%MSG-w XrdAdaptor:  (NoModuleName) 27-Nov-2019 18:31:08 CET pre-events
+Data is now served from ihep.ac.cn, desy.de instead of previous ihep.ac.cn
+%MSG
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2018/2e34/v3.3.0/HLT/V8'
+>>>   Global tag:    '101X_dataRun2_HLT_v7'
+%MSG-w XrdAdaptor:  PostStreamBeginRun 27-Nov-2019 18:31:13 CET  PostStreamBeginRun
+Data is now served from desy.de instead of previous ihep.ac.cn, desy.de
+%MSG
+27-Nov-2019 18:31:13 CET  Closed file file:root://xrootd-cms.infn.it//store/data/Run2018D/SingleMuon/MINIAOD/PromptReco-v2/000/320/569/00000/3C8C28E7-1A96-E811-BA8D-02163E012DD8.root
+
+  **** Summary of trigger menus ****************************
+  *                                                        *
+  *   80X_mcRun2_asymptotic_2016_TrancheIV_v6              *
+  *     /frozen/2016/25ns15e33/v4.0/HLT/V2                 *
+  *                                                        *
+  *   94X_mc2017_realistic_v10                             *
+  *     /frozen/2017/2e34/v4.0/HLT/V5                      *
+  *                                                        *
+  *   102X_upgrade2018_realistic_v15                       *
+  *     /frozen/2018/2e34/v3.2/HLT/V1                      *
+  *                                                        *
+  *   80X_dataRun2_HLT_v12                                 *
+  *     /cdaq/physics/Run2016/25ns10e33/v1.1.1/HLT/V12     *
+  *     /cdaq/physics/Run2016/25ns10e33/v1.1.1/HLT/V3      *
+  *     /cdaq/physics/Run2016/25ns10e33/v1.2.1/HLT/V15     *
+  *     /cdaq/physics/Run2016/25ns10e33/v1.2.2/HLT/V2      *
+  *     /cdaq/physics/Run2016/25ns10e33/v1.2.2/HLT/V6      *
+  *     /cdaq/physics/Run2016/25ns10e33/v1.2.2/HLT/V9      *
+  *     /cdaq/physics/Run2016/25ns10e33/v1.2.4/HLT/V1      *
+  *     /cdaq/physics/Run2016/25ns10e33/v1.2.5/HLT/V3      *
+  *     /cdaq/physics/Run2016/25ns10e33/v1.2.5/HLT/V6      *
+  *     /cdaq/physics/Run2016/25ns10e33/v2.1.4/HLT/V2      *
+  *     /cdaq/physics/Run2016/25ns10e33/v2.2.0/HLT/V13     *
+  *     /cdaq/physics/Run2016/25ns10e33/v2.2.0/HLT/V2      *
+  *     /cdaq/physics/Run2016/25ns10e33/v2.2.1/HLT/V3      *
+  *     /cdaq/physics/Run2016/25ns10e33/v2.2.2/HLT/V1      *
+  *     /cdaq/physics/Run2016/25ns10e33/v2.2.3/HLT/V2      *
+  *     /cdaq/physics/Run2016/25ns15e33/v3.0.1/HLT/V2      *
+  *     /cdaq/physics/Run2016/25ns15e33/v3.0.1/HLT/V3      *
+  *     /cdaq/physics/Run2016/25ns15e33/v3.0.1/HLT/V4      *
+  *     /cdaq/physics/Run2016/25ns15e33/v3.0.1/HLT/V6      *
+  *     /cdaq/physics/Run2016/25ns15e33/v3.0.3/HLT/V4      *
+  *     /cdaq/physics/Run2016/25ns15e33/v3.0/HLT/V6        *
+  *     /cdaq/physics/Run2016/25ns15e33/v3.0/HLT/V7        *
+  *     /cdaq/physics/Run2016/25ns15e33/v3.1.1/HLT/V1      *
+  *     /cdaq/physics/Run2016/25ns15e33/v3.1.1/HLT/V2      *
+  *     /cdaq/physics/Run2016/25ns15e33/v3.1.3/HLT/V15     *
+  *     /cdaq/physics/Run2016/25ns15e33/v3.1.4/HLT/V1      *
+  *     /cdaq/physics/Run2016/25ns15e33/v3.1.5/HLT/V1      *
+  *     /cdaq/physics/Run2016/25ns15e33/v3.1.6/HLT/V1      *
+  *     /cdaq/physics/Run2016/25ns15e33/v3.1.6/HLT/V2      *
+  *     /cdaq/physics/Run2016/25ns15e33/v3.1.7/HLT/V4      *
+  *     /cdaq/physics/Run2016/25ns15e33/v3.1.8/HLT/V1      *
+  *     /cdaq/physics/Run2016/25ns15e33/v4.2.1/HLT/V1      *
+  *     /cdaq/physics/Run2016/25ns15e33/v4.2.2/HLT/V1      *
+  *     /cdaq/physics/Run2016/LowPU25ns/v1.1/HLT/V2        *
+  *                                                        *
+  *   92X_dataRun2_HLT_v4                                  *
+  *     /cdaq/physics/Run2017/2e34/v1.1.5/HLT/V1           *
+  *     /cdaq/physics/Run2017/2e34/v1.2.1/HLT/V1           *
+  *     /cdaq/physics/Run2017/2e34/v1.2.4/HLT/V2           *
+  *     /cdaq/physics/Run2017/2e34/v2.1.0/HLT/V2           *
+  *     /cdaq/physics/Run2017/2e34/v2.1.2/HLT/V1           *
+  *     /cdaq/physics/Run2017/2e34/v2.1.3/HLT/V1           *
+  *                                                        *
+  *   92X_dataRun2_HLT_v7                                  *
+  *     /cdaq/physics/Run2017/2e34/v3.0.0/HLT/V1           *
+  *     /cdaq/physics/Run2017/2e34/v3.0.0/HLT/V4           *
+  *     /cdaq/physics/Run2017/2e34/v3.1.0/HLT/V1           *
+  *     /cdaq/physics/Run2017/2e34/v3.1.0/HLT/V2           *
+  *     /cdaq/physics/Run2017/2e34/v3.1.3/HLT/V1           *
+  *     /cdaq/physics/Run2017/2e34/v4.0.2/HLT/V1           *
+  *                                                        *
+  *   100X_dataRun2_HLT_v3                                 *
+  *     /cdaq/physics/Run2018/2e34/v1.2.0/HLT/V1           *
+  *                                                        *
+  *   101X_dataRun2_HLT_v7                                 *
+  *     /cdaq/physics/Run2018/2e34/v1.2.0/HLT/V3           *
+  *     /cdaq/physics/Run2018/2e34/v1.2.3/HLT/V2           *
+  *     /cdaq/physics/Run2018/2e34/v2.0.3/HLT/V1           *
+  *     /cdaq/physics/Run2018/2e34/v2.1.1/HLT/V1           *
+  *     /cdaq/physics/Run2018/2e34/v2.1.5/HLT/V5           *
+  *     /cdaq/physics/Run2018/2e34/v2.2.2/HLT/V2           *
+  *     /cdaq/physics/Run2018/2e34/v2.2.3/HLT/V2           *
+  *     /cdaq/physics/Run2018/2e34/v3.3.0/HLT/V8           *
+  *                                                        *
+  **********************************************************
+
+  **** Summary of filters per trigger in '80X_mcRun2_asymptotic_2016_TrancheIV_v6' ***********
+  *                                                                                          *
+  ********************************************************************************************
+
+  **** Summary of filters per trigger in '94X_mc2017_realistic_v10' **************************
+  *                                                                                          *
+  ********************************************************************************************
+
+  **** Summary of filters per trigger in '102X_upgrade2018_realistic_v15' ********************
+  *                                                                                          *
+  *   HLT_DoubleMu3_DoubleEle7p5_CaloIdL_TrackIdL_Upsilon                                    *
+  *     -> hltDiMu3DiEle7p5CaloIdLTrackIdLElectronlegClusterShapeFilter (F)                  *
+  *     -> hltDiMu3DiEle7p5CaloIdLTrackIdLElectronlegDetaFilter (F)                          *
+  *     -> hltDiMu3DiEle7p5CaloIdLTrackIdLElectronlegDphiFilter (F)                          *
+  *     -> hltDiMu3DiEle7p5CaloIdLTrackIdLElectronlegEtFilter (F)                            *
+  *     -> hltDiMu3DiEle7p5CaloIdLTrackIdLElectronlegHEFilter (F)                            *
+  *     -> hltDiMu3DiEle7p5CaloIdLTrackIdLElectronlegL1MatchFilter (F)                       *
+  *     -> hltDiMu3DiEle7p5CaloIdLTrackIdLElectronlegOneOEMinusOneOPFilter (F)               *
+  *     -> hltDiMu3DiEle7p5CaloIdLTrackIdLElectronlegPixelMatchFilter (F)                    *
+  *     -> hltEgammaCandidates (P)                                                           *
+  *     -> hltIterL3MuonCandidates (P)                                                       *
+  *     -> hltIterL3OIL3MuonCandidates (P)                                                   *
+  *     -> hltL3fL1DoubleMu3DiEG7p5f0Filtered3 (F)                                           *
+  *     hltDiMu3DiEle7p5CaloIdLTrackIdLElectronlegDphiFilter                                 *
+  *                                                                                          *
+  *   HLT_DoubleMu5_Upsilon_DoubleEle3_CaloIdL_TrackIdL                                      *
+  *     -> hltDiMu5Ele3CaloIdLTrackIdLElectronlegClusterShapeFilter (F)                      *
+  *     -> hltDiMu5Ele3CaloIdLTrackIdLElectronlegDetaFilter (F)                              *
+  *     -> hltDiMu5Ele3CaloIdLTrackIdLElectronlegDphiFilter (F)                              *
+  *     -> hltDiMu5Ele3CaloIdLTrackIdLElectronlegEtFilter (F)                                *
+  *     -> hltDiMu5Ele3CaloIdLTrackIdLElectronlegHEFilter (F)                                *
+  *     -> hltDiMu5Ele3CaloIdLTrackIdLElectronlegL1MatchFilter (F)                           *
+  *     -> hltDiMu5Ele3CaloIdLTrackIdLElectronlegOneOEMinusOneOPFilter (F)                   *
+  *     -> hltDiMu5Ele3CaloIdLTrackIdLElectronlegPixelMatchFilter (F)                        *
+  *     -> hltEgammaCandidates (P)                                                           *
+  *     -> hltIterL3MuonCandidates (P)                                                       *
+  *     -> hltIterL3OIL3MuonCandidates (P)                                                   *
+  *     -> hltL3fL1DoubleMu5EG3f0Filtered5 (F)                                               *
+  *     hltDiMu5Ele3CaloIdLTrackIdLElectronlegDphiFilter                                     *
+  *                                                                                          *
+  ********************************************************************************************
+
+  **** Summary of filters per trigger in '80X_dataRun2_HLT_v12' ******************************
+  *                                                                                          *
+  ********************************************************************************************
+
+  **** Summary of filters per trigger in '92X_dataRun2_HLT_v4' *******************************
+  *                                                                                          *
+  ********************************************************************************************
+
+  **** Summary of filters per trigger in '92X_dataRun2_HLT_v7' *******************************
+  *                                                                                          *
+  ********************************************************************************************
+
+  **** Summary of filters per trigger in '100X_dataRun2_HLT_v3' ******************************
+  *                                                                                          *
+  *   HLT_DoubleMu3_DoubleEle7p5_CaloIdL_TrackIdL_Upsilon                                    *
+  *     -> hltDiMu3DiEle7p5CaloIdLTrackIdLElectronlegClusterShapeFilter (F)                  *
+  *     -> hltDiMu3DiEle7p5CaloIdLTrackIdLElectronlegDetaFilter (F)                          *
+  *     -> hltDiMu3DiEle7p5CaloIdLTrackIdLElectronlegDphiFilter (F)                          *
+  *     -> hltDiMu3DiEle7p5CaloIdLTrackIdLElectronlegEtFilter (F)                            *
+  *     -> hltDiMu3DiEle7p5CaloIdLTrackIdLElectronlegHEFilter (F)                            *
+  *     -> hltDiMu3DiEle7p5CaloIdLTrackIdLElectronlegL1MatchFilter (F)                       *
+  *     -> hltDiMu3DiEle7p5CaloIdLTrackIdLElectronlegOneOEMinusOneOPFilter (F)               *
+  *     -> hltDiMu3DiEle7p5CaloIdLTrackIdLElectronlegPixelMatchFilter (F)                    *
+  *     -> hltEgammaCandidates (P)                                                           *
+  *     -> hltIterL3MuonCandidates (P)                                                       *
+  *     -> hltIterL3OIL3MuonCandidates (P)                                                   *
+  *     -> hltL3fL1DoubleMu3DiEG7p5f0Filtered3 (F)                                           *
+  *     hltDiMu3DiEle7p5CaloIdLTrackIdLElectronlegDphiFilter                                 *
+  *                                                                                          *
+  *   HLT_DoubleMu5_Upsilon_DoubleEle3_CaloIdL_TrackIdL                                      *
+  *     -> hltDiMu5Ele3CaloIdLTrackIdLElectronlegClusterShapeFilter (F)                      *
+  *     -> hltDiMu5Ele3CaloIdLTrackIdLElectronlegDetaFilter (F)                              *
+  *     -> hltDiMu5Ele3CaloIdLTrackIdLElectronlegDphiFilter (F)                              *
+  *     -> hltDiMu5Ele3CaloIdLTrackIdLElectronlegEtFilter (F)                                *
+  *     -> hltDiMu5Ele3CaloIdLTrackIdLElectronlegHEFilter (F)                                *
+  *     -> hltDiMu5Ele3CaloIdLTrackIdLElectronlegL1MatchFilter (F)                           *
+  *     -> hltDiMu5Ele3CaloIdLTrackIdLElectronlegOneOEMinusOneOPFilter (F)                   *
+  *     -> hltDiMu5Ele3CaloIdLTrackIdLElectronlegPixelMatchFilter (F)                        *
+  *     -> hltEgammaCandidates (P)                                                           *
+  *     -> hltIterL3MuonCandidates (P)                                                       *
+  *     -> hltIterL3OIL3MuonCandidates (P)                                                   *
+  *     -> hltL3fL1DoubleMu5EG3f0Filtered5 (F)                                               *
+  *     hltDiMu5Ele3CaloIdLTrackIdLElectronlegDphiFilter                                     *
+  *                                                                                          *
+  ********************************************************************************************
+
+  **** Summary of filters per trigger in '101X_dataRun2_HLT_v7' ******************************
+  *                                                                                          *
+  *   HLT_DoubleMu3_DoubleEle7p5_CaloIdL_TrackIdL_Upsilon                                    *
+  *     -> hltDiMu3DiEle7p5CaloIdLTrackIdLElectronlegClusterShapeFilter (F)                  *
+  *     -> hltDiMu3DiEle7p5CaloIdLTrackIdLElectronlegDetaFilter (F)                          *
+  *     -> hltDiMu3DiEle7p5CaloIdLTrackIdLElectronlegDphiFilter (F)                          *
+  *     -> hltDiMu3DiEle7p5CaloIdLTrackIdLElectronlegEtFilter (F)                            *
+  *     -> hltDiMu3DiEle7p5CaloIdLTrackIdLElectronlegHEFilter (F)                            *
+  *     -> hltDiMu3DiEle7p5CaloIdLTrackIdLElectronlegL1MatchFilter (F)                       *
+  *     -> hltDiMu3DiEle7p5CaloIdLTrackIdLElectronlegOneOEMinusOneOPFilter (F)               *
+  *     -> hltDiMu3DiEle7p5CaloIdLTrackIdLElectronlegPixelMatchFilter (F)                    *
+  *     -> hltEgammaCandidates (P)                                                           *
+  *     -> hltIterL3MuonCandidates (P)                                                       *
+  *     -> hltIterL3OIL3MuonCandidates (P)                                                   *
+  *     -> hltL3fL1DoubleMu3DiEG7p5f0Filtered3 (F)                                           *
+  *     hltDiMu3DiEle7p5CaloIdLTrackIdLElectronlegDphiFilter                                 *
+  *                                                                                          *
+  *   HLT_DoubleMu5_Upsilon_DoubleEle3_CaloIdL_TrackIdL                                      *
+  *     -> hltDiMu5Ele3CaloIdLTrackIdLElectronlegClusterShapeFilter (F)                      *
+  *     -> hltDiMu5Ele3CaloIdLTrackIdLElectronlegDetaFilter (F)                              *
+  *     -> hltDiMu5Ele3CaloIdLTrackIdLElectronlegDphiFilter (F)                              *
+  *     -> hltDiMu5Ele3CaloIdLTrackIdLElectronlegEtFilter (F)                                *
+  *     -> hltDiMu5Ele3CaloIdLTrackIdLElectronlegHEFilter (F)                                *
+  *     -> hltDiMu5Ele3CaloIdLTrackIdLElectronlegL1MatchFilter (F)                           *
+  *     -> hltDiMu5Ele3CaloIdLTrackIdLElectronlegOneOEMinusOneOPFilter (F)                   *
+  *     -> hltDiMu5Ele3CaloIdLTrackIdLElectronlegPixelMatchFilter (F)                        *
+  *     -> hltEgammaCandidates (P)                                                           *
+  *     -> hltIterL3MuonCandidates (P)                                                       *
+  *     -> hltIterL3OIL3MuonCandidates (P)                                                   *
+  *     -> hltL3fL1DoubleMu5EG3f0Filtered5 (F)                                               *
+  *     hltDiMu5Ele3CaloIdLTrackIdLElectronlegDphiFilter                                     *
+  *                                                                                          *
+  ********************************************************************************************
+
+  **** Summary of filters per trigger in 'All' ***********************************************
+  *                                                                                          *
+  *   HLT_DoubleMu3_DoubleEle7p5_CaloIdL_TrackIdL_Upsilon                                    *
+  *     -> hltDiMu3DiEle7p5CaloIdLTrackIdLElectronlegClusterShapeFilter (F)                  *
+  *     -> hltDiMu3DiEle7p5CaloIdLTrackIdLElectronlegDetaFilter (F)                          *
+  *     -> hltDiMu3DiEle7p5CaloIdLTrackIdLElectronlegDphiFilter (F)                          *
+  *     -> hltDiMu3DiEle7p5CaloIdLTrackIdLElectronlegEtFilter (F)                            *
+  *     -> hltDiMu3DiEle7p5CaloIdLTrackIdLElectronlegHEFilter (F)                            *
+  *     -> hltDiMu3DiEle7p5CaloIdLTrackIdLElectronlegL1MatchFilter (F)                       *
+  *     -> hltDiMu3DiEle7p5CaloIdLTrackIdLElectronlegOneOEMinusOneOPFilter (F)               *
+  *     -> hltDiMu3DiEle7p5CaloIdLTrackIdLElectronlegPixelMatchFilter (F)                    *
+  *     -> hltEgammaCandidates (P)                                                           *
+  *     -> hltIterL3MuonCandidates (P)                                                       *
+  *     -> hltIterL3OIL3MuonCandidates (P)                                                   *
+  *     -> hltL3fL1DoubleMu3DiEG7p5f0Filtered3 (F)                                           *
+  *     hltDiMu3DiEle7p5CaloIdLTrackIdLElectronlegDphiFilter                                 *
+  *                                                                                          *
+  *   HLT_DoubleMu5_Upsilon_DoubleEle3_CaloIdL_TrackIdL                                      *
+  *     -> hltDiMu5Ele3CaloIdLTrackIdLElectronlegClusterShapeFilter (F)                      *
+  *     -> hltDiMu5Ele3CaloIdLTrackIdLElectronlegDetaFilter (F)                              *
+  *     -> hltDiMu5Ele3CaloIdLTrackIdLElectronlegDphiFilter (F)                              *
+  *     -> hltDiMu5Ele3CaloIdLTrackIdLElectronlegEtFilter (F)                                *
+  *     -> hltDiMu5Ele3CaloIdLTrackIdLElectronlegHEFilter (F)                                *
+  *     -> hltDiMu5Ele3CaloIdLTrackIdLElectronlegL1MatchFilter (F)                           *
+  *     -> hltDiMu5Ele3CaloIdLTrackIdLElectronlegOneOEMinusOneOPFilter (F)                   *
+  *     -> hltDiMu5Ele3CaloIdLTrackIdLElectronlegPixelMatchFilter (F)                        *
+  *     -> hltEgammaCandidates (P)                                                           *
+  *     -> hltIterL3MuonCandidates (P)                                                       *
+  *     -> hltIterL3OIL3MuonCandidates (P)                                                   *
+  *     -> hltL3fL1DoubleMu5EG3f0Filtered5 (F)                                               *
+  *     hltDiMu5Ele3CaloIdLTrackIdLElectronlegDphiFilter                                     *
+  *                                                                                          *
+  ********************************************************************************************
+
+=============================================
+
+MessageLogger Summary
+
+ type     category        sev    module        subroutine        count    total
+ ---- -------------------- -- ---------------- ----------------  -----    -----
+    1 XrdAdaptor           -w (NoModuleName)                         2        2
+    2 XrdAdaptor           -w AfterFile                              1        1
+    3 XrdAdaptor           -w PostStreamBeginR                       1        1
+    4 XrdAdaptor           -w file_open                             19       19
+    5 fileAction           -s file_close                            19       19
+    6 fileAction           -s file_open                             38       38
+
+ type    category    Examples: run/evt        run/evt          run/evt
+ ---- -------------------- ---------------- ---------------- ----------------
+    1 XrdAdaptor           pre-events       pre-events       
+    2 XrdAdaptor           PostStreamBeginL                  
+    3 XrdAdaptor           PostStreamBeginR                  
+    4 XrdAdaptor           pre-events       PostStreamBeginL PostStreamBeginL
+    5 fileAction           PostStreamBeginL PostStreamBeginL PostGlobalEndRun
+    6 fileAction           pre-events       pre-events       PostStreamBeginL
+
+Severity    # Occurrences   Total Occurrences
+--------    -------------   -----------------
+Warning                23                  23
+System                 57                  57
+
+dropped waiting message count 0
