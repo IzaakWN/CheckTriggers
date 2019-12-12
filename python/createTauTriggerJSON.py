@@ -43,7 +43,7 @@ def createTauTriggerJSON(year):
         ('CaloIdLTrackIdLIsoVL',    1), # *CaloIdLTrackIdLIsoVL*TrackIso*Filter
         ('WPTightTrackIso',         2), # hltEle*WPTight*TrackIsoFilter*
         ('WPLooseTrackIso',         4), # hltEle*WPLoose*TrackIsoFilter
-        ('OverlapFilterPFTau',      8), # *OverlapFilter*IsoEle*PFTau*
+        ('OverlapFilterPFTau',      8), # *OverlapFilter*IsoEle*PFTau* -> for HPS: 'hltHpsOverlapFilterIsoEle'
         ('DiElectron',             16), # hltEle*Ele*CaloIdLTrackIdLIsoVL*Filter
         ('MuEle',                  32), # hltMu*TrkIsoVVL*Ele*CaloIdLTrackIdLIsoVL*Filter*
         ('hltOverlapFilterPFTau',  64), # hltOverlapFilterIsoEle*PFTau*'
@@ -79,7 +79,7 @@ def createTauTriggerJSON(year):
       data['filterbits']['Muon'] = OrderedDict([
         ('TrkIsoVVL',               1), # *RelTrkIsoVVLFiltered0p4
         ('Iso',                     2), # hltL3crIso*Filtered0p07
-        ('OverlapFilterPFTau',      4), # *OverlapFilterIsoMu*PFTau*
+        ('OverlapFilterPFTau',      4), # *OverlapFilterIsoMu*PFTau* -> for HPS: 'hltHpsOverlapFilterIsoMu'
         ('SingleMuon',              8), # hltL3crIsoL1*SingleMu*Filtered0p07 || hltL3crIsoL1sMu*Filtered0p07
         ('DiMuon',                 16), # hltDiMuon*Filtered*
         ('MuEle',                  32), # hltMu*TrkIsoVVL*Ele*CaloIdLTrackIdLIsoVL*Filter*
@@ -94,12 +94,12 @@ def createTauTriggerJSON(year):
         ('LooseChargedIso',         1), # *LooseChargedIso*
         ('MediumChargedIso',        2), # *MediumChargedIso*
         ('TightChargedIso',         4), # *TightChargedIso*
-        ('TightOOSCPhotons',        8), # *TightOOSCPhotons* -> "TightID"
+        ('TightOOSCPhotons',        8), # *TightOOSCPhotons* -> 'TightID'
         ('Hps',                    16), # *Hps*
         ('SelectedPFTau',          32), # hltSelectedPFTau*MediumChargedIsolationL1HLTMatched*
         ('DoublePFTauDz02Reg',     64), # hltDoublePFTau*TrackPt1*ChargedIsolation*Dz02Reg
-        ('OverlapFilterIsoEle',   128), # hltOverlapFilterIsoEle*PFTau*
-        ('OverlapFilterIsoMu',    256), # hltOverlapFilterIsoMu*PFTau*
+        ('OverlapFilterIsoEle',   128), # hltOverlapFilterIsoEle*PFTau* -> does not cover 'hltHpsOverlapFilterIsoEle*'
+        ('OverlapFilterIsoMu',    256), # hltOverlapFilterIsoMu*PFTau*  -> does not cover 'hltHpsOverlapFilterIsoMu*'
         ('DoublePFTau',           512), # hltDoublePFTau*TrackPt1*ChargedIsolation*
       ])
     
@@ -468,7 +468,7 @@ def createTauTriggerJSON(year):
            'Tau': orderDict({
              'ptmin':      30,
              'etamax':     2.1,
-             'filterbits': ['OverlapFilterIsoEle','LooseChargedIso','Hps']
+             'filterbits': ['LooseChargedIso','Hps'] #'OverlapFilterIsoEle',
            }),
         })),
         ('HLT_IsoMu20_eta2p1_LooseChargedIsoPFTau27_eta2p1_CrossL1', orderDict({ # data only
@@ -496,7 +496,7 @@ def createTauTriggerJSON(year):
            'Tau': orderDict({
              'ptmin':      32,
              'etamax':      2.1,
-             'filterbits': ['OverlapFilterIsoMu','LooseChargedIso','Hps']
+             'filterbits': ['LooseChargedIso','Hps'] #'OverlapFilterIsoMu',
            }),
         })),
         ('HLT_DoubleMediumChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg', orderDict({ # data only
@@ -532,7 +532,7 @@ def createTauTriggerJSON(year):
            'Tau': orderDict({
              'ptmin':      40,
              'etamax':     2.1,
-             'filterbits': ['DoublePFTauDz02Reg','MediumChargedIso','Hps']
+             'filterbits': ['MediumChargedIso','Hps'] #'DoublePFTauDz02Reg',
            }),
         })),
       ])

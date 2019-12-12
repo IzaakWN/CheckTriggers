@@ -167,7 +167,6 @@
         "ptmin": 30, 
         "etamax": 2.1, 
         "filterbits": [
-          "OverlapFilterIsoEle", 
           "LooseChargedIso", 
           "Hps"
         ]
@@ -212,7 +211,6 @@
         "ptmin": 32, 
         "etamax": 2.1, 
         "filterbits": [
-          "OverlapFilterIsoMu", 
           "LooseChargedIso", 
           "Hps"
         ]
@@ -275,7 +273,6 @@
         "ptmin": 40, 
         "etamax": 2.1, 
         "filterbits": [
-          "DoublePFTauDz02Reg", 
           "MediumChargedIso", 
           "Hps"
         ]
