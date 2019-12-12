@@ -10,160 +10,40 @@ import numpy as np
 from math import sqrt, pi
 from utils import ensureDirectory
 from PhysicsTools.NanoAODTools.postprocessing.framework.postprocessor import PostProcessor
-from PhysicsTools.NanoAODTools.postprocessing.framework.datamodel import Collection 
+from PhysicsTools.NanoAODTools.postprocessing.framework.datamodel import Collection
 from PhysicsTools.NanoAODTools.postprocessing.framework.eventloop import Module
-#from collections import namedtuples
+from filterTools import loadTriggersFromJSON, collections
 from ROOT import PyConfig, gROOT, gDirectory, gPad, gStyle, TFile, TCanvas, TLegend, TLatex, TH1F
 PyConfig.IgnoreCommandLineOptions = True
 gROOT.SetBatch(True)
 gStyle.SetOptTitle(False)
 gStyle.SetOptStat(False) #gStyle.SetOptStat(1110)
-#TriggerFilter = namedtuples('TriggerFilter','hltpath filters pt')
 
 
 
-# LOAD JSON
-def loadTriggersFromJSON(filename,verbose=True):
-    """Load JSON file for triggers."""
-    print ">>> loadTriggersFromJSON: loading '%s'"%(filename)
-    filters         = [ ]
-    filterpairs     = [ ]
-    filterbits_dict = { }
-    triggers        = { }
-    ids             = { 11: 'ele', 13: 'mu', 15: 'tau' }
-    with open(filename,'r') as file:
-      #data = json.load(file)
-      data = yaml.safe_load(file)
-    for id in ['ele','mu','tau']:
-      for filterbit, bit in data['filterbits'][id].iteritems():
-        filterbits_dict[filterbit] = bit
-        filter = TriggerFilter(id,filterbit,bit=bit)
-        filters.append(filter)
-    for hltpath, trigdict in data['hltpaths'].iteritems():
-      runrange     = trigdict.get('runrange',None)
-      hltfilters   = [ ]
-      for id in ['ele','mu','tau']:
-        if id not in trigdict: continue
-        ptcut      = trigdict[id]['pt_min']
-        etacut     = trigdict[id].get('etacut',2.5)
-        filterbits = trigdict[id]['filterbits']
-        filter     = TriggerFilter(id,filterbits,hltpath,ptcut,etacut,runrange)
-        filter.setbits(filterbits_dict)
-        filters.append(filter)
-        hltfilters.append(filter)
-      assert len(hltfilters)>0, "Did not find any valid filters for '%s' in %s"%(hltpath,trigdict)
-      filterpair   = FilterPair(hltpath,*hltfilters)
-      filterpairs.append(filterpair)
-    filters.sort(key=lambda f: (f.id,-int(f.name in data['filterbits'][ids[f.id]]),f.bits))
-    for datatype in data['hltcombs']:
-      triggers[datatype] = { }
-      for channel, hltcombs in data['hltcombs'][datatype].iteritems():
-        exec "triggers[datatype][channel] = lambda e: e."+' or e.'.join(hltcombs) in locals()
-    
-    # PRINT
-    if verbose:
-      for datatype in data['hltcombs']:
-        print ">>>   %s trigger requirements:"%datatype
-        for channel, hltcombs in data['hltcombs'][datatype].iteritems():
-          print ">>> %10s:  "%channel + ' || '.join(hltcombs)
-      print ">>>   hlt with pair of filters:"
-      for pair in filterpairs:
-        print ">>> %s (%s)"%(pair.name,pair.channel)
-        print ">>>   %3s leg: %s"%(ids[pair.filter1.id],pair.filter1.name)
-        print ">>>   %3s leg: %s"%(ids[pair.filter2.id],pair.filter2.name)
-      for id in [11,13,15]:
-        print ">>> %s filter bits:"%ids[id]
-        for filter in filters:
-          if filter.id!=id: continue
-          print ">>> %6d: %s"%(filter.bits,filter.name)
-    
-    return filters, filterpairs, triggers
-    
-
-
-# TRIGGER FILTER PAIR
-class FilterPair:
-    """Container class for filters of triggers of two objects."""
-    
-    def __init__(self,hltpath,*filters,**kwargs):
-        filter1, filter2 = filters[:2] if len(filters)>=2 else (filters[0],filters[0])
-        if filter1.id>filter2.id: filter1, filter2 = filter2, filter1
-        self.name     = hltpath
-        self.hltpath  = hltpath
-        self.filter1  = filter1
-        self.filter2  = filter2
-        self.runrange = kwargs.get('runrange',None)
-        self.channel  = ('etau'  if filter1.id==11 else 'mutau' if filter1.id==13 else
-                         'ditau' if filter1.id==15 else None)
-        exec ("self.hltfired = lambda e: e."+self.hltpath) in locals()
-    
-# TRIGGER FILTER
-class TriggerFilter:
-    """Container class for trigger filter."""
-    
-    def __init__(self,id,filters,hltpath=[],pt=0,eta=2.5,bit=0,runrange=None):
-        ids = ['ele','mu','tau',11,13,15]
-        assert id in ids, "Trigger object ID must be in %s"%(ids)
-        if isinstance(filters,str): filters = [filters]
-        if isinstance(hltpath,str): hltpath = [hltpath]
-        if isinstance(id,str):
-          id = 11 if 'ele' in id else 13 if 'mu' in id else 15 if 'tau' in id else None
-        self.filters    = filters
-        self.name       = '_'.join(filters)
-        self.hltpaths   = hltpath
-        self.runrange   = runrange
-        self.id         = id
-        self.collection = 'Electron' if id==11 else 'Muon' if id==13 else 'Tau' if id==15 else None
-        self.pt         = pt
-        self.eta        = eta
-        self.bits       = bit
-        self.channel    = ('etau' if id==11 else 'mutau' if id==13 else
-                           'etau' if any('IsoEle' in f for f in filters) else
-                           'mutau' if any('IsoMu' in f for f in filters) else 'ditau')
-        if self.hltpaths:
-          # function to check if a HLT paths were fired in an event (e)
-          exec "self.hltfired = lambda e: e."+' or e.'.join(self.hltpaths) in locals()
-        else:
-          self.hltfired = lambda e: True
-        
-    def __repr__(self):
-        """Returns string representation of TriggerFilter object."""
-        return '<%s("%s",%s) at %s>'%(self.__class__.__name__,self.name,self.bits,hex(id(self)))
-        
-    def setbits(self,filterbits_dict):
-        """Compute bits for all filters with some dictionairy."""
-        self.bits = 0
-        for filter in self.filters:
-          assert filter in filterbits_dict, "Could not find filter '%s' in filterbits_dict = %s"%(filter,filterbits_dict)
-          self.bits += filterbits_dict[filter] #.get(filter,0)
-        
-    def hasbits(self,bits):
-        """Check if a given set of bits contain this filter's set of bits,
-        using the bitwise 'and' operator '&'."""
-        return self.bits & bits == self.bits
-    
-    def match(self,trigobj,recoobj,dR=0.4):
-        #if isinstance(recoobj,'TrigObj'): trigobj, recoobj = recoobj, trigobj
-        return trigobj.DeltaR(recoobj)<dR and recoobj.pt>self.pt_min and abs(recoobj).eta<self.eta_max
-    
-
-# MODULE
 class TauTriggerChecks(Module):
     
-    def __init__(self,year=2017,wps=['loose','medium','tight'],datatype='mc'):
+    def __init__(self,year=2017,wps=['loose','medium','tight'],datatype='mc',verbose=True):
         
         assert year in [2016,2017,2018], "Year should be 2016, 2017 or 2018"
         assert datatype in ['mc','data'], "Wrong datatype '%s'! It should be 'mc' or 'data'!"%datatype
         
         jsonfile = "json/tau_triggers_%d.json"%year
-        filters, filterpairs, triggers = loadTriggersFromJSON(jsonfile)
+        filters, filterpairs, triggers = loadTriggersFromJSON(jsonfile,verbose=verbose)
         
         # FILTER bits
+        self.verbose     = verbose
         self.filters     = filters
         self.triggers    = triggers[datatype]
-        self.trigger     = lambda e: self.triggers['etau'](e) or self.triggers['mutau'](e) or self.triggers['ditau'](e)
+        self.trigger     = lambda e: self.triggers['etau'].fired(e) or self.triggers['mutau'].fired(e) or self.triggers['ditau'].fired(e) or\
+                                     self.triggers['SingleElectron'].fired(e) or self.triggers['SingleMuon'].fired(e)
         self.filterpairs = filterpairs
-        self.collections = { 11: 'Electron', 13: 'Muon', 15: 'Tau' }
+        self.unique_filters = [ ]
+        unique_filter_names = [ ]
+        for filter in filters:
+          if filter not in unique_filter_names:
+            self.unique_filters.append(filter)
+            unique_filter_names.append(filter.name)
         
         # TAU ID WP bits
         tauIDWPs = { wp: 2**i for i, wp in enumerate(['vvloose','vloose','loose','medium','tight','vtight','vvtight']) }
@@ -171,17 +51,19 @@ class TauTriggerChecks(Module):
         tauIDWPs = [(0,'all')]+sorted([(tauIDWPs[w],w) for w in wps])
         self.objectIDWPs = { 11: [(0,'all')], 13: [(0,'all')], 15: tauIDWPs }
         for id in self.objectIDWPs:
-          print ">>> %s ID WP bits:"%(self.collections[id].lower())
+          print ">>> %s ID WP bits:"%(collections[id])
           for wpbit, wp in self.objectIDWPs[id]:
             print ">>> %6d: %s"%(wpbit,wp)
         
     def beginFile(self, inputFile, outputFile, inputTree, wrappedOutputTree):
         """Create branches in output tree."""
         self.out = wrappedOutputTree
-        self.out.branch("trigger_etau",  'O')
-        self.out.branch("trigger_mutau", 'O')
-        self.out.branch("trigger_ditau", 'O')
-        for filter in self.filters:
+        self.out.branch("trigger_etau",           'O')
+        self.out.branch("trigger_mutau",          'O')
+        self.out.branch("trigger_ditau",          'O')
+        self.out.branch("trigger_SingleMuon",     'O')
+        self.out.branch("trigger_SingleElectron", 'O')
+        for filter in self.unique_filters:
           for wpbit, wp in self.objectIDWPs[filter.id]:
             wptag = "" if wp=='all' else '_'+wp
             self.out.branch("n%s_%s%s"%(filter.collection,filter.name,wptag), 'I')
@@ -211,10 +93,10 @@ class TauTriggerChecks(Module):
         nMatches      = { }
         nPairMatches  = { }
         filterMatches = { f: [ ] for f in self.filters }
-        for filter in self.filters:
+        for filter in self.unique_filters:
           nMatches[filter] = { }
           default = -2 # filter's trigger was not fired
-          if filter.hltfired(event):
+          if filter.trigger.fired(event):
             trigObjExists = False
             if filter.id in trigObjects:
               for trigobj, filters in trigObjects[filter.id].iteritems():
@@ -230,7 +112,7 @@ class TauTriggerChecks(Module):
         for pair in self.filterpairs:
           nPairMatches[pair] = { }
           default = -2 # filter's trigger was not fired
-          if pair.hltfired(event):
+          if pair.trigger.fired(event):
             if nMatches[pair.filter1][0]<0 or nMatches[pair.filter2][0]<0:
               default = -1 # event has trigger object for these filter bits
             else:
@@ -243,9 +125,9 @@ class TauTriggerChecks(Module):
           electrons = Collection(event,'Electron')
           for electron in electrons:
             for trigobj, filters in trigObjects[11].iteritems():
-              if electron.DeltaR(trigobj)>0.4: continue
+              if electron.DeltaR(trigobj)>0.3: continue
               for filter in filters:
-                #if electron.pt<filter.pt: continue
+                #if electron.pt<filter.ptmin: continue
                 nMatches[filter][0] += 1
                 filterMatches[filter].append((trigobj,electron))
         
@@ -256,7 +138,7 @@ class TauTriggerChecks(Module):
             for trigobj, filters in trigObjects[13].iteritems():
               if muon.DeltaR(trigobj)>0.3: continue
               for filter in filters:
-                #if muon.pt<filter.pt: continue
+                #if muon.pt<filter.ptmin: continue
                 nMatches[filter][0] += 1
                 filterMatches[filter].append((trigobj,muon))
         
@@ -267,9 +149,9 @@ class TauTriggerChecks(Module):
             #dm = tau.decayMode
             #if dm not in [0,1,10]: continue
             for trigobj, filters in trigObjects[15].iteritems():
-              if tau.DeltaR(trigobj)>0.4: continue
+              if tau.DeltaR(trigobj)>0.3: continue
               for filter in filters:
-                #if tau.pt<filter.pt: continue
+                #if tau.pt<filter.ptmin: continue
                 filterMatches[filter].append((trigobj,tau))
                 for wpbit, wp in self.objectIDWPs[15]: # ascending order
                   if tau.idMVAoldDM2017v2<wpbit: break
@@ -289,38 +171,29 @@ class TauTriggerChecks(Module):
           else: # for eletau and mutau
             for trigobj1, recoobj1 in filterMatches[pair.filter1]:
               for trigobj2, recoobj2 in filterMatches[pair.filter2]:
-                if trigobj1.DeltaR(trigobj2)<0.4: continue
-                if recoobj1.DeltaR(recoobj2)<0.4: continue
+                if trigobj1.DeltaR(trigobj2)<0.3: continue
+                if recoobj1.DeltaR(recoobj2)<0.3: continue
                 for wpbit, wp in self.objectIDWPs[15]: # ascending order
                   if recoobj2.idMVAoldDM2017v2<wpbit: break
                   nPairMatches[pair][wpbit] += 1
         
         # FILL BRANCHES
-        self.out.fillBranch("trigger_etau",  self.triggers['etau'](event))
-        self.out.fillBranch("trigger_mutau", self.triggers['mutau'](event))
-        self.out.fillBranch("trigger_ditau", self.triggers['ditau'](event))
-        for filter in self.filters:
+        self.out.fillBranch("trigger_etau",           self.triggers['etau'].fired(event))
+        self.out.fillBranch("trigger_mutau",          self.triggers['mutau'].fired(event))
+        self.out.fillBranch("trigger_ditau",          self.triggers['ditau'].fired(event))
+        self.out.fillBranch("trigger_SingleElectron", self.triggers['SingleElectron'].fired(event))
+        self.out.fillBranch("trigger_SingleMuon",     self.triggers['SingleMuon'].fired(event))
+        for filter in self.unique_filters:
           for wpbit, wp in self.objectIDWPs[filter.id]:
             wptag = "" if wp=='all' else '_'+wp
             self.out.fillBranch("n%s_%s%s"%(filter.collection,filter.name,wptag),nMatches[filter][wpbit])
-        for pair in self.filterpairs:
+        for pair in nPairMatches:
           for wpbit, wp in self.objectIDWPs[15]:
             wptag = "" if wp=='all' else '_'+wp
             self.out.fillBranch("nPair_%s%s"%(pair.name,wptag
             ),nPairMatches[pair][wpbit])
         return True
         
-
-
-def getBits(x):
-  """Decompose integer into list of bits (powers of 2)."""
-  powers = [ ]
-  i = 1
-  while i <= x:
-    if i & x: powers.append(i)
-    i <<= 1
-  return powers
-  
 
 
 # POST-PROCESSOR
@@ -466,10 +339,13 @@ if plot:
   tree     = file.Get('Events')
   outdir   = ensureDirectory('plots')
   WPs      = { id: [w[1] for w in wps] for id, wps in module.objectIDWPs.iteritems() }
+  triggers = ['etau','mutau','ditau']
   
   # PLOT FILTERS
   for filter in module.filters:
-    if not filter.hltpaths: continue
+    if not filter.trigpath: continue
+    if filter.channel not in triggers: continue
+    print ">>> Plotting filter '%s'"%(filter.name)
     id       = filter.id
     object   = filter.collection
     trigger  = filter.channel
@@ -478,18 +354,21 @@ if plot:
     channel  = trigger.replace('mu',"#mu").replace('di',"tau").replace('tau',"#tau_{h}")
     plotname = "%s/%s_%s_comparison_%d"%(outdir,trigger,branch,year)
     ctexts   = ["%s channel, %s trigger-reco object matching"%(channel,"#tau_{h}" if id==15 else object.lower())] +\
-               ['|| '+t if i>0 else t for i, t in enumerate(filter.hltpaths)]
+               ['|| '+t if i>0 else t for i, t in enumerate(filter.trigpaths)]
     plotMatches(tree,branch,trigger,WPs[id],plotname,header,ctexts)
   
   # PLOT PAIRS
   for pair in module.filterpairs:
+    print ">>> Plotting filter pair for '%s'"%(pair.name)
+    if pair.channel not in triggers: continue
     trigger  = pair.channel
     branch   = "nPair_%s"%(pair.name)
     header   = "#tau_{h} MVAoldDM2017v2"
     channel  = trigger.replace('mu',"#mu").replace('di',"tau").replace('tau',"#tau_{h}")
     plotname = "%s/%s_%s_comparison_%d"%(outdir,trigger,branch,year)
-    ctexts   = ["%s trigger-reco object matching"%channel,pair.hltpath]
+    ctexts   = ["%s trigger-reco object matching"%channel,pair.trigpath]
     plotMatches(tree,branch,trigger,WPs[15],plotname,header,ctexts)
   
   file.Close()
-    
+  
+
