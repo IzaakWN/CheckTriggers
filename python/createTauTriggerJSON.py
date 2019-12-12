@@ -38,87 +38,69 @@ def createTauTriggerJSON(year):
     
     data = OrderedDict()
     data['year'] = year
+    data['filterbits'] = OrderedDict([
+      ('Electron', OrderedDict([        # same for 2016, 2017, 2018
+        ('CaloIdLTrackIdLIsoVL',    1), # *CaloIdLTrackIdLIsoVL*TrackIso*Filter
+        ('WPTightTrackIso',         2), # hltEle*WPTight*TrackIsoFilter*
+        ('WPLooseTrackIso',         4), # hltEle*WPLoose*TrackIsoFilter
+        ('OverlapFilterPFTau',      8), # *OverlapFilter*IsoEle*PFTau*
+        ('DiElectron',             16), # hltEle*Ele*CaloIdLTrackIdLIsoVL*Filter
+        ('MuEle',                  32), # hltMu*TrkIsoVVL*Ele*CaloIdLTrackIdLIsoVL*Filter*
+        ('hltOverlapFilterPFTau',  64), # hltOverlapFilterIsoEle*PFTau*'
+        ('TripleElectron',        128), # hltEle*Ele*Ele*CaloIdLTrackIdLDphiLeg*Filter
+        ('SingleMuonDiEle',       256), # hltL3fL1Mu*DoubleEG*Filtered* || hltMu*DiEle*CaloIdLTrackIdLElectronleg*Filter
+        ('DiMuonSingleEle',       512), # hltL3fL1DoubleMu*EG*Filter* || hltDiMu*Ele*CaloIdLTrackIdLElectronleg*Filter
+        ('DoubleAndSingleEle',   1024), # hltEle32L1DoubleEGWPTightGsfTrackIsoFilter && hltEGL1SingleEGOrFilter
+        ('CaloIdVT_GsfTrkIdT',   2048), # hltEle*CaloIdVTGsfTrkIdTGsf*Filter
+        ('PFJet',                4096), # HLT_Ele*PFJet*
+        ('Photon175_Photon200',  8192), # hltEG175HEFilter || hltEG200HEFilter
+      ])),
+    ])
     if year==2016:
-      data['filterbits'] = OrderedDict([
-        ('Electron', OrderedDict([
-          ('CaloIdLTrackIdLIsoVL',    1), # *CaloIdLTrackIdLIsoVL*TrackIso*Filter
-          ('WPTightTrackIso',         2), # hltEle*WPTight*TrackIsoFilter*
-          ('WPLooseTrackIso',         4), # hltEle*WPLoose*TrackIsoFilter
-          ('OverlapFilterPFTau',      8), # *OverlapFilter*IsoEle*PFTau*
-          ('DiElectron',             16), # hltEle*Ele*CaloIdLTrackIdLIsoVL*Filter
-          ('MuEle',                  32), # hltMu*TrkIsoVVL*Ele*CaloIdLTrackIdLIsoVL*Filter*
-          ('hltOverlapFilterPFTau',  64), # hltOverlapFilterIsoEle*PFTau*'
-          ('TripleElectron',        128), # hltEle*Ele*Ele*CaloIdLTrackIdLDphiLeg*Filter
-          ('SingleMuonDiEle',       256), # hltL3fL1Mu*DoubleEG*Filtered* || hltMu*DiEle*CaloIdLTrackIdLElectronleg*Filter
-          ('DiMuonSingleEle',       512), # hltL3fL1DoubleMu*EG*Filter* || hltDiMu*Ele*CaloIdLTrackIdLElectronleg*Filter
-          ('DoubleAndSingleEle',   1024), # hltEle32L1DoubleEGWPTightGsfTrackIsoFilter && hltEGL1SingleEGOrFilter
-          ('CaloIdVT_GsfTrkIdT',   2048), # hltEle*CaloIdVTGsfTrkIdTGsf*Filter
-          ('PFJet',                4096), # HLT_Ele*PFJet*
-          ('Photon175_Photon200',  8192), # hltEG175HEFilter || hltEG200HEFilter
-        ])),
-        ('Muon', OrderedDict([
-          ('TrkIsoVVL',               1), # *RelTrkIso*Filtered0p4
-          ('Iso',                     2), # hltL3cr*IsoFiltered0p09
-          ('OverlapFilterPFTau',      4), # *OverlapFilter*IsoMu*PFTau*
-          ('IsoTk',                   8), # hltL3f*IsoFiltered0p09
-          ('Mu50',                 1024), # hltL3fL1sMu*L3Filtered50* || hltL3fL1sMu*TkFiltered50*
-        ])),
-        ('Tau', OrderedDict([
-          ('LooseIso',               1), # *LooseIso* - *VLooseIso*
-          ('MediumIso',              2), # *Medium*Iso*
-          ('VLooseIso',              4), # *VLooseIso*
-          #('None',                   8), # None
-          ('L2TauIsoFilter',        16), # hltL2TauIsoFilter (L2p5 pixel iso)
-          ('OverlapFilterIsoMu',    32), # *OverlapFilter*IsoMu*
-          ('OverlapFilterIsoEle',   64), # *OverlapFilter*IsoEle*
-          ('L1HLTMatched',         128), # *L1HLTMatched*
-          ('Dz02',                 256), # *Dz02*
-        ])),
+      data['filterbits']['Muon'] = OrderedDict([
+        ('TrkIsoVVL',               1), # *RelTrkIso*Filtered0p4
+        ('Iso',                     2), # hltL3cr*IsoFiltered0p09
+        ('OverlapFilterPFTau',      4), # *OverlapFilter*IsoMu*PFTau*
+        ('IsoTk',                   8), # hltL3f*IsoFiltered0p09
+        ('Mu50',                 1024), # hltL3fL1sMu*L3Filtered50* || hltL3fL1sMu*TkFiltered50*
+      ])
+      data['filterbits']['Tau'] = OrderedDict([
+        ('LooseIso',                1), # *LooseIso* - *VLooseIso*
+        ('MediumIso',               2), # *Medium*Iso*
+        ('VLooseIso',               4), # *VLooseIso*
+        #('None',                    8), # None
+        ('L2TauIsoFilter',         16), # hltL2TauIsoFilter (L2p5 pixel iso)
+        ('OverlapFilterIsoMu',     32), # *OverlapFilter*IsoMu*
+        ('OverlapFilterIsoEle',    64), # *OverlapFilter*IsoEle*
+        ('L1HLTMatched',          128), # *L1HLTMatched*
+        ('Dz02',                  256), # *Dz02*
       ])
     else:
-      data['filterbits'] = OrderedDict([
-        ('Electron', OrderedDict([
-          ('CaloIdLTrackIdLIsoVL',    1), # *CaloIdLTrackIdLIsoVL*TrackIso*Filter
-          ('WPTightTrackIso',         2), # hltEle*WPTight*TrackIsoFilter*
-          ('WPLooseTrackIso',         4), # hltEle*WPLoose*TrackIsoFilter
-          ('OverlapFilterPFTau',      8), # *OverlapFilter*IsoEle*PFTau*
-          ('DiElectron',             16), # hltEle*Ele*CaloIdLTrackIdLIsoVL*Filter
-          ('MuEle',                  32), # hltMu*TrkIsoVVL*Ele*CaloIdLTrackIdLIsoVL*Filter*
-          ('hltOverlapFilterPFTau',  64), # hltOverlapFilterIsoEle*PFTau*'
-          ('TripleElectron',        128), # hltEle*Ele*Ele*CaloIdLTrackIdLDphiLeg*Filter
-          ('SingleMuonDiEle',       256), # hltL3fL1Mu*DoubleEG*Filtered* || hltMu*DiEle*CaloIdLTrackIdLElectronleg*Filter
-          ('DiMuonSingleEle',       512), # hltL3fL1DoubleMu*EG*Filter* || hltDiMu*Ele*CaloIdLTrackIdLElectronleg*Filter
-          ('DoubleAndSingleEle',   1024), # hltEle32L1DoubleEGWPTightGsfTrackIsoFilter && hltEGL1SingleEGOrFilter
-          ('CaloIdVT_GsfTrkIdT',   2048), # hltEle*CaloIdVTGsfTrkIdTGsf*Filter
-          ('PFJet',                4096), # HLT_Ele*PFJet*
-          ('Photon175_Photon200',  8192), # hltEG175HEFilter || hltEG200HEFilter
-        ])),
-        ('Muon', OrderedDict([
-          ('TrkIsoVVL',               1), # *RelTrkIsoVVLFiltered0p4
-          ('Iso',                     2), # hltL3crIso*Filtered0p07
-          ('OverlapFilterPFTau',      4), # *OverlapFilterIsoMu*PFTau*
-          ('SingleMuon',              8), # hltL3crIsoL1*SingleMu*Filtered0p07 || hltL3crIsoL1sMu*Filtered0p07
-          ('DiMuon',                 16), # hltDiMuon*Filtered*
-          ('MuEle',                  32), # hltMu*TrkIsoVVL*Ele*CaloIdLTrackIdLIsoVL*Filter*
-          ('hltOverlapFilterPFTau',  64), # hltOverlapFilterIsoMu*PFTau*
-          ('TripleMuon',            128), # hltL3fL1TripleMu*
-          ('DiMuonSingleEle',       256), # hltL3fL1DoubleMu*EG*Filtered* || hltDiMu*Ele*CaloIdLTrackIdLElectronleg*Filter
-          ('SingleMuonDiEle',       512), # hltL3fL1Mu*DoubleEG*Filtered* || hltMu*DiEle*CaloIdLTrackIdLElectronleg*Filter
-          ('Mu50',                 1024), # hltL3fL1sMu*L3Filtered50* || hltL3fL1sMu*TkFiltered50*
-          ('Mu100',                2048), # hltL3fL1sMu*L3Filtered100* || hltL3fL1sMu*TkFiltered100*
-        ])),
-        ('Tau', OrderedDict([
-          ('LooseChargedIso',         1), # *LooseChargedIso*
-          ('MediumChargedIso',        2), # *MediumChargedIso*
-          ('TightChargedIso',         4), # *TightChargedIso*
-          ('TightOOSCPhotons',        8), # *TightOOSCPhotons* -> "TightID"
-          ('Hps',                    16), # *Hps*
-          ('SelectedPFTau',          32), # hltSelectedPFTau*MediumChargedIsolationL1HLTMatched*
-          ('DoublePFTauDz02Reg',     64), # hltDoublePFTau*TrackPt1*ChargedIsolation*Dz02Reg
-          ('OverlapFilterIsoEle',   128), # hltOverlapFilterIsoEle*PFTau*
-          ('OverlapFilterIsoMu',    256), # hltOverlapFilterIsoMu*PFTau*
-          ('DoublePFTau',           512), # hltDoublePFTau*TrackPt1*ChargedIsolation*
-        ])),
+      data['filterbits']['Muon'] = OrderedDict([
+        ('TrkIsoVVL',               1), # *RelTrkIsoVVLFiltered0p4
+        ('Iso',                     2), # hltL3crIso*Filtered0p07
+        ('OverlapFilterPFTau',      4), # *OverlapFilterIsoMu*PFTau*
+        ('SingleMuon',              8), # hltL3crIsoL1*SingleMu*Filtered0p07 || hltL3crIsoL1sMu*Filtered0p07
+        ('DiMuon',                 16), # hltDiMuon*Filtered*
+        ('MuEle',                  32), # hltMu*TrkIsoVVL*Ele*CaloIdLTrackIdLIsoVL*Filter*
+        ('hltOverlapFilterPFTau',  64), # hltOverlapFilterIsoMu*PFTau*
+        ('TripleMuon',            128), # hltL3fL1TripleMu*
+        ('DiMuonSingleEle',       256), # hltL3fL1DoubleMu*EG*Filtered* || hltDiMu*Ele*CaloIdLTrackIdLElectronleg*Filter
+        ('SingleMuonDiEle',       512), # hltL3fL1Mu*DoubleEG*Filtered* || hltMu*DiEle*CaloIdLTrackIdLElectronleg*Filter
+        ('Mu50',                 1024), # hltL3fL1sMu*L3Filtered50* || hltL3fL1sMu*TkFiltered50*
+        ('Mu100',                2048), # hltL3fL1sMu*L3Filtered100* || hltL3fL1sMu*TkFiltered100*
+      ])
+      data['filterbits']['Tau'] = OrderedDict([
+        ('LooseChargedIso',         1), # *LooseChargedIso*
+        ('MediumChargedIso',        2), # *MediumChargedIso*
+        ('TightChargedIso',         4), # *TightChargedIso*
+        ('TightOOSCPhotons',        8), # *TightOOSCPhotons* -> "TightID"
+        ('Hps',                    16), # *Hps*
+        ('SelectedPFTau',          32), # hltSelectedPFTau*MediumChargedIsolationL1HLTMatched*
+        ('DoublePFTauDz02Reg',     64), # hltDoublePFTau*TrackPt1*ChargedIsolation*Dz02Reg
+        ('OverlapFilterIsoEle',   128), # hltOverlapFilterIsoEle*PFTau*
+        ('OverlapFilterIsoMu',    256), # hltOverlapFilterIsoMu*PFTau*
+        ('DoublePFTau',           512), # hltDoublePFTau*TrackPt1*ChargedIsolation*
       ])
     
     
