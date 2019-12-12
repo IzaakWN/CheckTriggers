@@ -1,0 +1,1087 @@
+>>> --------------- checkTriggers_cfg.py ------------------------------------
+>>> year         = -1
+>>> dtype        = ''
+>>> verbose      = False
+>>> nlast        = 1
+>>> triggers     = ['HLT_*Double*Tau*']
+>>> filters      = ['hlt*DoublePFTau*TrackPt1*ChargedIsolation*Dz02Reg', 'hlt*DoublePFTau*TrackPt1*ChargedIsolation*']
+>>> vetoTriggers = []
+>>> vetoFilters  = []
+>>> files        = [
+>>>   'file:root://xrootd-cms.infn.it//store/mc/RunIISummer16MiniAODv3/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUMoriond17_94X_mcRun2_asymptotic_v3_ext1-v2/120000/ACDA5D95-3EDF-E811-AC6F-842B2B6AEE8B.root',
+>>>   'file:root://xrootd-cms.infn.it//store/mc/RunIIFall17MiniAODv2/DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/MINIAODSIM/PU2017RECOSIMstep_12Apr2018_94X_mc2017_realistic_v14-v1/70000/0256D125-5A44-E811-8C69-44A842CFD64D.root',
+>>>   'file:root://xrootd-cms.infn.it//store/mc/RunIIAutumn18MiniAOD/DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/MINIAODSIM/102X_upgrade2018_realistic_v15-v1/100000/08540B6C-AA39-3F49-8FFE-8771AD2A8885.root',
+>>>   'file:root://xrootd-cms.infn.it//store/data/Run2016B/Tau/MINIAOD/17Jul2018_ver2-v1/40000/349B0F86-F78B-E811-8D9E-7CD30AD0A75C.root',
+>>>   'file:root://xrootd-cms.infn.it//store/data/Run2016C/Tau/MINIAOD/17Jul2018-v1/40000/52BAEB0A-478A-E811-8376-0CC47A4D764C.root',
+>>>   'file:root://xrootd-cms.infn.it//store/data/Run2016D/Tau/MINIAOD/17Jul2018-v1/40000/46AA66A9-708B-E811-9182-AC1F6B23C830.root',
+>>>   'file:root://xrootd-cms.infn.it//store/data/Run2016E/Tau/MINIAOD/17Jul2018-v1/00000/863BF917-368A-E811-9D0F-0242AC1C0503.root',
+>>>   'file:root://xrootd-cms.infn.it//store/data/Run2016F/Tau/MINIAOD/17Jul2018-v1/40000/BCBF3F41-988A-E811-A6B4-008CFAFBFC72.root',
+>>>   'file:root://xrootd-cms.infn.it//store/data/Run2016G/Tau/MINIAOD/17Jul2018-v1/20000/807650BA-C98B-E811-8B69-008CFA0A55E8.root',
+>>>   'file:root://xrootd-cms.infn.it//store/data/Run2016H/Tau/MINIAOD/17Jul2018-v1/80000/78EDACAC-8C8D-E811-8BF8-008CFA111354.root',
+>>>   'file:root://xrootd-cms.infn.it//store/data/Run2017B/Tau/MINIAOD/31Mar2018-v1/90000/602B3645-3237-E811-B67B-A4BF0112BE4C.root',
+>>>   'file:root://xrootd-cms.infn.it//store/data/Run2017C/Tau/MINIAOD/31Mar2018-v1/00000/F057F44E-C637-E811-94D6-D4AE527EEA1D.root',
+>>>   'file:root://xrootd-cms.infn.it//store/data/Run2017D/Tau/MINIAOD/31Mar2018-v1/00000/6695F96F-E836-E811-BB64-008CFAF554C8.root',
+>>>   'file:root://xrootd-cms.infn.it//store/data/Run2017E/Tau/MINIAOD/31Mar2018-v1/90000/4075D591-6C37-E811-BED9-B4E10FA31F63.root',
+>>>   'file:root://xrootd-cms.infn.it//store/data/Run2017F/Tau/MINIAOD/31Mar2018-v1/30000/E45B7EAA-BB37-E811-9BD6-1866DAEA79C8.root',
+>>>   'file:root://xrootd-cms.infn.it//store/data/Run2018A/Tau/MINIAOD/17Sep2018-v1/270000/72909117-1CB7-A745-99E4-34F7728F0DC1.root',
+>>>   'file:root://xrootd-cms.infn.it//store/data/Run2018B/Tau/MINIAOD/17Sep2018-v1/100000/FB06FB19-4CC9-5F47-AEE2-D69D3089BA91.root',
+>>>   'file:root://xrootd-cms.infn.it//store/data/Run2018C/Tau/MINIAOD/17Sep2018-v1/120000/B21AD337-DD07-0943-9683-93FC5C1215DB.root',
+>>>   'file:root://xrootd-cms.infn.it//store/data/Run2018D/Tau/MINIAOD/PromptReco-v2/000/320/654/00000/FE8DA6C7-9896-E811-8CD8-FA163EA5E58D.root'
+>>> ]
+>>> ----------------------------------------------------------------------
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/frozen/2016/25ns15e33/v4.0/HLT/V2'
+>>>   Global tag:    '80X_mcRun2_asymptotic_2016_TrancheIV_v6'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/frozen/2017/2e34/v4.0/HLT/V5'
+>>>   Global tag:    '94X_mc2017_realistic_v10'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/frozen/2018/2e34/v3.2/HLT/V1'
+>>>   Global tag:    '102X_upgrade2018_realistic_v15'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2016/25ns10e33/v1.2.1/HLT/V4'
+>>>   Global tag:    '80X_dataRun2_HLT_v12'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2016/25ns10e33/v1.2.3/HLT/V6'
+>>>   Global tag:    '80X_dataRun2_HLT_v12'
+>>>   Trigger menu did not change. Skipping...
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2016/25ns10e33/v1.2.4/HLT/V1'
+>>>   Global tag:    '80X_dataRun2_HLT_v12'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2016/25ns10e33/v1.2.5/HLT/V3'
+>>>   Global tag:    '80X_dataRun2_HLT_v12'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2016/25ns10e33/v1.2.5/HLT/V6'
+>>>   Global tag:    '80X_dataRun2_HLT_v12'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2016/25ns10e33/v1.2.5/HLT/V9'
+>>>   Global tag:    '80X_dataRun2_HLT_v12'
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2016/25ns10e33/v2.1.4/HLT/V1'
+>>>   Global tag:    '80X_dataRun2_HLT_v12'
+>>>   Trigger menu did not change. Skipping...
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2016/25ns10e33/v2.1.4/HLT/V2'
+>>>   Global tag:    '80X_dataRun2_HLT_v12'
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2016/25ns10e33/v2.2.0/HLT/V2'
+>>>   Global tag:    '80X_dataRun2_HLT_v12'
+>>>   Trigger menu did not change. Skipping...
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2016/25ns10e33/v2.2.0/HLT/V13'
+>>>   Global tag:    '80X_dataRun2_HLT_v12'
+>>>   Trigger menu did not change. Skipping...
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2016/25ns10e33/v2.2.1/HLT/V3'
+>>>   Global tag:    '80X_dataRun2_HLT_v12'
+>>>   Trigger menu did not change. Skipping...
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2016/25ns15e33/v3.0/HLT/V6'
+>>>   Global tag:    '80X_dataRun2_HLT_v12'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2016/25ns15e33/v3.0/HLT/V7'
+>>>   Global tag:    '80X_dataRun2_HLT_v12'
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2016/25ns15e33/v3.0.1/HLT/V2'
+>>>   Global tag:    '80X_dataRun2_HLT_v12'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2016/25ns15e33/v3.0.1/HLT/V3'
+>>>   Global tag:    '80X_dataRun2_HLT_v12'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2016/25ns15e33/v3.0.1/HLT/V4'
+>>>   Global tag:    '80X_dataRun2_HLT_v12'
+>>>   Trigger menu did not change. Skipping...
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2016/25ns15e33/v3.0.1/HLT/V6'
+>>>   Global tag:    '80X_dataRun2_HLT_v12'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2016/25ns15e33/v3.0.3/HLT/V2'
+>>>   Global tag:    '80X_dataRun2_HLT_v12'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2016/25ns15e33/v3.0.3/HLT/V4'
+>>>   Global tag:    '80X_dataRun2_HLT_v12'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2016/25ns15e33/v3.0.3/HLT/V4'
+>>>   Global tag:    '80X_dataRun2_HLT_v12'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2016/25ns15e33/v3.0.3/HLT/V4'
+>>>   Global tag:    '80X_dataRun2_HLT_v12'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2016/25ns15e33/v3.1.1/HLT/V1'
+>>>   Global tag:    '80X_dataRun2_HLT_v12'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2016/25ns15e33/v3.1.1/HLT/V2'
+>>>   Global tag:    '80X_dataRun2_HLT_v12'
+>>>   Trigger menu did not change. Skipping...
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2016/25ns15e33/v3.1.2/HLT/V1'
+>>>   Global tag:    '80X_dataRun2_HLT_v12'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2016/25ns15e33/v3.1.6/HLT/V1'
+>>>   Global tag:    '80X_dataRun2_HLT_v12'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2016/25ns15e33/v3.1.7_HighRateParkedZeroBias/HLT/V2'
+>>>   Global tag:    '80X_dataRun2_HLT_v12'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2016/25ns15e33/v3.1.8/HLT/V1'
+>>>   Global tag:    '80X_dataRun2_HLT_v12'
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2016/25ns15e33/v4.1.7/HLT/V1'
+>>>   Global tag:    '80X_dataRun2_HLT_v12'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2016/25ns15e33/v4.2.2/HLT/V1'
+>>>   Global tag:    '80X_dataRun2_HLT_v12'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2016/25ns15e33/v4.2.3/HLT/V1'
+>>>   Global tag:    '80X_dataRun2_HLT_v12'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2017/2e34/v1.1.7/HLT/V2'
+>>>   Global tag:    '92X_dataRun2_HLT_v4'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2017/2e34/v1.2.1/HLT/V1'
+>>>   Global tag:    '92X_dataRun2_HLT_v4'
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2017/2e34/v1.2.1/HLT/V2'
+>>>   Global tag:    '92X_dataRun2_HLT_v4'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2017/2e34/v1.2.3/HLT/V3'
+>>>   Global tag:    '92X_dataRun2_HLT_v4'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2017/2e34/v1.2.4/HLT/V1'
+>>>   Global tag:    '92X_dataRun2_HLT_v4'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2017/2e34/v1.2.4/HLT/V2'
+>>>   Global tag:    '92X_dataRun2_HLT_v4'
+>>>   Trigger menu did not change. Skipping...
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2017/2e34/v2.0.1/HLT/V6'
+>>>   Global tag:    '92X_dataRun2_HLT_v4'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2017/2e34/v2.1.0/HLT/V3'
+>>>   Global tag:    '92X_dataRun2_HLT_v4'
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2017/2e34/v2.1.3/HLT/V1'
+>>>   Global tag:    '92X_dataRun2_HLT_v4'
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2017/2e34/v2.2.0/HLT/V2'
+>>>   Global tag:    '92X_dataRun2_HLT_v7'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2017/2e34/v3.0.0/HLT/V1'
+>>>   Global tag:    '92X_dataRun2_HLT_v7'
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2017/2e34/v3.0.0/HLT/V4'
+>>>   Global tag:    '92X_dataRun2_HLT_v7'
+>>>   Trigger menu did not change. Skipping...
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2017/2e34/v3.1.0/HLT/V2'
+>>>   Global tag:    '92X_dataRun2_HLT_v7'
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2017/2e34/v3.1.3/HLT/V1'
+>>>   Global tag:    '92X_dataRun2_HLT_v7'
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2017/2e34/v3.1.3/HLT/V2'
+>>>   Global tag:    '92X_dataRun2_HLT_v7'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2017/2e34/v3.2.2/HLT/V6'
+>>>   Global tag:    '92X_dataRun2_HLT_v7'
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2017/2e34/v4.1.0/HLT/V3'
+>>>   Global tag:    '92X_dataRun2_HLT_v7'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2017/2e34/v4.2.1/HLT/V2'
+>>>   Global tag:    '92X_dataRun2_HLT_v7'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2018/2e34/v1.2.2/HLT/V3'
+>>>   Global tag:    '101X_dataRun2_HLT_v7'
+>>>   Trigger menu did not change. Skipping...
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2018/2e34/v2.0.2/HLT/V2'
+>>>   Global tag:    '101X_dataRun2_HLT_v7'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2018/2e34/v2.0.3/HLT/V1'
+>>>   Global tag:    '101X_dataRun2_HLT_v7'
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2018/2e34/v2.1.5/HLT/V5'
+>>>   Global tag:    '101X_dataRun2_HLT_v7'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2018/2e34/v2.1.7/HLT/V3'
+>>>   Global tag:    '101X_dataRun2_HLT_v7'
+>>>   Trigger menu did not change. Skipping...
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2018/2e34/v2.2.0/HLT/V1'
+>>>   Global tag:    '101X_dataRun2_HLT_v7'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2018/2e34/v2.2.0/HLT/V2'
+>>>   Global tag:    '101X_dataRun2_HLT_v7'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2018/2e34/v2.2.3/HLT/V2'
+>>>   Global tag:    '101X_dataRun2_HLT_v7'
+>>>   Trigger menu did not change. Skipping...
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '/cdaq/physics/Run2018/2e34/v3.3.0/HLT/V9'
+>>>   Global tag:    '101X_dataRun2_HLT_v7'
+
+  **** Summary of trigger menus ****************************
+  *                                                        *
+  *   80X_mcRun2_asymptotic_2016_TrancheIV_v6              *
+  *     /frozen/2016/25ns15e33/v4.0/HLT/V2                 *
+  *                                                        *
+  *   94X_mc2017_realistic_v10                             *
+  *     /frozen/2017/2e34/v4.0/HLT/V5                      *
+  *                                                        *
+  *   102X_upgrade2018_realistic_v15                       *
+  *     /frozen/2018/2e34/v3.2/HLT/V1                      *
+  *                                                        *
+  *   80X_dataRun2_HLT_v12                                 *
+  *     /cdaq/physics/Run2016/25ns10e33/v1.2.1/HLT/V4      *
+  *     /cdaq/physics/Run2016/25ns10e33/v1.2.3/HLT/V6      *
+  *     /cdaq/physics/Run2016/25ns10e33/v1.2.4/HLT/V1      *
+  *     /cdaq/physics/Run2016/25ns10e33/v1.2.5/HLT/V3      *
+  *     /cdaq/physics/Run2016/25ns10e33/v1.2.5/HLT/V6      *
+  *     /cdaq/physics/Run2016/25ns10e33/v1.2.5/HLT/V9      *
+  *     /cdaq/physics/Run2016/25ns10e33/v2.1.4/HLT/V1      *
+  *     /cdaq/physics/Run2016/25ns10e33/v2.1.4/HLT/V2      *
+  *     /cdaq/physics/Run2016/25ns10e33/v2.2.0/HLT/V13     *
+  *     /cdaq/physics/Run2016/25ns10e33/v2.2.0/HLT/V2      *
+  *     /cdaq/physics/Run2016/25ns10e33/v2.2.1/HLT/V3      *
+  *     /cdaq/physics/Run2016/25ns15e33/v3.0.1/HLT/V2      *
+  *     /cdaq/physics/Run2016/25ns15e33/v3.0.1/HLT/V3      *
+  *     /cdaq/physics/Run2016/25ns15e33/v3.0.1/HLT/V4      *
+  *     /cdaq/physics/Run2016/25ns15e33/v3.0.1/HLT/V6      *
+  *     /cdaq/physics/Run2016/25ns15e33/v3.0.3/HLT/V2      *
+  *     /cdaq/physics/Run2016/25ns15e33/v3.0.3/HLT/V4      *
+  *     /cdaq/physics/Run2016/25ns15e33/v3.0/HLT/V6        *
+  *     /cdaq/physics/Run2016/25ns15e33/v3.0/HLT/V7        *
+  *     /cdaq/physics/Run2016/25ns15e33/v3.1.1/HLT/V1      *
+  *     /cdaq/physics/Run2016/25ns15e33/v3.1.1/HLT/V2      *
+  *     /cdaq/physics/Run2016/25ns15e33/v3.1.2/HLT/V1      *
+  *     /cdaq/physics/Run2016/25ns15e33/v3.1.6/HLT/V1      *
+  *     /cdaq/physics/Run2016/25ns15e33/v3.1.7_HighRateParkedZeroBias/HLT/V2*
+  *     /cdaq/physics/Run2016/25ns15e33/v3.1.8/HLT/V1      *
+  *     /cdaq/physics/Run2016/25ns15e33/v4.1.7/HLT/V1      *
+  *     /cdaq/physics/Run2016/25ns15e33/v4.2.2/HLT/V1      *
+  *     /cdaq/physics/Run2016/25ns15e33/v4.2.3/HLT/V1      *
+  *                                                        *
+  *   92X_dataRun2_HLT_v4                                  *
+  *     /cdaq/physics/Run2017/2e34/v1.1.7/HLT/V2           *
+  *     /cdaq/physics/Run2017/2e34/v1.2.1/HLT/V1           *
+  *     /cdaq/physics/Run2017/2e34/v1.2.1/HLT/V2           *
+  *     /cdaq/physics/Run2017/2e34/v1.2.3/HLT/V3           *
+  *     /cdaq/physics/Run2017/2e34/v1.2.4/HLT/V1           *
+  *     /cdaq/physics/Run2017/2e34/v1.2.4/HLT/V2           *
+  *     /cdaq/physics/Run2017/2e34/v2.0.1/HLT/V6           *
+  *     /cdaq/physics/Run2017/2e34/v2.1.0/HLT/V3           *
+  *     /cdaq/physics/Run2017/2e34/v2.1.3/HLT/V1           *
+  *                                                        *
+  *   92X_dataRun2_HLT_v7                                  *
+  *     /cdaq/physics/Run2017/2e34/v2.2.0/HLT/V2           *
+  *     /cdaq/physics/Run2017/2e34/v3.0.0/HLT/V1           *
+  *     /cdaq/physics/Run2017/2e34/v3.0.0/HLT/V4           *
+  *     /cdaq/physics/Run2017/2e34/v3.1.0/HLT/V2           *
+  *     /cdaq/physics/Run2017/2e34/v3.1.3/HLT/V1           *
+  *     /cdaq/physics/Run2017/2e34/v3.1.3/HLT/V2           *
+  *     /cdaq/physics/Run2017/2e34/v3.2.2/HLT/V6           *
+  *     /cdaq/physics/Run2017/2e34/v4.1.0/HLT/V3           *
+  *     /cdaq/physics/Run2017/2e34/v4.2.1/HLT/V2           *
+  *                                                        *
+  *   101X_dataRun2_HLT_v7                                 *
+  *     /cdaq/physics/Run2018/2e34/v1.2.2/HLT/V3           *
+  *     /cdaq/physics/Run2018/2e34/v2.0.2/HLT/V2           *
+  *     /cdaq/physics/Run2018/2e34/v2.0.3/HLT/V1           *
+  *     /cdaq/physics/Run2018/2e34/v2.1.5/HLT/V5           *
+  *     /cdaq/physics/Run2018/2e34/v2.1.7/HLT/V3           *
+  *     /cdaq/physics/Run2018/2e34/v2.2.0/HLT/V1           *
+  *     /cdaq/physics/Run2018/2e34/v2.2.0/HLT/V2           *
+  *     /cdaq/physics/Run2018/2e34/v2.2.3/HLT/V2           *
+  *     /cdaq/physics/Run2018/2e34/v3.3.0/HLT/V9           *
+  *                                                        *
+  **********************************************************
+
+  **** Summary of filters per trigger in '80X_mcRun2_asymptotic_2016_TrancheIV_v6' ***********
+  *                                                                                          *
+  *   HLT_DoubleMediumCombinedIsoPFTau35_Trk1_eta2p1_Reg                                     *
+  *     hltDoublePFTau35TrackPt1MediumCombinedIsolationDz02Reg                               *
+  *                                                                                          *
+  *   HLT_DoubleMediumCombinedIsoPFTau40_Trk1_eta2p1                                         *
+  *     hltDoublePFTau40TrackPt1MediumCombinedIsolationDz02                                  *
+  *                                                                                          *
+  *   HLT_DoubleMediumCombinedIsoPFTau40_Trk1_eta2p1_Reg                                     *
+  *     hltDoublePFTau40TrackPt1MediumCombinedIsolationDz02Reg                               *
+  *                                                                                          *
+  *   HLT_DoubleMediumIsoPFTau35_Trk1_eta2p1_Reg                                             *
+  *     hltDoublePFTau35TrackPt1MediumIsolationDz02Reg                                       *
+  *                                                                                          *
+  *   HLT_DoubleMediumIsoPFTau40_Trk1_eta2p1                                                 *
+  *     hltDoublePFTau40TrackPt1MediumIsolationDz02                                          *
+  *                                                                                          *
+  *   HLT_DoubleMediumIsoPFTau40_Trk1_eta2p1_Reg                                             *
+  *     hltDoublePFTau40TrackPt1MediumIsolationDz02Reg                                       *
+  *                                                                                          *
+  *   HLT_DoubleMu3_Trk_Tau3mu                                                               *
+  *     hltTau3muTkVertexFilter                                                              *
+  *                                                                                          *
+  *   HLT_DoubleTightCombinedIsoPFTau35_Trk1_eta2p1_Reg                                      *
+  *     hltDoublePFTau35TrackPt1TightCombinedIsolationDz02Reg                                *
+  *                                                                                          *
+  *   HLT_DoubleTightCombinedIsoPFTau40_Trk1_eta2p1                                          *
+  *     hltDoublePFTau40TrackPt1TightCombinedIsolationDz02                                   *
+  *                                                                                          *
+  *   HLT_DoubleTightCombinedIsoPFTau40_Trk1_eta2p1_Reg                                      *
+  *     hltDoublePFTau40TrackPt1TightCombinedIsolationDz02Reg                                *
+  *                                                                                          *
+  ********************************************************************************************
+
+  **** Summary of filters per trigger in '94X_mc2017_realistic_v10' **************************
+  *                                                                                          *
+  *   HLT_DoubleLooseChargedIsoPFTau35_Trk1_TightID_eta2p1_Reg                               *
+  *     -> hltDoublePFTau35TrackPt1LooseChargedIsolationAndTightOOSCPhotonsDz02Reg (F)       *
+  *     -> hltDoublePFTau35TrackPt1LooseChargedIsolationAndTightOOSCPhotonsL1HLTMatchedReg (F)*
+  *     -> hltDoublePFTau35TrackPt1LooseChargedIsolationAndTightOOSCPhotonsReg (F)           *
+  *     -> hltL1JetsHLTDoublePFTauTrackPt1LooseChargedIsolationAndTightOOSCPhotonsMatchReg (P)*
+  *     hltDoublePFTau35TrackPt1LooseChargedIsolationAndTightOOSCPhotonsDz02Reg              *
+  *                                                                                          *
+  *   HLT_DoubleLooseChargedIsoPFTau35_Trk1_eta2p1_Reg                                       *
+  *     -> hltDoublePFTau35TrackPt1LooseChargedIsolationDz02Reg (F)                          *
+  *     -> hltDoublePFTau35TrackPt1LooseChargedIsolationL1HLTMatchedReg (F)                  *
+  *     -> hltDoublePFTau35TrackPt1LooseChargedIsolationReg (F)                              *
+  *     -> hltL1JetsHLTDoublePFTauTrackPt1LooseChargedIsolationMatchReg (P)                  *
+  *     hltDoublePFTau35TrackPt1LooseChargedIsolationDz02Reg                                 *
+  *                                                                                          *
+  *   HLT_DoubleLooseChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg                               *
+  *     -> hltDoublePFTau40TrackPt1LooseChargedIsolationAndTightOOSCPhotonsDz02Reg (F)       *
+  *     -> hltDoublePFTau40TrackPt1LooseChargedIsolationAndTightOOSCPhotonsL1HLTMatchedReg (F)*
+  *     -> hltDoublePFTau40TrackPt1LooseChargedIsolationAndTightOOSCPhotonsReg (F)           *
+  *     -> hltL1JetsHLTDoublePFTauTrackPt1LooseChargedIsolationAndTightOOSCPhotonsMatchReg (P)*
+  *     hltDoublePFTau40TrackPt1LooseChargedIsolationAndTightOOSCPhotonsDz02Reg              *
+  *                                                                                          *
+  *   HLT_DoubleLooseChargedIsoPFTau40_Trk1_eta2p1_Reg                                       *
+  *     -> hltDoublePFTau40TrackPt1LooseChargedIsolationDz02Reg (F)                          *
+  *     -> hltDoublePFTau40TrackPt1LooseChargedIsolationL1HLTMatchedReg (F)                  *
+  *     -> hltDoublePFTau40TrackPt1LooseChargedIsolationReg (F)                              *
+  *     -> hltL1JetsHLTDoublePFTauTrackPt1LooseChargedIsolationMatchReg (P)                  *
+  *     hltDoublePFTau40TrackPt1LooseChargedIsolationDz02Reg                                 *
+  *                                                                                          *
+  *   HLT_DoubleMediumChargedIsoPFTau35_Trk1_TightID_eta2p1_Reg                              *
+  *     -> hltDoublePFTau35TrackPt1MediumChargedIsolationAndTightOOSCPhotonsDz02Reg (F)      *
+  *     -> hltDoublePFTau35TrackPt1MediumChargedIsolationAndTightOOSCPhotonsL1HLTMatchedReg (F)*
+  *     -> hltDoublePFTau35TrackPt1MediumChargedIsolationAndTightOOSCPhotonsReg (F)          *
+  *     -> hltL1JetsHLTDoublePFTauTrackPt1MediumChargedIsolationAndTightOOSCPhotonsMatchReg (P)*
+  *     hltDoublePFTau35TrackPt1MediumChargedIsolationAndTightOOSCPhotonsDz02Reg             *
+  *                                                                                          *
+  *   HLT_DoubleMediumChargedIsoPFTau35_Trk1_eta2p1_Reg                                      *
+  *     -> hltDoublePFTau35TrackPt1MediumChargedIsolationDz02Reg (F)                         *
+  *     -> hltDoublePFTau35TrackPt1MediumChargedIsolationL1HLTMatchedReg (F)                 *
+  *     -> hltDoublePFTau35TrackPt1MediumChargedIsolationReg (F)                             *
+  *     -> hltL1JetsHLTDoublePFTauTrackPt1MediumChargedIsolationMatchReg (P)                 *
+  *     hltDoublePFTau35TrackPt1MediumChargedIsolationDz02Reg                                *
+  *                                                                                          *
+  *   HLT_DoubleMediumChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg                              *
+  *     -> hltDoublePFTau40TrackPt1MediumChargedIsolationAndTightOOSCPhotonsDz02Reg (F)      *
+  *     -> hltDoublePFTau40TrackPt1MediumChargedIsolationAndTightOOSCPhotonsL1HLTMatchedReg (F)*
+  *     -> hltDoublePFTau40TrackPt1MediumChargedIsolationAndTightOOSCPhotonsReg (F)          *
+  *     -> hltL1JetsHLTDoublePFTauTrackPt1MediumChargedIsolationAndTightOOSCPhotonsMatchReg (P)*
+  *     hltDoublePFTau40TrackPt1MediumChargedIsolationAndTightOOSCPhotonsDz02Reg             *
+  *                                                                                          *
+  *   HLT_DoubleMediumChargedIsoPFTau40_Trk1_eta2p1_Reg                                      *
+  *     -> hltDoublePFTau40TrackPt1MediumChargedIsolationDz02Reg (F)                         *
+  *     -> hltDoublePFTau40TrackPt1MediumChargedIsolationL1HLTMatchedReg (F)                 *
+  *     -> hltDoublePFTau40TrackPt1MediumChargedIsolationReg (F)                             *
+  *     -> hltL1JetsHLTDoublePFTauTrackPt1MediumChargedIsolationMatchReg (P)                 *
+  *     hltDoublePFTau40TrackPt1MediumChargedIsolationDz02Reg                                *
+  *                                                                                          *
+  *   HLT_DoubleMu3_Trk_Tau3mu                                                               *
+  *     hltTau3muTkVertexFilter                                                              *
+  *                                                                                          *
+  *   HLT_DoubleMu3_Trk_Tau3mu_NoL1Mass                                                      *
+  *     hltTau3muNoL1MassTkVertexFilter                                                      *
+  *                                                                                          *
+  *   HLT_DoubleTightChargedIsoPFTau35_Trk1_TightID_eta2p1_Reg                               *
+  *     -> hltDoublePFTau35TrackPt1TightChargedIsolationAndTightOOSCPhotonsDz02Reg (F)       *
+  *     -> hltDoublePFTau35TrackPt1TightChargedIsolationAndTightOOSCPhotonsL1HLTMatchedReg (F)*
+  *     -> hltDoublePFTau35TrackPt1TightChargedIsolationAndTightOOSCPhotonsReg (F)           *
+  *     -> hltL1JetsHLTDoublePFTauTrackPt1TightChargedIsolationAndTightOOSCPhotonsMatchReg (P)*
+  *     hltDoublePFTau35TrackPt1TightChargedIsolationAndTightOOSCPhotonsDz02Reg              *
+  *                                                                                          *
+  *   HLT_DoubleTightChargedIsoPFTau35_Trk1_eta2p1_Reg                                       *
+  *     -> hltDoublePFTau35TrackPt1TightChargedIsolationDz02Reg (F)                          *
+  *     -> hltDoublePFTau35TrackPt1TightChargedIsolationL1HLTMatchedReg (F)                  *
+  *     -> hltDoublePFTau35TrackPt1TightChargedIsolationReg (F)                              *
+  *     -> hltL1JetsHLTDoublePFTauTrackPt1TightChargedIsolationMatchReg (P)                  *
+  *     hltDoublePFTau35TrackPt1TightChargedIsolationDz02Reg                                 *
+  *                                                                                          *
+  *   HLT_DoubleTightChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg                               *
+  *     -> hltDoublePFTau40TrackPt1TightChargedIsolationAndTightOOSCPhotonsDz02Reg (F)       *
+  *     -> hltDoublePFTau40TrackPt1TightChargedIsolationAndTightOOSCPhotonsL1HLTMatchedReg (F)*
+  *     -> hltDoublePFTau40TrackPt1TightChargedIsolationAndTightOOSCPhotonsReg (F)           *
+  *     -> hltL1JetsHLTDoublePFTauTrackPt1TightChargedIsolationAndTightOOSCPhotonsMatchReg (P)*
+  *     hltDoublePFTau40TrackPt1TightChargedIsolationAndTightOOSCPhotonsDz02Reg              *
+  *                                                                                          *
+  *   HLT_DoubleTightChargedIsoPFTau40_Trk1_eta2p1_Reg                                       *
+  *     -> hltDoublePFTau40TrackPt1TightChargedIsolationDz02Reg (F)                          *
+  *     -> hltDoublePFTau40TrackPt1TightChargedIsolationL1HLTMatchedReg (F)                  *
+  *     -> hltDoublePFTau40TrackPt1TightChargedIsolationReg (F)                              *
+  *     -> hltL1JetsHLTDoublePFTauTrackPt1TightChargedIsolationMatchReg (P)                  *
+  *     hltDoublePFTau40TrackPt1TightChargedIsolationDz02Reg                                 *
+  *                                                                                          *
+  *   HLT_VBF_DoubleLooseChargedIsoPFTau20_Trk1_eta2p1_Reg                                   *
+  *     -> hltDoublePFTau20TrackPt1LooseChargedIsolationReg (F)                              *
+  *     hltMatchedVBFOnePFJet2CrossCleanedFromDoubleLooseChargedIsoPFTau20                   *
+  *                                                                                          *
+  *   HLT_VBF_DoubleMediumChargedIsoPFTau20_Trk1_eta2p1_Reg                                  *
+  *     -> hltDoublePFTau20TrackPt1MediumChargedIsolationReg (F)                             *
+  *     hltMatchedVBFOnePFJet2CrossCleanedFromDoubleMediumChargedIsoPFTau20                  *
+  *                                                                                          *
+  *   HLT_VBF_DoubleTightChargedIsoPFTau20_Trk1_eta2p1_Reg                                   *
+  *     -> hltDoublePFTau20TrackPt1TightChargedIsolationReg (F)                              *
+  *     hltMatchedVBFOnePFJet2CrossCleanedFromDoubleTightChargedIsoPFTau20                   *
+  *                                                                                          *
+  ********************************************************************************************
+
+  **** Summary of filters per trigger in '102X_upgrade2018_realistic_v15' ********************
+  *                                                                                          *
+  *   HLT_DoubleMediumChargedIsoPFTauHPS35_Trk1_TightID_eta2p1_Reg                           *
+  *     -> hltHpsDoublePFTau35TrackPt1MediumChargedIsolationAndTightOOSCPhotonsDz02Reg (F)   *
+  *     -> hltHpsDoublePFTau35TrackPt1MediumChargedIsolationAndTightOOSCPhotonsL1HLTMatchedReg (F)*
+  *     -> hltHpsDoublePFTau35TrackPt1MediumChargedIsolationAndTightOOSCPhotonsReg (F)       *
+  *     -> hltHpsL1JetsHLTDoublePFTauTrackPt1MediumChargedIsolationAndTightOOSCPhotonsMatchReg (P)*
+  *     hltHpsDoublePFTau35TrackPt1MediumChargedIsolationAndTightOOSCPhotonsDz02Reg          *
+  *                                                                                          *
+  *   HLT_DoubleMediumChargedIsoPFTauHPS35_Trk1_eta2p1_Reg                                   *
+  *     -> hltHpsDoublePFTau35TrackPt1MediumChargedIsolationDz02Reg (F)                      *
+  *     -> hltHpsDoublePFTau35TrackPt1MediumChargedIsolationL1HLTMatchedReg (F)              *
+  *     -> hltHpsDoublePFTau35TrackPt1MediumChargedIsolationReg (F)                          *
+  *     -> hltHpsL1JetsHLTDoublePFTauTrackPt1MediumChargedIsolationMatchReg (P)              *
+  *     hltHpsDoublePFTau35TrackPt1MediumChargedIsolationDz02Reg                             *
+  *                                                                                          *
+  *   HLT_DoubleMediumChargedIsoPFTauHPS40_Trk1_TightID_eta2p1_Reg                           *
+  *     -> hltHpsDoublePFTau40TrackPt1MediumChargedIsolationAndTightOOSCPhotonsDz02Reg (F)   *
+  *     -> hltHpsDoublePFTau40TrackPt1MediumChargedIsolationAndTightOOSCPhotonsL1HLTMatchedReg (F)*
+  *     -> hltHpsDoublePFTau40TrackPt1MediumChargedIsolationAndTightOOSCPhotonsReg (F)       *
+  *     -> hltHpsL1JetsHLTDoublePFTauTrackPt1MediumChargedIsolationAndTightOOSCPhotonsMatchReg (P)*
+  *     hltHpsDoublePFTau40TrackPt1MediumChargedIsolationAndTightOOSCPhotonsDz02Reg          *
+  *                                                                                          *
+  *   HLT_DoubleMediumChargedIsoPFTauHPS40_Trk1_eta2p1_Reg                                   *
+  *     -> hltHpsDoublePFTau40TrackPt1MediumChargedIsolationDz02Reg (F)                      *
+  *     -> hltHpsDoublePFTau40TrackPt1MediumChargedIsolationL1HLTMatchedReg (F)              *
+  *     -> hltHpsDoublePFTau40TrackPt1MediumChargedIsolationReg (F)                          *
+  *     -> hltHpsL1JetsHLTDoublePFTauTrackPt1MediumChargedIsolationMatchReg (P)              *
+  *     hltHpsDoublePFTau40TrackPt1MediumChargedIsolationDz02Reg                             *
+  *                                                                                          *
+  *   HLT_DoubleMu3_TkMu_DsTau3Mu                                                            *
+  *     hltdstau3muDisplaced3muFltr                                                          *
+  *                                                                                          *
+  *   HLT_DoubleMu3_Trk_Tau3mu                                                               *
+  *     hltTau3muTkVertexFilter                                                              *
+  *                                                                                          *
+  *   HLT_DoubleMu3_Trk_Tau3mu_NoL1Mass                                                      *
+  *     hltTau3muNoL1MassTkVertexFilter                                                      *
+  *                                                                                          *
+  *   HLT_DoubleTightChargedIsoPFTauHPS35_Trk1_TightID_eta2p1_Reg                            *
+  *     -> hltHpsDoublePFTau35TrackPt1TightChargedIsolationAndTightOOSCPhotonsDz02Reg (F)    *
+  *     -> hltHpsDoublePFTau35TrackPt1TightChargedIsolationAndTightOOSCPhotonsL1HLTMatchedReg (F)*
+  *     -> hltHpsDoublePFTau35TrackPt1TightChargedIsolationAndTightOOSCPhotonsReg (F)        *
+  *     -> hltHpsL1JetsHLTDoublePFTauTrackPt1TightChargedIsolationAndTightOOSCPhotonsMatchReg (P)*
+  *     hltHpsDoublePFTau35TrackPt1TightChargedIsolationAndTightOOSCPhotonsDz02Reg           *
+  *                                                                                          *
+  *   HLT_DoubleTightChargedIsoPFTauHPS35_Trk1_eta2p1_Reg                                    *
+  *     -> hltHpsDoublePFTau35TrackPt1TightChargedIsolationDz02Reg (F)                       *
+  *     -> hltHpsDoublePFTau35TrackPt1TightChargedIsolationL1HLTMatchedReg (F)               *
+  *     -> hltHpsDoublePFTau35TrackPt1TightChargedIsolationReg (F)                           *
+  *     -> hltHpsL1JetsHLTDoublePFTauTrackPt1TightChargedIsolationMatchReg (P)               *
+  *     hltHpsDoublePFTau35TrackPt1TightChargedIsolationDz02Reg                              *
+  *                                                                                          *
+  *   HLT_DoubleTightChargedIsoPFTauHPS40_Trk1_TightID_eta2p1_Reg                            *
+  *     -> hltHpsDoublePFTau40TrackPt1TightChargedIsolationAndTightOOSCPhotonsDz02Reg (F)    *
+  *     -> hltHpsDoublePFTau40TrackPt1TightChargedIsolationAndTightOOSCPhotonsL1HLTMatchedReg (F)*
+  *     -> hltHpsDoublePFTau40TrackPt1TightChargedIsolationAndTightOOSCPhotonsReg (F)        *
+  *     -> hltHpsL1JetsHLTDoublePFTauTrackPt1TightChargedIsolationAndTightOOSCPhotonsMatchReg (P)*
+  *     hltHpsDoublePFTau40TrackPt1TightChargedIsolationAndTightOOSCPhotonsDz02Reg           *
+  *                                                                                          *
+  *   HLT_DoubleTightChargedIsoPFTauHPS40_Trk1_eta2p1_Reg                                    *
+  *     -> hltHpsDoublePFTau40TrackPt1TightChargedIsolationDz02Reg (F)                       *
+  *     -> hltHpsDoublePFTau40TrackPt1TightChargedIsolationL1HLTMatchedReg (F)               *
+  *     -> hltHpsDoublePFTau40TrackPt1TightChargedIsolationReg (F)                           *
+  *     -> hltHpsL1JetsHLTDoublePFTauTrackPt1TightChargedIsolationMatchReg (P)               *
+  *     hltHpsDoublePFTau40TrackPt1TightChargedIsolationDz02Reg                              *
+  *                                                                                          *
+  *   HLT_VBF_DoubleLooseChargedIsoPFTauHPS20_Trk1_eta2p1                                    *
+  *     hltMatchedVBFOnePFJet2CrossCleanedFromDoubleLooseChargedIsoPFTauHPS20                *
+  *                                                                                          *
+  *   HLT_VBF_DoubleMediumChargedIsoPFTauHPS20_Trk1_eta2p1                                   *
+  *     hltMatchedVBFOnePFJet2CrossCleanedFromDoubleMediumChargedIsoPFTauHPS20               *
+  *                                                                                          *
+  *   HLT_VBF_DoubleTightChargedIsoPFTauHPS20_Trk1_eta2p1                                    *
+  *     hltMatchedVBFOnePFJet2CrossCleanedFromDoubleTightChargedIsoPFTauHPS20                *
+  *                                                                                          *
+  ********************************************************************************************
+
+  **** Summary of filters per trigger in '80X_dataRun2_HLT_v12' ******************************
+  *                                                                                          *
+  *   HLT_DoubleMediumCombinedIsoPFTau35_Trk1_eta2p1_Reg                                     *
+  *     hltDoublePFTau35TrackPt1MediumCombinedIsolationDz02Reg                               *
+  *                                                                                          *
+  *   HLT_DoubleMediumCombinedIsoPFTau40_Trk1_eta2p1                                         *
+  *     hltDoublePFTau40TrackPt1MediumCombinedIsolationDz02                                  *
+  *                                                                                          *
+  *   HLT_DoubleMediumCombinedIsoPFTau40_Trk1_eta2p1_Reg                                     *
+  *     hltDoublePFTau40TrackPt1MediumCombinedIsolationDz02Reg                               *
+  *                                                                                          *
+  *   HLT_DoubleMu3_Trk_Tau3mu                                                               *
+  *     hltTau3muTkVertexFilter                                                              *
+  *                                                                                          *
+  *   HLT_DoubleTightCombinedIsoPFTau35_Trk1_eta2p1_Reg                                      *
+  *     hltDoublePFTau35TrackPt1TightCombinedIsolationDz02Reg                                *
+  *                                                                                          *
+  *   HLT_DoubleTightCombinedIsoPFTau40_Trk1_eta2p1                                          *
+  *     hltDoublePFTau40TrackPt1TightCombinedIsolationDz02                                   *
+  *                                                                                          *
+  *   HLT_DoubleTightCombinedIsoPFTau40_Trk1_eta2p1_Reg                                      *
+  *     hltDoublePFTau40TrackPt1TightCombinedIsolationDz02Reg                                *
+  *                                                                                          *
+  ********************************************************************************************
+
+  **** Summary of filters per trigger in '92X_dataRun2_HLT_v4' *******************************
+  *                                                                                          *
+  *   HLT_DoubleLooseChargedIsoPFTau35_Trk1_TightID_eta2p1_Reg                               *
+  *     -> hltDoublePFTau35TrackPt1LooseChargedIsolationAndTightOOSCPhotonsDz02Reg (F)       *
+  *     -> hltDoublePFTau35TrackPt1LooseChargedIsolationAndTightOOSCPhotonsL1HLTMatchedReg (F)*
+  *     -> hltDoublePFTau35TrackPt1LooseChargedIsolationAndTightOOSCPhotonsReg (F)           *
+  *     -> hltL1JetsHLTDoublePFTauTrackPt1LooseChargedIsolationAndTightOOSCPhotonsMatchReg (P)*
+  *     hltDoublePFTau35TrackPt1LooseChargedIsolationAndTightOOSCPhotonsDz02Reg              *
+  *                                                                                          *
+  *   HLT_DoubleLooseChargedIsoPFTau35_Trk1_eta2p1_Reg                                       *
+  *     -> hltDoublePFTau35TrackPt1LooseChargedIsolationDz02Reg (F)                          *
+  *     -> hltDoublePFTau35TrackPt1LooseChargedIsolationL1HLTMatchedReg (F)                  *
+  *     -> hltDoublePFTau35TrackPt1LooseChargedIsolationReg (F)                              *
+  *     -> hltL1JetsHLTDoublePFTauTrackPt1LooseChargedIsolationMatchReg (P)                  *
+  *     hltDoublePFTau35TrackPt1LooseChargedIsolationDz02Reg                                 *
+  *                                                                                          *
+  *   HLT_DoubleLooseChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg                               *
+  *     -> hltDoublePFTau40TrackPt1LooseChargedIsolationAndTightOOSCPhotonsDz02Reg (F)       *
+  *     -> hltDoublePFTau40TrackPt1LooseChargedIsolationAndTightOOSCPhotonsL1HLTMatchedReg (F)*
+  *     -> hltDoublePFTau40TrackPt1LooseChargedIsolationAndTightOOSCPhotonsReg (F)           *
+  *     -> hltL1JetsHLTDoublePFTauTrackPt1LooseChargedIsolationAndTightOOSCPhotonsMatchReg (P)*
+  *     hltDoublePFTau40TrackPt1LooseChargedIsolationAndTightOOSCPhotonsDz02Reg              *
+  *                                                                                          *
+  *   HLT_DoubleLooseChargedIsoPFTau40_Trk1_eta2p1_Reg                                       *
+  *     -> hltDoublePFTau40TrackPt1LooseChargedIsolationDz02Reg (F)                          *
+  *     -> hltDoublePFTau40TrackPt1LooseChargedIsolationL1HLTMatchedReg (F)                  *
+  *     -> hltDoublePFTau40TrackPt1LooseChargedIsolationReg (F)                              *
+  *     -> hltL1JetsHLTDoublePFTauTrackPt1LooseChargedIsolationMatchReg (P)                  *
+  *     hltDoublePFTau40TrackPt1LooseChargedIsolationDz02Reg                                 *
+  *                                                                                          *
+  *   HLT_DoubleMediumChargedIsoPFTau35_Trk1_TightID_eta2p1_Reg                              *
+  *     -> hltDoublePFTau35TrackPt1MediumChargedIsolationAndTightOOSCPhotonsDz02Reg (F)      *
+  *     -> hltDoublePFTau35TrackPt1MediumChargedIsolationAndTightOOSCPhotonsL1HLTMatchedReg (F)*
+  *     -> hltDoublePFTau35TrackPt1MediumChargedIsolationAndTightOOSCPhotonsReg (F)          *
+  *     -> hltL1JetsHLTDoublePFTauTrackPt1MediumChargedIsolationAndTightOOSCPhotonsMatchReg (P)*
+  *     hltDoublePFTau35TrackPt1MediumChargedIsolationAndTightOOSCPhotonsDz02Reg             *
+  *                                                                                          *
+  *   HLT_DoubleMediumChargedIsoPFTau35_Trk1_eta2p1_Reg                                      *
+  *     -> hltDoublePFTau35TrackPt1MediumChargedIsolationDz02Reg (F)                         *
+  *     -> hltDoublePFTau35TrackPt1MediumChargedIsolationL1HLTMatchedReg (F)                 *
+  *     -> hltDoublePFTau35TrackPt1MediumChargedIsolationReg (F)                             *
+  *     -> hltL1JetsHLTDoublePFTauTrackPt1MediumChargedIsolationMatchReg (P)                 *
+  *     hltDoublePFTau35TrackPt1MediumChargedIsolationDz02Reg                                *
+  *                                                                                          *
+  *   HLT_DoubleMediumChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg                              *
+  *     -> hltDoublePFTau40TrackPt1MediumChargedIsolationAndTightOOSCPhotonsDz02Reg (F)      *
+  *     -> hltDoublePFTau40TrackPt1MediumChargedIsolationAndTightOOSCPhotonsL1HLTMatchedReg (F)*
+  *     -> hltDoublePFTau40TrackPt1MediumChargedIsolationAndTightOOSCPhotonsReg (F)          *
+  *     -> hltL1JetsHLTDoublePFTauTrackPt1MediumChargedIsolationAndTightOOSCPhotonsMatchReg (P)*
+  *     hltDoublePFTau40TrackPt1MediumChargedIsolationAndTightOOSCPhotonsDz02Reg             *
+  *                                                                                          *
+  *   HLT_DoubleMediumChargedIsoPFTau40_Trk1_eta2p1_Reg                                      *
+  *     -> hltDoublePFTau40TrackPt1MediumChargedIsolationDz02Reg (F)                         *
+  *     -> hltDoublePFTau40TrackPt1MediumChargedIsolationL1HLTMatchedReg (F)                 *
+  *     -> hltDoublePFTau40TrackPt1MediumChargedIsolationReg (F)                             *
+  *     -> hltL1JetsHLTDoublePFTauTrackPt1MediumChargedIsolationMatchReg (P)                 *
+  *     hltDoublePFTau40TrackPt1MediumChargedIsolationDz02Reg                                *
+  *                                                                                          *
+  *   HLT_DoubleMu3_Trk_Tau3mu                                                               *
+  *     hltTau3muTkVertexFilter                                                              *
+  *                                                                                          *
+  *   HLT_DoubleMu3_Trk_Tau3mu_NoL1Mass                                                      *
+  *     hltTau3muNoL1MassTkVertexFilter                                                      *
+  *                                                                                          *
+  *   HLT_DoubleTightChargedIsoPFTau35_Trk1_TightID_eta2p1_Reg                               *
+  *     -> hltDoublePFTau35TrackPt1TightChargedIsolationAndTightOOSCPhotonsDz02Reg (F)       *
+  *     -> hltDoublePFTau35TrackPt1TightChargedIsolationAndTightOOSCPhotonsL1HLTMatchedReg (F)*
+  *     -> hltDoublePFTau35TrackPt1TightChargedIsolationAndTightOOSCPhotonsReg (F)           *
+  *     -> hltL1JetsHLTDoublePFTauTrackPt1TightChargedIsolationAndTightOOSCPhotonsMatchReg (P)*
+  *     hltDoublePFTau35TrackPt1TightChargedIsolationAndTightOOSCPhotonsDz02Reg              *
+  *                                                                                          *
+  *   HLT_DoubleTightChargedIsoPFTau35_Trk1_eta2p1_Reg                                       *
+  *     -> hltDoublePFTau35TrackPt1TightChargedIsolationDz02Reg (F)                          *
+  *     -> hltDoublePFTau35TrackPt1TightChargedIsolationL1HLTMatchedReg (F)                  *
+  *     -> hltDoublePFTau35TrackPt1TightChargedIsolationReg (F)                              *
+  *     -> hltL1JetsHLTDoublePFTauTrackPt1TightChargedIsolationMatchReg (P)                  *
+  *     hltDoublePFTau35TrackPt1TightChargedIsolationDz02Reg                                 *
+  *                                                                                          *
+  *   HLT_DoubleTightChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg                               *
+  *     -> hltDoublePFTau40TrackPt1TightChargedIsolationAndTightOOSCPhotonsDz02Reg (F)       *
+  *     -> hltDoublePFTau40TrackPt1TightChargedIsolationAndTightOOSCPhotonsL1HLTMatchedReg (F)*
+  *     -> hltDoublePFTau40TrackPt1TightChargedIsolationAndTightOOSCPhotonsReg (F)           *
+  *     -> hltL1JetsHLTDoublePFTauTrackPt1TightChargedIsolationAndTightOOSCPhotonsMatchReg (P)*
+  *     hltDoublePFTau40TrackPt1TightChargedIsolationAndTightOOSCPhotonsDz02Reg              *
+  *                                                                                          *
+  *   HLT_DoubleTightChargedIsoPFTau40_Trk1_eta2p1_Reg                                       *
+  *     -> hltDoublePFTau40TrackPt1TightChargedIsolationDz02Reg (F)                          *
+  *     -> hltDoublePFTau40TrackPt1TightChargedIsolationL1HLTMatchedReg (F)                  *
+  *     -> hltDoublePFTau40TrackPt1TightChargedIsolationReg (F)                              *
+  *     -> hltL1JetsHLTDoublePFTauTrackPt1TightChargedIsolationMatchReg (P)                  *
+  *     hltDoublePFTau40TrackPt1TightChargedIsolationDz02Reg                                 *
+  *                                                                                          *
+  ********************************************************************************************
+
+  **** Summary of filters per trigger in '92X_dataRun2_HLT_v7' *******************************
+  *                                                                                          *
+  *   HLT_DoubleLooseChargedIsoPFTau35_Trk1_TightID_eta2p1_Reg                               *
+  *     -> hltDoublePFTau35TrackPt1LooseChargedIsolationAndTightOOSCPhotonsDz02Reg (F)       *
+  *     -> hltDoublePFTau35TrackPt1LooseChargedIsolationAndTightOOSCPhotonsL1HLTMatchedReg (F)*
+  *     -> hltDoublePFTau35TrackPt1LooseChargedIsolationAndTightOOSCPhotonsReg (F)           *
+  *     -> hltL1JetsHLTDoublePFTauTrackPt1LooseChargedIsolationAndTightOOSCPhotonsMatchReg (P)*
+  *     hltDoublePFTau35TrackPt1LooseChargedIsolationAndTightOOSCPhotonsDz02Reg              *
+  *                                                                                          *
+  *   HLT_DoubleLooseChargedIsoPFTau35_Trk1_eta2p1_Reg                                       *
+  *     -> hltDoublePFTau35TrackPt1LooseChargedIsolationDz02Reg (F)                          *
+  *     -> hltDoublePFTau35TrackPt1LooseChargedIsolationL1HLTMatchedReg (F)                  *
+  *     -> hltDoublePFTau35TrackPt1LooseChargedIsolationReg (F)                              *
+  *     -> hltL1JetsHLTDoublePFTauTrackPt1LooseChargedIsolationMatchReg (P)                  *
+  *     hltDoublePFTau35TrackPt1LooseChargedIsolationDz02Reg                                 *
+  *                                                                                          *
+  *   HLT_DoubleLooseChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg                               *
+  *     -> hltDoublePFTau40TrackPt1LooseChargedIsolationAndTightOOSCPhotonsDz02Reg (F)       *
+  *     -> hltDoublePFTau40TrackPt1LooseChargedIsolationAndTightOOSCPhotonsL1HLTMatchedReg (F)*
+  *     -> hltDoublePFTau40TrackPt1LooseChargedIsolationAndTightOOSCPhotonsReg (F)           *
+  *     -> hltL1JetsHLTDoublePFTauTrackPt1LooseChargedIsolationAndTightOOSCPhotonsMatchReg (P)*
+  *     hltDoublePFTau40TrackPt1LooseChargedIsolationAndTightOOSCPhotonsDz02Reg              *
+  *                                                                                          *
+  *   HLT_DoubleLooseChargedIsoPFTau40_Trk1_eta2p1_Reg                                       *
+  *     -> hltDoublePFTau40TrackPt1LooseChargedIsolationDz02Reg (F)                          *
+  *     -> hltDoublePFTau40TrackPt1LooseChargedIsolationL1HLTMatchedReg (F)                  *
+  *     -> hltDoublePFTau40TrackPt1LooseChargedIsolationReg (F)                              *
+  *     -> hltL1JetsHLTDoublePFTauTrackPt1LooseChargedIsolationMatchReg (P)                  *
+  *     hltDoublePFTau40TrackPt1LooseChargedIsolationDz02Reg                                 *
+  *                                                                                          *
+  *   HLT_DoubleMediumChargedIsoPFTau35_Trk1_TightID_eta2p1_Reg                              *
+  *     -> hltDoublePFTau35TrackPt1MediumChargedIsolationAndTightOOSCPhotonsDz02Reg (F)      *
+  *     -> hltDoublePFTau35TrackPt1MediumChargedIsolationAndTightOOSCPhotonsL1HLTMatchedReg (F)*
+  *     -> hltDoublePFTau35TrackPt1MediumChargedIsolationAndTightOOSCPhotonsReg (F)          *
+  *     -> hltL1JetsHLTDoublePFTauTrackPt1MediumChargedIsolationAndTightOOSCPhotonsMatchReg (P)*
+  *     hltDoublePFTau35TrackPt1MediumChargedIsolationAndTightOOSCPhotonsDz02Reg             *
+  *                                                                                          *
+  *   HLT_DoubleMediumChargedIsoPFTau35_Trk1_eta2p1_Reg                                      *
+  *     -> hltDoublePFTau35TrackPt1MediumChargedIsolationDz02Reg (F)                         *
+  *     -> hltDoublePFTau35TrackPt1MediumChargedIsolationL1HLTMatchedReg (F)                 *
+  *     -> hltDoublePFTau35TrackPt1MediumChargedIsolationReg (F)                             *
+  *     -> hltL1JetsHLTDoublePFTauTrackPt1MediumChargedIsolationMatchReg (P)                 *
+  *     hltDoublePFTau35TrackPt1MediumChargedIsolationDz02Reg                                *
+  *                                                                                          *
+  *   HLT_DoubleMediumChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg                              *
+  *     -> hltDoublePFTau40TrackPt1MediumChargedIsolationAndTightOOSCPhotonsDz02Reg (F)      *
+  *     -> hltDoublePFTau40TrackPt1MediumChargedIsolationAndTightOOSCPhotonsL1HLTMatchedReg (F)*
+  *     -> hltDoublePFTau40TrackPt1MediumChargedIsolationAndTightOOSCPhotonsReg (F)          *
+  *     -> hltL1JetsHLTDoublePFTauTrackPt1MediumChargedIsolationAndTightOOSCPhotonsMatchReg (P)*
+  *     hltDoublePFTau40TrackPt1MediumChargedIsolationAndTightOOSCPhotonsDz02Reg             *
+  *                                                                                          *
+  *   HLT_DoubleMediumChargedIsoPFTau40_Trk1_eta2p1_Reg                                      *
+  *     -> hltDoublePFTau40TrackPt1MediumChargedIsolationDz02Reg (F)                         *
+  *     -> hltDoublePFTau40TrackPt1MediumChargedIsolationL1HLTMatchedReg (F)                 *
+  *     -> hltDoublePFTau40TrackPt1MediumChargedIsolationReg (F)                             *
+  *     -> hltL1JetsHLTDoublePFTauTrackPt1MediumChargedIsolationMatchReg (P)                 *
+  *     hltDoublePFTau40TrackPt1MediumChargedIsolationDz02Reg                                *
+  *                                                                                          *
+  *   HLT_DoubleMu3_TkMu_DsTau3Mu                                                            *
+  *     hltdstau3muDisplaced3muFltr                                                          *
+  *                                                                                          *
+  *   HLT_DoubleMu3_Trk_Tau3mu                                                               *
+  *     hltTau3muTkVertexFilter                                                              *
+  *                                                                                          *
+  *   HLT_DoubleMu3_Trk_Tau3mu_NoL1Mass                                                      *
+  *     hltTau3muNoL1MassTkVertexFilter                                                      *
+  *                                                                                          *
+  *   HLT_DoubleTightChargedIsoPFTau35_Trk1_TightID_eta2p1_Reg                               *
+  *     -> hltDoublePFTau35TrackPt1TightChargedIsolationAndTightOOSCPhotonsDz02Reg (F)       *
+  *     -> hltDoublePFTau35TrackPt1TightChargedIsolationAndTightOOSCPhotonsL1HLTMatchedReg (F)*
+  *     -> hltDoublePFTau35TrackPt1TightChargedIsolationAndTightOOSCPhotonsReg (F)           *
+  *     -> hltL1JetsHLTDoublePFTauTrackPt1TightChargedIsolationAndTightOOSCPhotonsMatchReg (P)*
+  *     hltDoublePFTau35TrackPt1TightChargedIsolationAndTightOOSCPhotonsDz02Reg              *
+  *                                                                                          *
+  *   HLT_DoubleTightChargedIsoPFTau35_Trk1_eta2p1_Reg                                       *
+  *     -> hltDoublePFTau35TrackPt1TightChargedIsolationDz02Reg (F)                          *
+  *     -> hltDoublePFTau35TrackPt1TightChargedIsolationL1HLTMatchedReg (F)                  *
+  *     -> hltDoublePFTau35TrackPt1TightChargedIsolationReg (F)                              *
+  *     -> hltL1JetsHLTDoublePFTauTrackPt1TightChargedIsolationMatchReg (P)                  *
+  *     hltDoublePFTau35TrackPt1TightChargedIsolationDz02Reg                                 *
+  *                                                                                          *
+  *   HLT_DoubleTightChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg                               *
+  *     -> hltDoublePFTau40TrackPt1TightChargedIsolationAndTightOOSCPhotonsDz02Reg (F)       *
+  *     -> hltDoublePFTau40TrackPt1TightChargedIsolationAndTightOOSCPhotonsL1HLTMatchedReg (F)*
+  *     -> hltDoublePFTau40TrackPt1TightChargedIsolationAndTightOOSCPhotonsReg (F)           *
+  *     -> hltL1JetsHLTDoublePFTauTrackPt1TightChargedIsolationAndTightOOSCPhotonsMatchReg (P)*
+  *     hltDoublePFTau40TrackPt1TightChargedIsolationAndTightOOSCPhotonsDz02Reg              *
+  *                                                                                          *
+  *   HLT_DoubleTightChargedIsoPFTau40_Trk1_eta2p1_Reg                                       *
+  *     -> hltDoublePFTau40TrackPt1TightChargedIsolationDz02Reg (F)                          *
+  *     -> hltDoublePFTau40TrackPt1TightChargedIsolationL1HLTMatchedReg (F)                  *
+  *     -> hltDoublePFTau40TrackPt1TightChargedIsolationReg (F)                              *
+  *     -> hltL1JetsHLTDoublePFTauTrackPt1TightChargedIsolationMatchReg (P)                  *
+  *     hltDoublePFTau40TrackPt1TightChargedIsolationDz02Reg                                 *
+  *                                                                                          *
+  *   HLT_VBF_DoubleLooseChargedIsoPFTau20_Trk1_eta2p1_Reg                                   *
+  *     -> hltDoublePFTau20TrackPt1LooseChargedIsolationReg (F)                              *
+  *     hltMatchedVBFOnePFJet2CrossCleanedFromDoubleLooseChargedIsoPFTau20                   *
+  *                                                                                          *
+  *   HLT_VBF_DoubleMediumChargedIsoPFTau20_Trk1_eta2p1_Reg                                  *
+  *     -> hltDoublePFTau20TrackPt1MediumChargedIsolationReg (F)                             *
+  *     hltMatchedVBFOnePFJet2CrossCleanedFromDoubleMediumChargedIsoPFTau20                  *
+  *                                                                                          *
+  *   HLT_VBF_DoubleTightChargedIsoPFTau20_Trk1_eta2p1_Reg                                   *
+  *     -> hltDoublePFTau20TrackPt1TightChargedIsolationReg (F)                              *
+  *     hltMatchedVBFOnePFJet2CrossCleanedFromDoubleTightChargedIsoPFTau20                   *
+  *                                                                                          *
+  ********************************************************************************************
+
+  **** Summary of filters per trigger in '101X_dataRun2_HLT_v7' ******************************
+  *                                                                                          *
+  *   HLT_DoubleMediumChargedIsoPFTauHPS35_Trk1_TightID_eta2p1_Reg                           *
+  *     -> hltHpsDoublePFTau35TrackPt1MediumChargedIsolationAndTightOOSCPhotonsDz02Reg (F)   *
+  *     -> hltHpsDoublePFTau35TrackPt1MediumChargedIsolationAndTightOOSCPhotonsL1HLTMatchedReg (F)*
+  *     -> hltHpsDoublePFTau35TrackPt1MediumChargedIsolationAndTightOOSCPhotonsReg (F)       *
+  *     -> hltHpsL1JetsHLTDoublePFTauTrackPt1MediumChargedIsolationAndTightOOSCPhotonsMatchReg (P)*
+  *     hltHpsDoublePFTau35TrackPt1MediumChargedIsolationAndTightOOSCPhotonsDz02Reg          *
+  *                                                                                          *
+  *   HLT_DoubleMediumChargedIsoPFTauHPS35_Trk1_eta2p1_Reg                                   *
+  *     -> hltHpsDoublePFTau35TrackPt1MediumChargedIsolationDz02Reg (F)                      *
+  *     -> hltHpsDoublePFTau35TrackPt1MediumChargedIsolationL1HLTMatchedReg (F)              *
+  *     -> hltHpsDoublePFTau35TrackPt1MediumChargedIsolationReg (F)                          *
+  *     -> hltHpsL1JetsHLTDoublePFTauTrackPt1MediumChargedIsolationMatchReg (P)              *
+  *     hltHpsDoublePFTau35TrackPt1MediumChargedIsolationDz02Reg                             *
+  *                                                                                          *
+  *   HLT_DoubleMediumChargedIsoPFTauHPS40_Trk1_TightID_eta2p1_Reg                           *
+  *     -> hltHpsDoublePFTau40TrackPt1MediumChargedIsolationAndTightOOSCPhotonsDz02Reg (F)   *
+  *     -> hltHpsDoublePFTau40TrackPt1MediumChargedIsolationAndTightOOSCPhotonsL1HLTMatchedReg (F)*
+  *     -> hltHpsDoublePFTau40TrackPt1MediumChargedIsolationAndTightOOSCPhotonsReg (F)       *
+  *     -> hltHpsL1JetsHLTDoublePFTauTrackPt1MediumChargedIsolationAndTightOOSCPhotonsMatchReg (P)*
+  *     hltHpsDoublePFTau40TrackPt1MediumChargedIsolationAndTightOOSCPhotonsDz02Reg          *
+  *                                                                                          *
+  *   HLT_DoubleMediumChargedIsoPFTauHPS40_Trk1_eta2p1_Reg                                   *
+  *     -> hltHpsDoublePFTau40TrackPt1MediumChargedIsolationDz02Reg (F)                      *
+  *     -> hltHpsDoublePFTau40TrackPt1MediumChargedIsolationL1HLTMatchedReg (F)              *
+  *     -> hltHpsDoublePFTau40TrackPt1MediumChargedIsolationReg (F)                          *
+  *     -> hltHpsL1JetsHLTDoublePFTauTrackPt1MediumChargedIsolationMatchReg (P)              *
+  *     hltHpsDoublePFTau40TrackPt1MediumChargedIsolationDz02Reg                             *
+  *                                                                                          *
+  *   HLT_DoubleMu3_TkMu_DsTau3Mu                                                            *
+  *     hltdstau3muDisplaced3muFltr                                                          *
+  *                                                                                          *
+  *   HLT_DoubleMu3_Trk_Tau3mu                                                               *
+  *     hltTau3muTkVertexFilter                                                              *
+  *                                                                                          *
+  *   HLT_DoubleMu3_Trk_Tau3mu_NoL1Mass                                                      *
+  *     hltTau3muNoL1MassTkVertexFilter                                                      *
+  *                                                                                          *
+  *   HLT_DoubleTightChargedIsoPFTauHPS35_Trk1_TightID_eta2p1_Reg                            *
+  *     -> hltHpsDoublePFTau35TrackPt1TightChargedIsolationAndTightOOSCPhotonsDz02Reg (F)    *
+  *     -> hltHpsDoublePFTau35TrackPt1TightChargedIsolationAndTightOOSCPhotonsL1HLTMatchedReg (F)*
+  *     -> hltHpsDoublePFTau35TrackPt1TightChargedIsolationAndTightOOSCPhotonsReg (F)        *
+  *     -> hltHpsL1JetsHLTDoublePFTauTrackPt1TightChargedIsolationAndTightOOSCPhotonsMatchReg (P)*
+  *     hltHpsDoublePFTau35TrackPt1TightChargedIsolationAndTightOOSCPhotonsDz02Reg           *
+  *                                                                                          *
+  *   HLT_DoubleTightChargedIsoPFTauHPS35_Trk1_eta2p1_Reg                                    *
+  *     -> hltHpsDoublePFTau35TrackPt1TightChargedIsolationDz02Reg (F)                       *
+  *     -> hltHpsDoublePFTau35TrackPt1TightChargedIsolationL1HLTMatchedReg (F)               *
+  *     -> hltHpsDoublePFTau35TrackPt1TightChargedIsolationReg (F)                           *
+  *     -> hltHpsL1JetsHLTDoublePFTauTrackPt1TightChargedIsolationMatchReg (P)               *
+  *     hltHpsDoublePFTau35TrackPt1TightChargedIsolationDz02Reg                              *
+  *                                                                                          *
+  *   HLT_DoubleTightChargedIsoPFTauHPS40_Trk1_TightID_eta2p1_Reg                            *
+  *     -> hltHpsDoublePFTau40TrackPt1TightChargedIsolationAndTightOOSCPhotonsDz02Reg (F)    *
+  *     -> hltHpsDoublePFTau40TrackPt1TightChargedIsolationAndTightOOSCPhotonsL1HLTMatchedReg (F)*
+  *     -> hltHpsDoublePFTau40TrackPt1TightChargedIsolationAndTightOOSCPhotonsReg (F)        *
+  *     -> hltHpsL1JetsHLTDoublePFTauTrackPt1TightChargedIsolationAndTightOOSCPhotonsMatchReg (P)*
+  *     hltHpsDoublePFTau40TrackPt1TightChargedIsolationAndTightOOSCPhotonsDz02Reg           *
+  *                                                                                          *
+  *   HLT_DoubleTightChargedIsoPFTauHPS40_Trk1_eta2p1_Reg                                    *
+  *     -> hltHpsDoublePFTau40TrackPt1TightChargedIsolationDz02Reg (F)                       *
+  *     -> hltHpsDoublePFTau40TrackPt1TightChargedIsolationL1HLTMatchedReg (F)               *
+  *     -> hltHpsDoublePFTau40TrackPt1TightChargedIsolationReg (F)                           *
+  *     -> hltHpsL1JetsHLTDoublePFTauTrackPt1TightChargedIsolationMatchReg (P)               *
+  *     hltHpsDoublePFTau40TrackPt1TightChargedIsolationDz02Reg                              *
+  *                                                                                          *
+  *   HLT_VBF_DoubleLooseChargedIsoPFTauHPS20_Trk1_eta2p1                                    *
+  *     hltMatchedVBFOnePFJet2CrossCleanedFromDoubleLooseChargedIsoPFTauHPS20                *
+  *                                                                                          *
+  *   HLT_VBF_DoubleMediumChargedIsoPFTauHPS20_Trk1_eta2p1                                   *
+  *     hltMatchedVBFOnePFJet2CrossCleanedFromDoubleMediumChargedIsoPFTauHPS20               *
+  *                                                                                          *
+  *   HLT_VBF_DoubleTightChargedIsoPFTauHPS20_Trk1_eta2p1                                    *
+  *     hltMatchedVBFOnePFJet2CrossCleanedFromDoubleTightChargedIsoPFTauHPS20                *
+  *                                                                                          *
+  ********************************************************************************************
+
+  **** Summary of filters per trigger in 'All' ***********************************************
+  *                                                                                          *
+  *   HLT_DoubleLooseChargedIsoPFTau35_Trk1_TightID_eta2p1_Reg                               *
+  *     -> hltDoublePFTau35TrackPt1LooseChargedIsolationAndTightOOSCPhotonsDz02Reg (F)       *
+  *     -> hltDoublePFTau35TrackPt1LooseChargedIsolationAndTightOOSCPhotonsL1HLTMatchedReg (F)*
+  *     -> hltDoublePFTau35TrackPt1LooseChargedIsolationAndTightOOSCPhotonsReg (F)           *
+  *     -> hltL1JetsHLTDoublePFTauTrackPt1LooseChargedIsolationAndTightOOSCPhotonsMatchReg (P)*
+  *     hltDoublePFTau35TrackPt1LooseChargedIsolationAndTightOOSCPhotonsDz02Reg              *
+  *                                                                                          *
+  *   HLT_DoubleLooseChargedIsoPFTau35_Trk1_eta2p1_Reg                                       *
+  *     -> hltDoublePFTau35TrackPt1LooseChargedIsolationDz02Reg (F)                          *
+  *     -> hltDoublePFTau35TrackPt1LooseChargedIsolationL1HLTMatchedReg (F)                  *
+  *     -> hltDoublePFTau35TrackPt1LooseChargedIsolationReg (F)                              *
+  *     -> hltL1JetsHLTDoublePFTauTrackPt1LooseChargedIsolationMatchReg (P)                  *
+  *     hltDoublePFTau35TrackPt1LooseChargedIsolationDz02Reg                                 *
+  *                                                                                          *
+  *   HLT_DoubleLooseChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg                               *
+  *     -> hltDoublePFTau40TrackPt1LooseChargedIsolationAndTightOOSCPhotonsDz02Reg (F)       *
+  *     -> hltDoublePFTau40TrackPt1LooseChargedIsolationAndTightOOSCPhotonsL1HLTMatchedReg (F)*
+  *     -> hltDoublePFTau40TrackPt1LooseChargedIsolationAndTightOOSCPhotonsReg (F)           *
+  *     -> hltL1JetsHLTDoublePFTauTrackPt1LooseChargedIsolationAndTightOOSCPhotonsMatchReg (P)*
+  *     hltDoublePFTau40TrackPt1LooseChargedIsolationAndTightOOSCPhotonsDz02Reg              *
+  *                                                                                          *
+  *   HLT_DoubleLooseChargedIsoPFTau40_Trk1_eta2p1_Reg                                       *
+  *     -> hltDoublePFTau40TrackPt1LooseChargedIsolationDz02Reg (F)                          *
+  *     -> hltDoublePFTau40TrackPt1LooseChargedIsolationL1HLTMatchedReg (F)                  *
+  *     -> hltDoublePFTau40TrackPt1LooseChargedIsolationReg (F)                              *
+  *     -> hltL1JetsHLTDoublePFTauTrackPt1LooseChargedIsolationMatchReg (P)                  *
+  *     hltDoublePFTau40TrackPt1LooseChargedIsolationDz02Reg                                 *
+  *                                                                                          *
+  *   HLT_DoubleMediumChargedIsoPFTau35_Trk1_TightID_eta2p1_Reg                              *
+  *     -> hltDoublePFTau35TrackPt1MediumChargedIsolationAndTightOOSCPhotonsDz02Reg (F)      *
+  *     -> hltDoublePFTau35TrackPt1MediumChargedIsolationAndTightOOSCPhotonsL1HLTMatchedReg (F)*
+  *     -> hltDoublePFTau35TrackPt1MediumChargedIsolationAndTightOOSCPhotonsReg (F)          *
+  *     -> hltL1JetsHLTDoublePFTauTrackPt1MediumChargedIsolationAndTightOOSCPhotonsMatchReg (P)*
+  *     hltDoublePFTau35TrackPt1MediumChargedIsolationAndTightOOSCPhotonsDz02Reg             *
+  *                                                                                          *
+  *   HLT_DoubleMediumChargedIsoPFTau35_Trk1_eta2p1_Reg                                      *
+  *     -> hltDoublePFTau35TrackPt1MediumChargedIsolationDz02Reg (F)                         *
+  *     -> hltDoublePFTau35TrackPt1MediumChargedIsolationL1HLTMatchedReg (F)                 *
+  *     -> hltDoublePFTau35TrackPt1MediumChargedIsolationReg (F)                             *
+  *     -> hltL1JetsHLTDoublePFTauTrackPt1MediumChargedIsolationMatchReg (P)                 *
+  *     hltDoublePFTau35TrackPt1MediumChargedIsolationDz02Reg                                *
+  *                                                                                          *
+  *   HLT_DoubleMediumChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg                              *
+  *     -> hltDoublePFTau40TrackPt1MediumChargedIsolationAndTightOOSCPhotonsDz02Reg (F)      *
+  *     -> hltDoublePFTau40TrackPt1MediumChargedIsolationAndTightOOSCPhotonsL1HLTMatchedReg (F)*
+  *     -> hltDoublePFTau40TrackPt1MediumChargedIsolationAndTightOOSCPhotonsReg (F)          *
+  *     -> hltL1JetsHLTDoublePFTauTrackPt1MediumChargedIsolationAndTightOOSCPhotonsMatchReg (P)*
+  *     hltDoublePFTau40TrackPt1MediumChargedIsolationAndTightOOSCPhotonsDz02Reg             *
+  *                                                                                          *
+  *   HLT_DoubleMediumChargedIsoPFTau40_Trk1_eta2p1_Reg                                      *
+  *     -> hltDoublePFTau40TrackPt1MediumChargedIsolationDz02Reg (F)                         *
+  *     -> hltDoublePFTau40TrackPt1MediumChargedIsolationL1HLTMatchedReg (F)                 *
+  *     -> hltDoublePFTau40TrackPt1MediumChargedIsolationReg (F)                             *
+  *     -> hltL1JetsHLTDoublePFTauTrackPt1MediumChargedIsolationMatchReg (P)                 *
+  *     hltDoublePFTau40TrackPt1MediumChargedIsolationDz02Reg                                *
+  *                                                                                          *
+  *   HLT_DoubleMediumChargedIsoPFTauHPS35_Trk1_TightID_eta2p1_Reg                           *
+  *     -> hltHpsDoublePFTau35TrackPt1MediumChargedIsolationAndTightOOSCPhotonsDz02Reg (F)   *
+  *     -> hltHpsDoublePFTau35TrackPt1MediumChargedIsolationAndTightOOSCPhotonsL1HLTMatchedReg (F)*
+  *     -> hltHpsDoublePFTau35TrackPt1MediumChargedIsolationAndTightOOSCPhotonsReg (F)       *
+  *     -> hltHpsL1JetsHLTDoublePFTauTrackPt1MediumChargedIsolationAndTightOOSCPhotonsMatchReg (P)*
+  *     hltHpsDoublePFTau35TrackPt1MediumChargedIsolationAndTightOOSCPhotonsDz02Reg          *
+  *                                                                                          *
+  *   HLT_DoubleMediumChargedIsoPFTauHPS35_Trk1_eta2p1_Reg                                   *
+  *     -> hltHpsDoublePFTau35TrackPt1MediumChargedIsolationDz02Reg (F)                      *
+  *     -> hltHpsDoublePFTau35TrackPt1MediumChargedIsolationL1HLTMatchedReg (F)              *
+  *     -> hltHpsDoublePFTau35TrackPt1MediumChargedIsolationReg (F)                          *
+  *     -> hltHpsL1JetsHLTDoublePFTauTrackPt1MediumChargedIsolationMatchReg (P)              *
+  *     hltHpsDoublePFTau35TrackPt1MediumChargedIsolationDz02Reg                             *
+  *                                                                                          *
+  *   HLT_DoubleMediumChargedIsoPFTauHPS40_Trk1_TightID_eta2p1_Reg                           *
+  *     -> hltHpsDoublePFTau40TrackPt1MediumChargedIsolationAndTightOOSCPhotonsDz02Reg (F)   *
+  *     -> hltHpsDoublePFTau40TrackPt1MediumChargedIsolationAndTightOOSCPhotonsL1HLTMatchedReg (F)*
+  *     -> hltHpsDoublePFTau40TrackPt1MediumChargedIsolationAndTightOOSCPhotonsReg (F)       *
+  *     -> hltHpsL1JetsHLTDoublePFTauTrackPt1MediumChargedIsolationAndTightOOSCPhotonsMatchReg (P)*
+  *     hltHpsDoublePFTau40TrackPt1MediumChargedIsolationAndTightOOSCPhotonsDz02Reg          *
+  *                                                                                          *
+  *   HLT_DoubleMediumChargedIsoPFTauHPS40_Trk1_eta2p1_Reg                                   *
+  *     -> hltHpsDoublePFTau40TrackPt1MediumChargedIsolationDz02Reg (F)                      *
+  *     -> hltHpsDoublePFTau40TrackPt1MediumChargedIsolationL1HLTMatchedReg (F)              *
+  *     -> hltHpsDoublePFTau40TrackPt1MediumChargedIsolationReg (F)                          *
+  *     -> hltHpsL1JetsHLTDoublePFTauTrackPt1MediumChargedIsolationMatchReg (P)              *
+  *     hltHpsDoublePFTau40TrackPt1MediumChargedIsolationDz02Reg                             *
+  *                                                                                          *
+  *   HLT_DoubleMediumCombinedIsoPFTau35_Trk1_eta2p1_Reg                                     *
+  *     hltDoublePFTau35TrackPt1MediumCombinedIsolationDz02Reg                               *
+  *                                                                                          *
+  *   HLT_DoubleMediumCombinedIsoPFTau40_Trk1_eta2p1                                         *
+  *     hltDoublePFTau40TrackPt1MediumCombinedIsolationDz02                                  *
+  *                                                                                          *
+  *   HLT_DoubleMediumCombinedIsoPFTau40_Trk1_eta2p1_Reg                                     *
+  *     hltDoublePFTau40TrackPt1MediumCombinedIsolationDz02Reg                               *
+  *                                                                                          *
+  *   HLT_DoubleMediumIsoPFTau32_Trk1_eta2p1_Reg                                             *
+  *     hltDoublePFTau32TrackPt1MediumIsolationDz02Reg                                       *
+  *                                                                                          *
+  *   HLT_DoubleMediumIsoPFTau35_Trk1_eta2p1_Reg                                             *
+  *     hltDoublePFTau35TrackPt1MediumIsolationDz02Reg                                       *
+  *                                                                                          *
+  *   HLT_DoubleMediumIsoPFTau40_Trk1_eta2p1                                                 *
+  *     hltDoublePFTau40TrackPt1MediumIsolationDz02                                          *
+  *                                                                                          *
+  *   HLT_DoubleMediumIsoPFTau40_Trk1_eta2p1_Reg                                             *
+  *     hltDoublePFTau40TrackPt1MediumIsolationDz02Reg                                       *
+  *                                                                                          *
+  *   HLT_DoubleMu3_TkMu_DsTau3Mu                                                            *
+  *     hltdstau3muDisplaced3muFltr                                                          *
+  *                                                                                          *
+  *   HLT_DoubleMu3_Trk_Tau3mu                                                               *
+  *     hltTau3muTkVertexFilter                                                              *
+  *                                                                                          *
+  *   HLT_DoubleMu3_Trk_Tau3mu_NoL1Mass                                                      *
+  *     hltTau3muNoL1MassTkVertexFilter                                                      *
+  *                                                                                          *
+  *   HLT_DoubleTightChargedIsoPFTau35_Trk1_TightID_eta2p1_Reg                               *
+  *     -> hltDoublePFTau35TrackPt1TightChargedIsolationAndTightOOSCPhotonsDz02Reg (F)       *
+  *     -> hltDoublePFTau35TrackPt1TightChargedIsolationAndTightOOSCPhotonsL1HLTMatchedReg (F)*
+  *     -> hltDoublePFTau35TrackPt1TightChargedIsolationAndTightOOSCPhotonsReg (F)           *
+  *     -> hltL1JetsHLTDoublePFTauTrackPt1TightChargedIsolationAndTightOOSCPhotonsMatchReg (P)*
+  *     hltDoublePFTau35TrackPt1TightChargedIsolationAndTightOOSCPhotonsDz02Reg              *
+  *                                                                                          *
+  *   HLT_DoubleTightChargedIsoPFTau35_Trk1_eta2p1_Reg                                       *
+  *     -> hltDoublePFTau35TrackPt1TightChargedIsolationDz02Reg (F)                          *
+  *     -> hltDoublePFTau35TrackPt1TightChargedIsolationL1HLTMatchedReg (F)                  *
+  *     -> hltDoublePFTau35TrackPt1TightChargedIsolationReg (F)                              *
+  *     -> hltL1JetsHLTDoublePFTauTrackPt1TightChargedIsolationMatchReg (P)                  *
+  *     hltDoublePFTau35TrackPt1TightChargedIsolationDz02Reg                                 *
+  *                                                                                          *
+  *   HLT_DoubleTightChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg                               *
+  *     -> hltDoublePFTau40TrackPt1TightChargedIsolationAndTightOOSCPhotonsDz02Reg (F)       *
+  *     -> hltDoublePFTau40TrackPt1TightChargedIsolationAndTightOOSCPhotonsL1HLTMatchedReg (F)*
+  *     -> hltDoublePFTau40TrackPt1TightChargedIsolationAndTightOOSCPhotonsReg (F)           *
+  *     -> hltL1JetsHLTDoublePFTauTrackPt1TightChargedIsolationAndTightOOSCPhotonsMatchReg (P)*
+  *     hltDoublePFTau40TrackPt1TightChargedIsolationAndTightOOSCPhotonsDz02Reg              *
+  *                                                                                          *
+  *   HLT_DoubleTightChargedIsoPFTau40_Trk1_eta2p1_Reg                                       *
+  *     -> hltDoublePFTau40TrackPt1TightChargedIsolationDz02Reg (F)                          *
+  *     -> hltDoublePFTau40TrackPt1TightChargedIsolationL1HLTMatchedReg (F)                  *
+  *     -> hltDoublePFTau40TrackPt1TightChargedIsolationReg (F)                              *
+  *     -> hltL1JetsHLTDoublePFTauTrackPt1TightChargedIsolationMatchReg (P)                  *
+  *     hltDoublePFTau40TrackPt1TightChargedIsolationDz02Reg                                 *
+  *                                                                                          *
+  *   HLT_DoubleTightChargedIsoPFTauHPS35_Trk1_TightID_eta2p1_Reg                            *
+  *     -> hltHpsDoublePFTau35TrackPt1TightChargedIsolationAndTightOOSCPhotonsDz02Reg (F)    *
+  *     -> hltHpsDoublePFTau35TrackPt1TightChargedIsolationAndTightOOSCPhotonsL1HLTMatchedReg (F)*
+  *     -> hltHpsDoublePFTau35TrackPt1TightChargedIsolationAndTightOOSCPhotonsReg (F)        *
+  *     -> hltHpsL1JetsHLTDoublePFTauTrackPt1TightChargedIsolationAndTightOOSCPhotonsMatchReg (P)*
+  *     hltHpsDoublePFTau35TrackPt1TightChargedIsolationAndTightOOSCPhotonsDz02Reg           *
+  *                                                                                          *
+  *   HLT_DoubleTightChargedIsoPFTauHPS35_Trk1_eta2p1_Reg                                    *
+  *     -> hltHpsDoublePFTau35TrackPt1TightChargedIsolationDz02Reg (F)                       *
+  *     -> hltHpsDoublePFTau35TrackPt1TightChargedIsolationL1HLTMatchedReg (F)               *
+  *     -> hltHpsDoublePFTau35TrackPt1TightChargedIsolationReg (F)                           *
+  *     -> hltHpsL1JetsHLTDoublePFTauTrackPt1TightChargedIsolationMatchReg (P)               *
+  *     hltHpsDoublePFTau35TrackPt1TightChargedIsolationDz02Reg                              *
+  *                                                                                          *
+  *   HLT_DoubleTightChargedIsoPFTauHPS40_Trk1_TightID_eta2p1_Reg                            *
+  *     -> hltHpsDoublePFTau40TrackPt1TightChargedIsolationAndTightOOSCPhotonsDz02Reg (F)    *
+  *     -> hltHpsDoublePFTau40TrackPt1TightChargedIsolationAndTightOOSCPhotonsL1HLTMatchedReg (F)*
+  *     -> hltHpsDoublePFTau40TrackPt1TightChargedIsolationAndTightOOSCPhotonsReg (F)        *
+  *     -> hltHpsL1JetsHLTDoublePFTauTrackPt1TightChargedIsolationAndTightOOSCPhotonsMatchReg (P)*
+  *     hltHpsDoublePFTau40TrackPt1TightChargedIsolationAndTightOOSCPhotonsDz02Reg           *
+  *                                                                                          *
+  *   HLT_DoubleTightChargedIsoPFTauHPS40_Trk1_eta2p1_Reg                                    *
+  *     -> hltHpsDoublePFTau40TrackPt1TightChargedIsolationDz02Reg (F)                       *
+  *     -> hltHpsDoublePFTau40TrackPt1TightChargedIsolationL1HLTMatchedReg (F)               *
+  *     -> hltHpsDoublePFTau40TrackPt1TightChargedIsolationReg (F)                           *
+  *     -> hltHpsL1JetsHLTDoublePFTauTrackPt1TightChargedIsolationMatchReg (P)               *
+  *     hltHpsDoublePFTau40TrackPt1TightChargedIsolationDz02Reg                              *
+  *                                                                                          *
+  *   HLT_DoubleTightCombinedIsoPFTau35_Trk1_eta2p1_Reg                                      *
+  *     hltDoublePFTau35TrackPt1TightCombinedIsolationDz02Reg                                *
+  *                                                                                          *
+  *   HLT_DoubleTightCombinedIsoPFTau40_Trk1_eta2p1                                          *
+  *     hltDoublePFTau40TrackPt1TightCombinedIsolationDz02                                   *
+  *                                                                                          *
+  *   HLT_DoubleTightCombinedIsoPFTau40_Trk1_eta2p1_Reg                                      *
+  *     hltDoublePFTau40TrackPt1TightCombinedIsolationDz02Reg                                *
+  *                                                                                          *
+  *   HLT_Ele27_eta2p1_WPLoose_Gsf_DoubleMediumIsoPFTau32_Trk1_eta2p1_Reg                    *
+  *     hltDoublePFTau32TrackPt1MediumIsolationNoL1MatchDz02Reg                              *
+  *                                                                                          *
+  *   HLT_Ele27_eta2p1_WPLoose_Gsf_DoubleMediumIsoPFTau35_Trk1_eta2p1_Reg                    *
+  *     hltDoublePFTau35TrackPt1MediumIsolationNoL1MatchDz02Reg                              *
+  *                                                                                          *
+  *   HLT_Ele27_eta2p1_WPLoose_Gsf_DoubleMediumIsoPFTau40_Trk1_eta2p1_Reg                    *
+  *     hltDoublePFTau40TrackPt1MediumIsolationNoL1MatchDz02Reg                              *
+  *                                                                                          *
+  *   HLT_VBF_DoubleLooseChargedIsoPFTau20_Trk1_eta2p1                                       *
+  *     hltMatchedVBFOnePFJet2CrossCleanedFromDoubleLooseChargedIsoPFTau20                   *
+  *                                                                                          *
+  *   HLT_VBF_DoubleLooseChargedIsoPFTau20_Trk1_eta2p1_Reg                                   *
+  *     -> hltDoublePFTau20TrackPt1LooseChargedIsolationReg (F)                              *
+  *     hltMatchedVBFOnePFJet2CrossCleanedFromDoubleLooseChargedIsoPFTau20                   *
+  *                                                                                          *
+  *   HLT_VBF_DoubleLooseChargedIsoPFTauHPS20_Trk1_eta2p1                                    *
+  *     hltMatchedVBFOnePFJet2CrossCleanedFromDoubleLooseChargedIsoPFTauHPS20                *
+  *                                                                                          *
+  *   HLT_VBF_DoubleMediumChargedIsoPFTau20_Trk1_eta2p1                                      *
+  *     hltMatchedVBFOnePFJet2CrossCleanedFromDoubleMediumChargedIsoPFTau20                  *
+  *                                                                                          *
+  *   HLT_VBF_DoubleMediumChargedIsoPFTau20_Trk1_eta2p1_Reg                                  *
+  *     -> hltDoublePFTau20TrackPt1MediumChargedIsolationReg (F)                             *
+  *     hltMatchedVBFOnePFJet2CrossCleanedFromDoubleMediumChargedIsoPFTau20                  *
+  *                                                                                          *
+  *   HLT_VBF_DoubleMediumChargedIsoPFTauHPS20_Trk1_eta2p1                                   *
+  *     hltMatchedVBFOnePFJet2CrossCleanedFromDoubleMediumChargedIsoPFTauHPS20               *
+  *                                                                                          *
+  *   HLT_VBF_DoubleTightChargedIsoPFTau20_Trk1_eta2p1                                       *
+  *     hltMatchedVBFOnePFJet2CrossCleanedFromDoubleTightChargedIsoPFTau20                   *
+  *                                                                                          *
+  *   HLT_VBF_DoubleTightChargedIsoPFTau20_Trk1_eta2p1_Reg                                   *
+  *     -> hltDoublePFTau20TrackPt1TightChargedIsolationReg (F)                              *
+  *     hltMatchedVBFOnePFJet2CrossCleanedFromDoubleTightChargedIsoPFTau20                   *
+  *                                                                                          *
+  *   HLT_VBF_DoubleTightChargedIsoPFTauHPS20_Trk1_eta2p1                                    *
+  *     hltMatchedVBFOnePFJet2CrossCleanedFromDoubleTightChargedIsoPFTauHPS20                *
+  *                                                                                          *
+  ********************************************************************************************

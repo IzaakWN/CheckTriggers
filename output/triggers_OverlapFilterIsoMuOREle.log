@@ -1,0 +1,1485 @@
+>>> --------------- checkTriggers_cfg.py ------------------------------------
+>>> year         = -1
+>>> dtype        = ''
+>>> verbose      = False
+>>> nlast        = 1
+>>> triggers     = ['HLT_*Mu*Tau*', 'HLT_*Ele*Tau*', 'HLT_*Tau*Mu*', 'HLT_*Tau*Ele*']
+>>> filters      = ['hlt*OverlapFilterIsoEle*PFTau*', 'hlt*OverlapFilterIsoMu*PFTau*']
+>>> vetoTriggers = []
+>>> vetoFilters  = []
+>>> files        = [
+>>>   'file:root://xrootd-cms.infn.it//store/mc/RunIISummer16MiniAODv3/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUMoriond17_94X_mcRun2_asymptotic_v3_ext1-v2/120000/ACDA5D95-3EDF-E811-AC6F-842B2B6AEE8B.root',
+>>>   'file:root://xrootd-cms.infn.it//store/mc/RunIIFall17MiniAODv2/DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/MINIAODSIM/PU2017RECOSIMstep_12Apr2018_94X_mc2017_realistic_v14-v1/70000/0256D125-5A44-E811-8C69-44A842CFD64D.root',
+>>>   'file:root://xrootd-cms.infn.it//store/mc/RunIIAutumn18MiniAOD/DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/MINIAODSIM/102X_upgrade2018_realistic_v15-v1/100000/08540B6C-AA39-3F49-8FFE-8771AD2A8885.root',
+>>>   'file:root://xrootd-cms.infn.it//store/data/Run2016B/Tau/MINIAOD/17Jul2018_ver2-v1/40000/349B0F86-F78B-E811-8D9E-7CD30AD0A75C.root',
+>>>   'file:root://xrootd-cms.infn.it//store/data/Run2016C/Tau/MINIAOD/17Jul2018-v1/40000/52BAEB0A-478A-E811-8376-0CC47A4D764C.root',
+>>>   'file:root://xrootd-cms.infn.it//store/data/Run2016D/Tau/MINIAOD/17Jul2018-v1/40000/46AA66A9-708B-E811-9182-AC1F6B23C830.root',
+>>>   'file:root://xrootd-cms.infn.it//store/data/Run2016E/Tau/MINIAOD/17Jul2018-v1/00000/863BF917-368A-E811-9D0F-0242AC1C0503.root',
+>>>   'file:root://xrootd-cms.infn.it//store/data/Run2016F/Tau/MINIAOD/17Jul2018-v1/40000/BCBF3F41-988A-E811-A6B4-008CFAFBFC72.root',
+>>>   'file:root://xrootd-cms.infn.it//store/data/Run2016G/Tau/MINIAOD/17Jul2018-v1/20000/807650BA-C98B-E811-8B69-008CFA0A55E8.root',
+>>>   'file:root://xrootd-cms.infn.it//store/data/Run2016H/Tau/MINIAOD/17Jul2018-v1/80000/78EDACAC-8C8D-E811-8BF8-008CFA111354.root',
+>>>   'file:root://xrootd-cms.infn.it//store/data/Run2017B/Tau/MINIAOD/31Mar2018-v1/90000/602B3645-3237-E811-B67B-A4BF0112BE4C.root',
+>>>   'file:root://xrootd-cms.infn.it//store/data/Run2017C/Tau/MINIAOD/31Mar2018-v1/00000/F057F44E-C637-E811-94D6-D4AE527EEA1D.root',
+>>>   'file:root://xrootd-cms.infn.it//store/data/Run2017D/Tau/MINIAOD/31Mar2018-v1/00000/6695F96F-E836-E811-BB64-008CFAF554C8.root',
+>>>   'file:root://xrootd-cms.infn.it//store/data/Run2017E/Tau/MINIAOD/31Mar2018-v1/90000/4075D591-6C37-E811-BED9-B4E10FA31F63.root',
+>>>   'file:root://xrootd-cms.infn.it//store/data/Run2017F/Tau/MINIAOD/31Mar2018-v1/30000/E45B7EAA-BB37-E811-9BD6-1866DAEA79C8.root',
+>>>   'file:root://xrootd-cms.infn.it//store/data/Run2018A/Tau/MINIAOD/17Sep2018-v1/270000/72909117-1CB7-A745-99E4-34F7728F0DC1.root',
+>>>   'file:root://xrootd-cms.infn.it//store/data/Run2018B/Tau/MINIAOD/17Sep2018-v1/100000/FB06FB19-4CC9-5F47-AEE2-D69D3089BA91.root',
+>>>   'file:root://xrootd-cms.infn.it//store/data/Run2018C/Tau/MINIAOD/17Sep2018-v1/120000/B21AD337-DD07-0943-9683-93FC5C1215DB.root',
+>>>   'file:root://xrootd-cms.infn.it//store/data/Run2018D/Tau/MINIAOD/PromptReco-v2/000/320/654/00000/FE8DA6C7-9896-E811-8CD8-FA163EA5E58D.root'
+>>> ]
+>>> ----------------------------------------------------------------------
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/frozen/2016/25ns15e33/v4.0/HLT/V2[0m'
+>>>   Global tag:    '[1m80X_mcRun2_asymptotic_2016_TrancheIV_v6[0m'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/frozen/2017/2e34/v4.0/HLT/V5[0m'
+>>>   Global tag:    '[1m94X_mc2017_realistic_v10[0m'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/frozen/2018/2e34/v3.2/HLT/V1[0m'
+>>>   Global tag:    '[1m102X_upgrade2018_realistic_v15[0m'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2016/25ns10e33/v1.2.1/HLT/V4[0m'
+>>>   Global tag:    '[1m80X_dataRun2_HLT_v12[0m'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2016/25ns10e33/v1.2.3/HLT/V6[0m'
+>>>   Global tag:    '[1m80X_dataRun2_HLT_v12[0m'
+>>>   Trigger menu did not change. Skipping...
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2016/25ns10e33/v1.2.4/HLT/V1[0m'
+>>>   Global tag:    '[1m80X_dataRun2_HLT_v12[0m'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2016/25ns10e33/v1.2.5/HLT/V3[0m'
+>>>   Global tag:    '[1m80X_dataRun2_HLT_v12[0m'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2016/25ns10e33/v1.2.5/HLT/V6[0m'
+>>>   Global tag:    '[1m80X_dataRun2_HLT_v12[0m'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2016/25ns10e33/v1.2.5/HLT/V9[0m'
+>>>   Global tag:    '[1m80X_dataRun2_HLT_v12[0m'
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2016/25ns10e33/v2.1.4/HLT/V1[0m'
+>>>   Global tag:    '[1m80X_dataRun2_HLT_v12[0m'
+>>>   Trigger menu did not change. Skipping...
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2016/25ns10e33/v2.1.4/HLT/V2[0m'
+>>>   Global tag:    '[1m80X_dataRun2_HLT_v12[0m'
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2016/25ns10e33/v2.2.0/HLT/V2[0m'
+>>>   Global tag:    '[1m80X_dataRun2_HLT_v12[0m'
+>>>   Trigger menu did not change. Skipping...
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2016/25ns10e33/v2.2.0/HLT/V13[0m'
+>>>   Global tag:    '[1m80X_dataRun2_HLT_v12[0m'
+>>>   Trigger menu did not change. Skipping...
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2016/25ns10e33/v2.2.1/HLT/V3[0m'
+>>>   Global tag:    '[1m80X_dataRun2_HLT_v12[0m'
+>>>   Trigger menu did not change. Skipping...
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2016/25ns15e33/v3.0/HLT/V6[0m'
+>>>   Global tag:    '[1m80X_dataRun2_HLT_v12[0m'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2016/25ns15e33/v3.0/HLT/V7[0m'
+>>>   Global tag:    '[1m80X_dataRun2_HLT_v12[0m'
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2016/25ns15e33/v3.0.1/HLT/V2[0m'
+>>>   Global tag:    '[1m80X_dataRun2_HLT_v12[0m'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2016/25ns15e33/v3.0.1/HLT/V3[0m'
+>>>   Global tag:    '[1m80X_dataRun2_HLT_v12[0m'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2016/25ns15e33/v3.0.1/HLT/V4[0m'
+>>>   Global tag:    '[1m80X_dataRun2_HLT_v12[0m'
+>>>   Trigger menu did not change. Skipping...
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2016/25ns15e33/v3.0.1/HLT/V6[0m'
+>>>   Global tag:    '[1m80X_dataRun2_HLT_v12[0m'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2016/25ns15e33/v3.0.3/HLT/V2[0m'
+>>>   Global tag:    '[1m80X_dataRun2_HLT_v12[0m'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2016/25ns15e33/v3.0.3/HLT/V4[0m'
+>>>   Global tag:    '[1m80X_dataRun2_HLT_v12[0m'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2016/25ns15e33/v3.0.3/HLT/V4[0m'
+>>>   Global tag:    '[1m80X_dataRun2_HLT_v12[0m'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2016/25ns15e33/v3.0.3/HLT/V4[0m'
+>>>   Global tag:    '[1m80X_dataRun2_HLT_v12[0m'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2016/25ns15e33/v3.1.1/HLT/V1[0m'
+>>>   Global tag:    '[1m80X_dataRun2_HLT_v12[0m'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2016/25ns15e33/v3.1.1/HLT/V2[0m'
+>>>   Global tag:    '[1m80X_dataRun2_HLT_v12[0m'
+>>>   Trigger menu did not change. Skipping...
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2016/25ns15e33/v3.1.2/HLT/V1[0m'
+>>>   Global tag:    '[1m80X_dataRun2_HLT_v12[0m'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2016/25ns15e33/v3.1.6/HLT/V1[0m'
+>>>   Global tag:    '[1m80X_dataRun2_HLT_v12[0m'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2016/25ns15e33/v3.1.7_HighRateParkedZeroBias/HLT/V2[0m'
+>>>   Global tag:    '[1m80X_dataRun2_HLT_v12[0m'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2016/25ns15e33/v3.1.8/HLT/V1[0m'
+>>>   Global tag:    '[1m80X_dataRun2_HLT_v12[0m'
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2016/25ns15e33/v4.1.7/HLT/V1[0m'
+>>>   Global tag:    '[1m80X_dataRun2_HLT_v12[0m'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2016/25ns15e33/v4.2.2/HLT/V1[0m'
+>>>   Global tag:    '[1m80X_dataRun2_HLT_v12[0m'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2016/25ns15e33/v4.2.3/HLT/V1[0m'
+>>>   Global tag:    '[1m80X_dataRun2_HLT_v12[0m'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2017/2e34/v1.1.7/HLT/V2[0m'
+>>>   Global tag:    '[1m92X_dataRun2_HLT_v4[0m'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2017/2e34/v1.2.1/HLT/V1[0m'
+>>>   Global tag:    '[1m92X_dataRun2_HLT_v4[0m'
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2017/2e34/v1.2.1/HLT/V2[0m'
+>>>   Global tag:    '[1m92X_dataRun2_HLT_v4[0m'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2017/2e34/v1.2.3/HLT/V3[0m'
+>>>   Global tag:    '[1m92X_dataRun2_HLT_v4[0m'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2017/2e34/v1.2.4/HLT/V1[0m'
+>>>   Global tag:    '[1m92X_dataRun2_HLT_v4[0m'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2017/2e34/v1.2.4/HLT/V2[0m'
+>>>   Global tag:    '[1m92X_dataRun2_HLT_v4[0m'
+>>>   Trigger menu did not change. Skipping...
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2017/2e34/v2.0.1/HLT/V6[0m'
+>>>   Global tag:    '[1m92X_dataRun2_HLT_v4[0m'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2017/2e34/v2.1.0/HLT/V3[0m'
+>>>   Global tag:    '[1m92X_dataRun2_HLT_v4[0m'
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2017/2e34/v2.1.3/HLT/V1[0m'
+>>>   Global tag:    '[1m92X_dataRun2_HLT_v4[0m'
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2017/2e34/v2.2.0/HLT/V2[0m'
+>>>   Global tag:    '[1m92X_dataRun2_HLT_v7[0m'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2017/2e34/v3.0.0/HLT/V1[0m'
+>>>   Global tag:    '[1m92X_dataRun2_HLT_v7[0m'
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2017/2e34/v3.0.0/HLT/V4[0m'
+>>>   Global tag:    '[1m92X_dataRun2_HLT_v7[0m'
+>>>   Trigger menu did not change. Skipping...
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2017/2e34/v3.1.0/HLT/V2[0m'
+>>>   Global tag:    '[1m92X_dataRun2_HLT_v7[0m'
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2017/2e34/v3.1.3/HLT/V1[0m'
+>>>   Global tag:    '[1m92X_dataRun2_HLT_v7[0m'
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2017/2e34/v3.1.3/HLT/V2[0m'
+>>>   Global tag:    '[1m92X_dataRun2_HLT_v7[0m'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2017/2e34/v3.2.2/HLT/V6[0m'
+>>>   Global tag:    '[1m92X_dataRun2_HLT_v7[0m'
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2017/2e34/v4.1.0/HLT/V3[0m'
+>>>   Global tag:    '[1m92X_dataRun2_HLT_v7[0m'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2017/2e34/v4.2.1/HLT/V2[0m'
+>>>   Global tag:    '[1m92X_dataRun2_HLT_v7[0m'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2018/2e34/v1.2.2/HLT/V3[0m'
+>>>   Global tag:    '[1m101X_dataRun2_HLT_v7[0m'
+>>>   Trigger menu did not change. Skipping...
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2018/2e34/v2.0.2/HLT/V2[0m'
+>>>   Global tag:    '[1m101X_dataRun2_HLT_v7[0m'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2018/2e34/v2.0.3/HLT/V1[0m'
+>>>   Global tag:    '[1m101X_dataRun2_HLT_v7[0m'
+>>>   Trigger menu did not change. Skipping...
+>>>   Trigger menu did not change. Skipping...
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2018/2e34/v2.1.5/HLT/V5[0m'
+>>>   Global tag:    '[1m101X_dataRun2_HLT_v7[0m'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2018/2e34/v2.1.7/HLT/V3[0m'
+>>>   Global tag:    '[1m101X_dataRun2_HLT_v7[0m'
+>>>   Trigger menu did not change. Skipping...
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2018/2e34/v2.2.0/HLT/V1[0m'
+>>>   Global tag:    '[1m101X_dataRun2_HLT_v7[0m'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2018/2e34/v2.2.0/HLT/V2[0m'
+>>>   Global tag:    '[1m101X_dataRun2_HLT_v7[0m'
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2018/2e34/v2.2.3/HLT/V2[0m'
+>>>   Global tag:    '[1m101X_dataRun2_HLT_v7[0m'
+>>>   Trigger menu did not change. Skipping...
+>>> HLT config extraction succeeded with process name 'HLT'
+>>>   HLT menu name: '[1m/cdaq/physics/Run2018/2e34/v3.3.0/HLT/V9[0m'
+>>>   Global tag:    '[1m101X_dataRun2_HLT_v7[0m'
+
+  **** Summary of trigger menus ****************************
+  *                                                        *
+  *   [1m80X_mcRun2_asymptotic_2016_TrancheIV_v6              [0m*
+  *     /frozen/2016/25ns15e33/v4.0/HLT/V2                 *
+  *                                                        *
+  *   [1m94X_mc2017_realistic_v10                             [0m*
+  *     /frozen/2017/2e34/v4.0/HLT/V5                      *
+  *                                                        *
+  *   [1m102X_upgrade2018_realistic_v15                       [0m*
+  *     /frozen/2018/2e34/v3.2/HLT/V1                      *
+  *                                                        *
+  *   [1m80X_dataRun2_HLT_v12                                 [0m*
+  *     /cdaq/physics/Run2016/25ns10e33/v1.2.1/HLT/V4      *
+  *     /cdaq/physics/Run2016/25ns10e33/v1.2.3/HLT/V6      *
+  *     /cdaq/physics/Run2016/25ns10e33/v1.2.4/HLT/V1      *
+  *     /cdaq/physics/Run2016/25ns10e33/v1.2.5/HLT/V3      *
+  *     /cdaq/physics/Run2016/25ns10e33/v1.2.5/HLT/V6      *
+  *     /cdaq/physics/Run2016/25ns10e33/v1.2.5/HLT/V9      *
+  *     /cdaq/physics/Run2016/25ns10e33/v2.1.4/HLT/V1      *
+  *     /cdaq/physics/Run2016/25ns10e33/v2.1.4/HLT/V2      *
+  *     /cdaq/physics/Run2016/25ns10e33/v2.2.0/HLT/V13     *
+  *     /cdaq/physics/Run2016/25ns10e33/v2.2.0/HLT/V2      *
+  *     /cdaq/physics/Run2016/25ns10e33/v2.2.1/HLT/V3      *
+  *     /cdaq/physics/Run2016/25ns15e33/v3.0.1/HLT/V2      *
+  *     /cdaq/physics/Run2016/25ns15e33/v3.0.1/HLT/V3      *
+  *     /cdaq/physics/Run2016/25ns15e33/v3.0.1/HLT/V4      *
+  *     /cdaq/physics/Run2016/25ns15e33/v3.0.1/HLT/V6      *
+  *     /cdaq/physics/Run2016/25ns15e33/v3.0.3/HLT/V2      *
+  *     /cdaq/physics/Run2016/25ns15e33/v3.0.3/HLT/V4      *
+  *     /cdaq/physics/Run2016/25ns15e33/v3.0/HLT/V6        *
+  *     /cdaq/physics/Run2016/25ns15e33/v3.0/HLT/V7        *
+  *     /cdaq/physics/Run2016/25ns15e33/v3.1.1/HLT/V1      *
+  *     /cdaq/physics/Run2016/25ns15e33/v3.1.1/HLT/V2      *
+  *     /cdaq/physics/Run2016/25ns15e33/v3.1.2/HLT/V1      *
+  *     /cdaq/physics/Run2016/25ns15e33/v3.1.6/HLT/V1      *
+  *     /cdaq/physics/Run2016/25ns15e33/v3.1.7_HighRateParkedZeroBias/HLT/V2*
+  *     /cdaq/physics/Run2016/25ns15e33/v3.1.8/HLT/V1      *
+  *     /cdaq/physics/Run2016/25ns15e33/v4.1.7/HLT/V1      *
+  *     /cdaq/physics/Run2016/25ns15e33/v4.2.2/HLT/V1      *
+  *     /cdaq/physics/Run2016/25ns15e33/v4.2.3/HLT/V1      *
+  *                                                        *
+  *   [1m92X_dataRun2_HLT_v4                                  [0m*
+  *     /cdaq/physics/Run2017/2e34/v1.1.7/HLT/V2           *
+  *     /cdaq/physics/Run2017/2e34/v1.2.1/HLT/V1           *
+  *     /cdaq/physics/Run2017/2e34/v1.2.1/HLT/V2           *
+  *     /cdaq/physics/Run2017/2e34/v1.2.3/HLT/V3           *
+  *     /cdaq/physics/Run2017/2e34/v1.2.4/HLT/V1           *
+  *     /cdaq/physics/Run2017/2e34/v1.2.4/HLT/V2           *
+  *     /cdaq/physics/Run2017/2e34/v2.0.1/HLT/V6           *
+  *     /cdaq/physics/Run2017/2e34/v2.1.0/HLT/V3           *
+  *     /cdaq/physics/Run2017/2e34/v2.1.3/HLT/V1           *
+  *                                                        *
+  *   [1m92X_dataRun2_HLT_v7                                  [0m*
+  *     /cdaq/physics/Run2017/2e34/v2.2.0/HLT/V2           *
+  *     /cdaq/physics/Run2017/2e34/v3.0.0/HLT/V1           *
+  *     /cdaq/physics/Run2017/2e34/v3.0.0/HLT/V4           *
+  *     /cdaq/physics/Run2017/2e34/v3.1.0/HLT/V2           *
+  *     /cdaq/physics/Run2017/2e34/v3.1.3/HLT/V1           *
+  *     /cdaq/physics/Run2017/2e34/v3.1.3/HLT/V2           *
+  *     /cdaq/physics/Run2017/2e34/v3.2.2/HLT/V6           *
+  *     /cdaq/physics/Run2017/2e34/v4.1.0/HLT/V3           *
+  *     /cdaq/physics/Run2017/2e34/v4.2.1/HLT/V2           *
+  *                                                        *
+  *   [1m101X_dataRun2_HLT_v7                                 [0m*
+  *     /cdaq/physics/Run2018/2e34/v1.2.2/HLT/V3           *
+  *     /cdaq/physics/Run2018/2e34/v2.0.2/HLT/V2           *
+  *     /cdaq/physics/Run2018/2e34/v2.0.3/HLT/V1           *
+  *     /cdaq/physics/Run2018/2e34/v2.1.5/HLT/V5           *
+  *     /cdaq/physics/Run2018/2e34/v2.1.7/HLT/V3           *
+  *     /cdaq/physics/Run2018/2e34/v2.2.0/HLT/V1           *
+  *     /cdaq/physics/Run2018/2e34/v2.2.0/HLT/V2           *
+  *     /cdaq/physics/Run2018/2e34/v2.2.3/HLT/V2           *
+  *     /cdaq/physics/Run2018/2e34/v3.3.0/HLT/V9           *
+  *                                                        *
+  **********************************************************
+
+  **** Summary of filters per trigger in '[1m80X_mcRun2_asymptotic_2016_TrancheIV_v6[0m' ***********
+  *                                                                                          *
+  *   HLT_DoubleMu3_Trk_Tau3mu                                                               *
+  *     hltTau3muTkVertexFilter                                                              *
+  *                                                                                          *
+  *   HLT_Ele20_eta2p1_WPLoose_Gsf_LooseIsoPFTau28                                           *
+  *     -> hltOverlapFilterIsoEle20WPLooseGsfLooseIsoPFTau28 (F)                             *
+  *     hltOverlapFilterIsoEle20WPLooseGsfLooseIsoPFTau28                                    *
+  *                                                                                          *
+  *   HLT_Ele22_eta2p1_WPLoose_Gsf_LooseIsoPFTau20_SingleL1                                  *
+  *     hltOverlapFilterSingleIsoEle22WPLooseGsfLooseIsoPFTau20                              *
+  *                                                                                          *
+  *   HLT_Ele22_eta2p1_WPLoose_Gsf_LooseIsoPFTau29                                           *
+  *     -> hltOverlapFilterIsoEle22WPLooseGsfLooseIsoPFTau29 (F)                             *
+  *     hltOverlapFilterIsoEle22WPLooseGsfLooseIsoPFTau29                                    *
+  *                                                                                          *
+  *   HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_L1JetTauSeeded                               *
+  *     hltEle23Ele12CaloIdLTrackIdLIsoVLDZL1TauJetSeededFilter                              *
+  *                                                                                          *
+  *   HLT_Ele24_eta2p1_WPLoose_Gsf_LooseIsoPFTau20                                           *
+  *     -> hltOverlapFilterIsoEle24WPLooseGsfLooseIsoPFTau20 (F)                             *
+  *     hltOverlapFilterIsoEle24WPLooseGsfLooseIsoPFTau20                                    *
+  *                                                                                          *
+  *   HLT_Ele24_eta2p1_WPLoose_Gsf_LooseIsoPFTau20_SingleL1                                  *
+  *     hltOverlapFilterSingleIsoEle24WPLooseGsfLooseIsoPFTau20                              *
+  *                                                                                          *
+  *   HLT_Ele24_eta2p1_WPLoose_Gsf_LooseIsoPFTau30                                           *
+  *     -> hltOverlapFilterIsoEle24WPLooseGsfLooseIsoPFTau30 (F)                             *
+  *     hltOverlapFilterIsoEle24WPLooseGsfLooseIsoPFTau30                                    *
+  *                                                                                          *
+  *   HLT_Ele27_WPTight_Gsf_L1JetTauSeeded                                                   *
+  *     hltEle27WPTightGsfTrackIsoL1TauJetSeededFilter                                       *
+  *                                                                                          *
+  *   HLT_Ele27_eta2p1_WPLoose_Gsf_LooseIsoPFTau20_SingleL1                                  *
+  *     -> hltOverlapFilterIsoEle27WPLooseGsfLooseIsoPFTau20 (F)                             *
+  *     hltOverlapFilterIsoEle27WPLooseGsfLooseIsoPFTau20                                    *
+  *                                                                                          *
+  *   HLT_Ele32_eta2p1_WPLoose_Gsf_LooseIsoPFTau20_SingleL1                                  *
+  *     -> hltOverlapFilterIsoEle32WPLooseGsfLooseIsoPFTau20 (F)                             *
+  *     hltOverlapFilterIsoEle32WPLooseGsfLooseIsoPFTau20                                    *
+  *                                                                                          *
+  *   HLT_Ele36_eta2p1_WPLoose_Gsf_LooseIsoPFTau20_SingleL1                                  *
+  *     hltOverlapFilterSingleIsoEle36WPLooseGsfLooseIsoPFTau20                              *
+  *                                                                                          *
+  *   HLT_Ele45_WPLoose_Gsf_L1JetTauSeeded                                                   *
+  *     hltEle45WPLooseGsfTrackIsoL1TauJetSeededFilter                                       *
+  *                                                                                          *
+  *   HLT_IsoMu16_eta2p1_MET30_LooseIsoPFTau50_Trk30_eta2p1                                  *
+  *     hltPFTau50TrackPt30LooseAbsOrRelIso                                                  *
+  *                                                                                          *
+  *   HLT_IsoMu17_eta2p1_LooseIsoPFTau20                                                     *
+  *     -> hltOverlapFilterIsoMu17LooseIsoPFTau20 (F)                                        *
+  *     hltOverlapFilterIsoMu17LooseIsoPFTau20                                               *
+  *                                                                                          *
+  *   HLT_IsoMu17_eta2p1_LooseIsoPFTau20_SingleL1                                            *
+  *     hltOverlapFilterSingleIsoMu17LooseIsoPFTau20                                         *
+  *                                                                                          *
+  *   HLT_IsoMu19_eta2p1_LooseCombinedIsoPFTau20                                             *
+  *     -> hltOverlapFilterIsoMu19LooseCombinedIsoPFTau20 (F)                                *
+  *     hltOverlapFilterIsoMu19LooseCombinedIsoPFTau20                                       *
+  *                                                                                          *
+  *   HLT_IsoMu19_eta2p1_LooseIsoPFTau20                                                     *
+  *     -> hltOverlapFilterIsoMu19LooseIsoPFTau20 (F)                                        *
+  *     hltOverlapFilterIsoMu19LooseIsoPFTau20                                               *
+  *                                                                                          *
+  *   HLT_IsoMu19_eta2p1_LooseIsoPFTau20_SingleL1                                            *
+  *     hltOverlapFilterSingleIsoMu19LooseIsoPFTau20                                         *
+  *                                                                                          *
+  *   HLT_IsoMu19_eta2p1_MediumCombinedIsoPFTau32_Trk1_eta2p1_Reg                            *
+  *     -> hltOverlapFilterIsoMu19MediumCombinedIsoPFTau32Reg (F)                            *
+  *     hltOverlapFilterIsoMu19MediumCombinedIsoPFTau32Reg                                   *
+  *                                                                                          *
+  *   HLT_IsoMu19_eta2p1_MediumIsoPFTau32_Trk1_eta2p1_Reg                                    *
+  *     -> hltOverlapFilterIsoMu19MediumIsoPFTau32Reg (F)                                    *
+  *     hltOverlapFilterIsoMu19MediumIsoPFTau32Reg                                           *
+  *                                                                                          *
+  *   HLT_IsoMu19_eta2p1_TightCombinedIsoPFTau32_Trk1_eta2p1_Reg                             *
+  *     -> hltOverlapFilterIsoMu19TightCombinedIsoPFTau32Reg (F)                             *
+  *     hltOverlapFilterIsoMu19TightCombinedIsoPFTau32Reg                                    *
+  *                                                                                          *
+  *   HLT_IsoMu21_eta2p1_LooseIsoPFTau20_SingleL1                                            *
+  *     hltOverlapFilterSingleIsoMu21LooseIsoPFTau20                                         *
+  *                                                                                          *
+  *   HLT_IsoMu21_eta2p1_LooseIsoPFTau50_Trk30_eta2p1_SingleL1                               *
+  *     hltPFTau50TrackPt30LooseAbsOrRelIso                                                  *
+  *                                                                                          *
+  *   HLT_IsoMu21_eta2p1_MediumCombinedIsoPFTau32_Trk1_eta2p1_Reg                            *
+  *     -> hltOverlapFilterIsoMu21MediumCombinedIsoPFTau32Reg (F)                            *
+  *     hltOverlapFilterIsoMu21MediumCombinedIsoPFTau32Reg                                   *
+  *                                                                                          *
+  *   HLT_IsoMu21_eta2p1_MediumIsoPFTau32_Trk1_eta2p1_Reg                                    *
+  *     -> hltOverlapFilterIsoMu21MediumIsoPFTau32Reg (F)                                    *
+  *     hltOverlapFilterIsoMu21MediumIsoPFTau32Reg                                           *
+  *                                                                                          *
+  *   HLT_IsoMu21_eta2p1_TightCombinedIsoPFTau32_Trk1_eta2p1_Reg                             *
+  *     -> hltOverlapFilterIsoMu21TightCombinedIsoPFTau32Reg (F)                             *
+  *     hltOverlapFilterIsoMu21TightCombinedIsoPFTau32Reg                                    *
+  *                                                                                          *
+  ********************************************************************************************
+
+  **** Summary of filters per trigger in '[1m94X_mc2017_realistic_v10[0m' **************************
+  *                                                                                          *
+  *   HLT_DoubleMu3_Trk_Tau3mu                                                               *
+  *     hltTau3muTkVertexFilter                                                              *
+  *                                                                                          *
+  *   HLT_DoubleMu3_Trk_Tau3mu_NoL1Mass                                                      *
+  *     hltTau3muNoL1MassTkVertexFilter                                                      *
+  *                                                                                          *
+  *   HLT_Ele24_eta2p1_WPTight_Gsf_LooseChargedIsoPFTau30_eta2p1_CrossL1                     *
+  *     -> hltOverlapFilterIsoEle24WPTightGsfLooseIsoPFTau30 (F)                             *
+  *     hltOverlapFilterIsoEle24WPTightGsfLooseIsoPFTau30                                    *
+  *                                                                                          *
+  *   HLT_Ele24_eta2p1_WPTight_Gsf_LooseChargedIsoPFTau30_eta2p1_TightID_CrossL1             *
+  *     -> hltOverlapFilterIsoEle24WPTightGsfLooseIsoTightOOSCPhotonsPFTau30 (F)             *
+  *     hltOverlapFilterIsoEle24WPTightGsfLooseIsoTightOOSCPhotonsPFTau30                    *
+  *                                                                                          *
+  *   HLT_Ele24_eta2p1_WPTight_Gsf_MediumChargedIsoPFTau30_eta2p1_CrossL1                    *
+  *     -> hltOverlapFilterIsoEle24WPTightGsfMediumChargedIsoPFTau30 (F)                     *
+  *     hltOverlapFilterIsoEle24WPTightGsfMediumChargedIsoPFTau30                            *
+  *                                                                                          *
+  *   HLT_Ele24_eta2p1_WPTight_Gsf_MediumChargedIsoPFTau30_eta2p1_TightID_CrossL1            *
+  *     -> hltOverlapFilterIsoEle24WPTightGsfMediumIsoTightOOSCPhotonsPFTau30 (F)            *
+  *     hltOverlapFilterIsoEle24WPTightGsfMediumIsoTightOOSCPhotonsPFTau30                   *
+  *                                                                                          *
+  *   HLT_Ele24_eta2p1_WPTight_Gsf_TightChargedIsoPFTau30_eta2p1_CrossL1                     *
+  *     -> hltOverlapFilterIsoEle24WPTightGsfTightChargedIsoPFTau30 (F)                      *
+  *     hltOverlapFilterIsoEle24WPTightGsfTightChargedIsoPFTau30                             *
+  *                                                                                          *
+  *   HLT_Ele24_eta2p1_WPTight_Gsf_TightChargedIsoPFTau30_eta2p1_TightID_CrossL1             *
+  *     -> hltOverlapFilterIsoEle24WPTightGsfTightIsoTightOOSCPhotonsPFTau30 (F)             *
+  *     hltOverlapFilterIsoEle24WPTightGsfTightIsoTightOOSCPhotonsPFTau30                    *
+  *                                                                                          *
+  *   HLT_IsoMu20_eta2p1_LooseChargedIsoPFTau27_eta2p1_CrossL1                               *
+  *     -> hltOverlapFilterIsoMu20LooseChargedIsoPFTau27L1Seeded (F)                         *
+  *     hltOverlapFilterIsoMu20LooseChargedIsoPFTau27L1Seeded                                *
+  *                                                                                          *
+  *   HLT_IsoMu20_eta2p1_LooseChargedIsoPFTau27_eta2p1_TightID_CrossL1                       *
+  *     -> hltOverlapFilterIsoMu20LooseChargedIsoTightOOSCPhotonsPFTau27L1Seeded (F)         *
+  *     hltOverlapFilterIsoMu20LooseChargedIsoTightOOSCPhotonsPFTau27L1Seeded                *
+  *                                                                                          *
+  *   HLT_IsoMu20_eta2p1_MediumChargedIsoPFTau27_eta2p1_CrossL1                              *
+  *     -> hltOverlapFilterIsoMu20MediumChargedIsoPFTau27L1Seeded (F)                        *
+  *     hltOverlapFilterIsoMu20MediumChargedIsoPFTau27L1Seeded                               *
+  *                                                                                          *
+  *   HLT_IsoMu20_eta2p1_MediumChargedIsoPFTau27_eta2p1_TightID_CrossL1                      *
+  *     -> hltOverlapFilterIsoMu20MediumChargedIsoTightOOSCPhotonsPFTau27L1Seeded (F)        *
+  *     hltOverlapFilterIsoMu20MediumChargedIsoTightOOSCPhotonsPFTau27L1Seeded               *
+  *                                                                                          *
+  *   HLT_IsoMu20_eta2p1_TightChargedIsoPFTau27_eta2p1_CrossL1                               *
+  *     -> hltOverlapFilterIsoMu20TightChargedIsoPFTau27L1Seeded (F)                         *
+  *     hltOverlapFilterIsoMu20TightChargedIsoPFTau27L1Seeded                                *
+  *                                                                                          *
+  *   HLT_IsoMu20_eta2p1_TightChargedIsoPFTau27_eta2p1_TightID_CrossL1                       *
+  *     -> hltOverlapFilterIsoMu20TightChargedIsoTightOOSCPhotonsPFTau27L1Seeded (F)         *
+  *     hltOverlapFilterIsoMu20TightChargedIsoTightOOSCPhotonsPFTau27L1Seeded                *
+  *                                                                                          *
+  *   HLT_IsoMu24_eta2p1_LooseChargedIsoPFTau20_SingleL1                                     *
+  *     -> hltOverlapFilterIsoMu24LooseChargedIsoPFTau20 (F)                                 *
+  *     hltOverlapFilterIsoMu24LooseChargedIsoPFTau20                                        *
+  *                                                                                          *
+  *   HLT_IsoMu24_eta2p1_LooseChargedIsoPFTau20_TightID_SingleL1                             *
+  *     -> hltOverlapFilterIsoMu24LooseChargedIsoTightOOSCPhotonsPFTau20 (F)                 *
+  *     hltOverlapFilterIsoMu24LooseChargedIsoTightOOSCPhotonsPFTau20                        *
+  *                                                                                          *
+  *   HLT_IsoMu24_eta2p1_LooseChargedIsoPFTau35_Trk1_TightID_eta2p1_Reg_CrossL1              *
+  *     -> hltOverlapFilterIsoMu24LooseChargedIsoAndTightOOSCPhotonsPFTau35MonitoringReg (F) *
+  *     hltOverlapFilterIsoMu24LooseChargedIsoAndTightOOSCPhotonsPFTau35MonitoringReg        *
+  *                                                                                          *
+  *   HLT_IsoMu24_eta2p1_LooseChargedIsoPFTau35_Trk1_eta2p1_Reg_CrossL1                      *
+  *     -> hltOverlapFilterIsoMu24LooseChargedIsoPFTau35MonitoringReg (F)                    *
+  *     hltOverlapFilterIsoMu24LooseChargedIsoPFTau35MonitoringReg                           *
+  *                                                                                          *
+  *   HLT_IsoMu24_eta2p1_MediumChargedIsoPFTau20_SingleL1                                    *
+  *     -> hltOverlapFilterIsoMu24MediumChargedIsoPFTau20 (F)                                *
+  *     hltOverlapFilterIsoMu24MediumChargedIsoPFTau20                                       *
+  *                                                                                          *
+  *   HLT_IsoMu24_eta2p1_MediumChargedIsoPFTau20_TightID_SingleL1                            *
+  *     -> hltOverlapFilterIsoMu24MediumChargedIsoTightOOSCPhotonsPFTau20 (F)                *
+  *     hltOverlapFilterIsoMu24MediumChargedIsoTightOOSCPhotonsPFTau20                       *
+  *                                                                                          *
+  *   HLT_IsoMu24_eta2p1_MediumChargedIsoPFTau35_Trk1_TightID_eta2p1_Reg_CrossL1             *
+  *     -> hltOverlapFilterIsoMu24MediumChargedIsoAndTightOOSCPhotonsPFTau35MonitoringReg (F)*
+  *     hltOverlapFilterIsoMu24MediumChargedIsoAndTightOOSCPhotonsPFTau35MonitoringReg       *
+  *                                                                                          *
+  *   HLT_IsoMu24_eta2p1_MediumChargedIsoPFTau35_Trk1_eta2p1_Reg_CrossL1                     *
+  *     -> hltOverlapFilterIsoMu24MediumChargedIsoPFTau35MonitoringReg (F)                   *
+  *     hltOverlapFilterIsoMu24MediumChargedIsoPFTau35MonitoringReg                          *
+  *                                                                                          *
+  *   HLT_IsoMu24_eta2p1_MediumChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg_CrossL1             *
+  *     -> hltOverlapFilterIsoMu24MediumChargedIsoAndTightOOSCPhotonsPFTau40MonitoringReg (F)*
+  *     hltOverlapFilterIsoMu24MediumChargedIsoAndTightOOSCPhotonsPFTau40MonitoringReg       *
+  *                                                                                          *
+  *   HLT_IsoMu24_eta2p1_MediumChargedIsoPFTau40_Trk1_eta2p1_Reg_CrossL1                     *
+  *     -> hltOverlapFilterIsoMu24MediumChargedIsoPFTau40MonitoringReg (F)                   *
+  *     hltOverlapFilterIsoMu24MediumChargedIsoPFTau40MonitoringReg                          *
+  *                                                                                          *
+  *   HLT_IsoMu24_eta2p1_MediumChargedIsoPFTau50_Trk30_eta2p1_1pr                            *
+  *     hltSelectedPFTau50MediumChargedIsolationL1HLTMatchedMu22IsoTau40                     *
+  *                                                                                          *
+  *   HLT_IsoMu24_eta2p1_TightChargedIsoPFTau20_SingleL1                                     *
+  *     -> hltOverlapFilterIsoMu24TightChargedIsoPFTau20 (F)                                 *
+  *     hltOverlapFilterIsoMu24TightChargedIsoPFTau20                                        *
+  *                                                                                          *
+  *   HLT_IsoMu24_eta2p1_TightChargedIsoPFTau20_TightID_SingleL1                             *
+  *     -> hltOverlapFilterIsoMu24TightChargedIsoTightOOSCPhotonsPFTau20 (F)                 *
+  *     hltOverlapFilterIsoMu24TightChargedIsoTightOOSCPhotonsPFTau20                        *
+  *                                                                                          *
+  *   HLT_IsoMu24_eta2p1_TightChargedIsoPFTau35_Trk1_TightID_eta2p1_Reg_CrossL1              *
+  *     -> hltOverlapFilterIsoMu24TightChargedIsoAndTightOOSCPhotonsPFTau35MonitoringReg (F) *
+  *     hltOverlapFilterIsoMu24TightChargedIsoAndTightOOSCPhotonsPFTau35MonitoringReg        *
+  *                                                                                          *
+  *   HLT_IsoMu24_eta2p1_TightChargedIsoPFTau35_Trk1_eta2p1_Reg_CrossL1                      *
+  *     -> hltOverlapFilterIsoMu24TightChargedIsoPFTau35MonitoringReg (F)                    *
+  *     hltOverlapFilterIsoMu24TightChargedIsoPFTau35MonitoringReg                           *
+  *                                                                                          *
+  *   HLT_IsoMu24_eta2p1_TightChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg_CrossL1              *
+  *     -> hltOverlapFilterIsoMu24TightChargedIsoAndTightOOSCPhotonsPFTau40MonitoringReg (F) *
+  *     hltOverlapFilterIsoMu24TightChargedIsoAndTightOOSCPhotonsPFTau40MonitoringReg        *
+  *                                                                                          *
+  *   HLT_IsoMu24_eta2p1_TightChargedIsoPFTau40_Trk1_eta2p1_Reg_CrossL1                      *
+  *     -> hltOverlapFilterIsoMu24TightChargedIsoPFTau40MonitoringReg (F)                    *
+  *     hltOverlapFilterIsoMu24TightChargedIsoPFTau40MonitoringReg                           *
+  *                                                                                          *
+  *   HLT_IsoMu27_LooseChargedIsoPFTau20_SingleL1                                            *
+  *     -> hltOverlapFilterIsoMu27LooseChargedIsoPFTau20 (F)                                 *
+  *     hltOverlapFilterIsoMu27LooseChargedIsoPFTau20                                        *
+  *                                                                                          *
+  *   HLT_IsoMu27_MediumChargedIsoPFTau20_SingleL1                                           *
+  *     -> hltOverlapFilterIsoMu27MediumChargedIsoPFTau20 (F)                                *
+  *     hltOverlapFilterIsoMu27MediumChargedIsoPFTau20                                       *
+  *                                                                                          *
+  *   HLT_IsoMu27_TightChargedIsoPFTau20_SingleL1                                            *
+  *     -> hltOverlapFilterIsoMu27TightChargedIsoPFTau20 (F)                                 *
+  *     hltOverlapFilterIsoMu27TightChargedIsoPFTau20                                        *
+  *                                                                                          *
+  *   HLT_Tau3Mu_Mu7_Mu1_TkMu1_IsoTau15                                                      *
+  *     hltTau3MuIsoFilter                                                                   *
+  *                                                                                          *
+  *   HLT_Tau3Mu_Mu7_Mu1_TkMu1_IsoTau15_Charge1                                              *
+  *     hltTau3MuIsoFilterCharge1                                                            *
+  *                                                                                          *
+  *   HLT_Tau3Mu_Mu7_Mu1_TkMu1_Tau15                                                         *
+  *     hltTau3MuPreFilter                                                                   *
+  *                                                                                          *
+  *   HLT_Tau3Mu_Mu7_Mu1_TkMu1_Tau15_Charge1                                                 *
+  *     hltTau3MuPreFilterCharge1                                                            *
+  *                                                                                          *
+  ********************************************************************************************
+
+  **** Summary of filters per trigger in '[1m102X_upgrade2018_realistic_v15[0m' ********************
+  *                                                                                          *
+  *   HLT_DoubleMu3_TkMu_DsTau3Mu                                                            *
+  *     hltdstau3muDisplaced3muFltr                                                          *
+  *                                                                                          *
+  *   HLT_DoubleMu3_Trk_Tau3mu                                                               *
+  *     hltTau3muTkVertexFilter                                                              *
+  *                                                                                          *
+  *   HLT_DoubleMu3_Trk_Tau3mu_NoL1Mass                                                      *
+  *     hltTau3muNoL1MassTkVertexFilter                                                      *
+  *                                                                                          *
+  *   HLT_Ele24_eta2p1_WPTight_Gsf_LooseChargedIsoPFTauHPS30_eta2p1_CrossL1                  *
+  *     -> hltHpsOverlapFilterIsoEle24WPTightGsfLooseIsoPFTau30 (F)                          *
+  *     hltHpsOverlapFilterIsoEle24WPTightGsfLooseIsoPFTau30                                 *
+  *                                                                                          *
+  *   HLT_Ele24_eta2p1_WPTight_Gsf_LooseChargedIsoPFTauHPS30_eta2p1_TightID_CrossL1          *
+  *     -> hltHpsOverlapFilterIsoEle24WPTightGsfLooseIsoTightOOSCPhotonsPFTau30 (F)          *
+  *     hltHpsOverlapFilterIsoEle24WPTightGsfLooseIsoTightOOSCPhotonsPFTau30                 *
+  *                                                                                          *
+  *   HLT_Ele24_eta2p1_WPTight_Gsf_MediumChargedIsoPFTauHPS30_eta2p1_CrossL1                 *
+  *     -> hltHpsOverlapFilterIsoEle24WPTightGsfMediumIsoPFTau30 (F)                         *
+  *     hltHpsOverlapFilterIsoEle24WPTightGsfMediumIsoPFTau30                                *
+  *                                                                                          *
+  *   HLT_Ele24_eta2p1_WPTight_Gsf_MediumChargedIsoPFTauHPS30_eta2p1_TightID_CrossL1         *
+  *     -> hltHpsOverlapFilterIsoEle24WPTightGsfMediumIsoTightOOSCPhotonsPFTau30 (F)         *
+  *     hltHpsOverlapFilterIsoEle24WPTightGsfMediumIsoTightOOSCPhotonsPFTau30                *
+  *                                                                                          *
+  *   HLT_Ele24_eta2p1_WPTight_Gsf_TightChargedIsoPFTauHPS30_eta2p1_CrossL1                  *
+  *     -> hltHpsOverlapFilterIsoEle24WPTightGsfTightIsoPFTau30 (F)                          *
+  *     hltHpsOverlapFilterIsoEle24WPTightGsfTightIsoPFTau30                                 *
+  *                                                                                          *
+  *   HLT_Ele24_eta2p1_WPTight_Gsf_TightChargedIsoPFTauHPS30_eta2p1_TightID_CrossL1          *
+  *     -> hltHpsOverlapFilterIsoEle24WPTightGsfTightIsoTightOOSCPhotonsPFTau30 (F)          *
+  *     hltHpsOverlapFilterIsoEle24WPTightGsfTightIsoTightOOSCPhotonsPFTau30                 *
+  *                                                                                          *
+  *   HLT_IsoMu20_eta2p1_LooseChargedIsoPFTauHPS27_eta2p1_CrossL1                            *
+  *     -> hltHpsOverlapFilterIsoMu20LooseChargedIsoPFTau27L1Seeded (F)                      *
+  *     hltHpsOverlapFilterIsoMu20LooseChargedIsoPFTau27L1Seeded                             *
+  *                                                                                          *
+  *   HLT_IsoMu20_eta2p1_LooseChargedIsoPFTauHPS27_eta2p1_TightID_CrossL1                    *
+  *     -> hltHpsOverlapFilterIsoMu20LooseChargedIsoTightOOSCPhotonsPFTau27L1Seeded (F)      *
+  *     hltHpsOverlapFilterIsoMu20LooseChargedIsoTightOOSCPhotonsPFTau27L1Seeded             *
+  *                                                                                          *
+  *   HLT_IsoMu20_eta2p1_MediumChargedIsoPFTauHPS27_eta2p1_CrossL1                           *
+  *     -> hltHpsOverlapFilterIsoMu20MediumChargedIsoPFTau27L1Seeded (F)                     *
+  *     hltHpsOverlapFilterIsoMu20MediumChargedIsoPFTau27L1Seeded                            *
+  *                                                                                          *
+  *   HLT_IsoMu20_eta2p1_MediumChargedIsoPFTauHPS27_eta2p1_TightID_CrossL1                   *
+  *     -> hltHpsOverlapFilterIsoMu20MediumChargedIsoTightOOSCPhotonsPFTau27L1Seeded (F)     *
+  *     hltHpsOverlapFilterIsoMu20MediumChargedIsoTightOOSCPhotonsPFTau27L1Seeded            *
+  *                                                                                          *
+  *   HLT_IsoMu20_eta2p1_TightChargedIsoPFTauHPS27_eta2p1_CrossL1                            *
+  *     -> hltHpsOverlapFilterIsoMu20TightChargedIsoPFTau27L1Seeded (F)                      *
+  *     hltHpsOverlapFilterIsoMu20TightChargedIsoPFTau27L1Seeded                             *
+  *                                                                                          *
+  *   HLT_IsoMu20_eta2p1_TightChargedIsoPFTauHPS27_eta2p1_TightID_CrossL1                    *
+  *     -> hltHpsOverlapFilterIsoMu20TightChargedIsoTightOOSCPhotonsPFTau27L1Seeded (F)      *
+  *     hltHpsOverlapFilterIsoMu20TightChargedIsoTightOOSCPhotonsPFTau27L1Seeded             *
+  *                                                                                          *
+  *   HLT_IsoMu24_eta2p1_MediumChargedIsoPFTau50_Trk30_eta2p1_1pr                            *
+  *     hltSelectedPFTau50MediumChargedIsolationL1HLTMatchedMu22IsoTau40                     *
+  *                                                                                          *
+  *   HLT_IsoMu24_eta2p1_MediumChargedIsoPFTauHPS35_Trk1_TightID_eta2p1_Reg_CrossL1          *
+  *     -> hltHpsOverlapFilterIsoMu24MediumChargedIsoAndTightOOSCPhotonsPFTau35MonitoringReg (F)*
+  *     hltHpsOverlapFilterIsoMu24MediumChargedIsoAndTightOOSCPhotonsPFTau35MonitoringReg    *
+  *                                                                                          *
+  *   HLT_IsoMu24_eta2p1_MediumChargedIsoPFTauHPS35_Trk1_eta2p1_Reg_CrossL1                  *
+  *     -> hltHpsOverlapFilterIsoMu24MediumChargedIsoPFTau35MonitoringReg (F)                *
+  *     hltHpsOverlapFilterIsoMu24MediumChargedIsoPFTau35MonitoringReg                       *
+  *                                                                                          *
+  *   HLT_IsoMu24_eta2p1_TightChargedIsoPFTauHPS35_Trk1_TightID_eta2p1_Reg_CrossL1           *
+  *     -> hltHpsOverlapFilterIsoMu24TightChargedIsoAndTightOOSCPhotonsPFTau35MonitoringReg (F)*
+  *     hltHpsOverlapFilterIsoMu24TightChargedIsoAndTightOOSCPhotonsPFTau35MonitoringReg     *
+  *                                                                                          *
+  *   HLT_IsoMu24_eta2p1_TightChargedIsoPFTauHPS35_Trk1_eta2p1_Reg_CrossL1                   *
+  *     -> hltHpsOverlapFilterIsoMu24TightChargedIsoPFTau35MonitoringReg (F)                 *
+  *     hltHpsOverlapFilterIsoMu24TightChargedIsoPFTau35MonitoringReg                        *
+  *                                                                                          *
+  *   HLT_IsoMu27_LooseChargedIsoPFTauHPS20_Trk1_eta2p1_SingleL1                             *
+  *     -> hltHpsOverlapFilterIsoMu27LooseChargedIsoPFTau20 (F)                              *
+  *     hltHpsOverlapFilterIsoMu27LooseChargedIsoPFTau20                                     *
+  *                                                                                          *
+  *   HLT_IsoMu27_MediumChargedIsoPFTauHPS20_Trk1_eta2p1_SingleL1                            *
+  *     -> hltHpsOverlapFilterIsoMu27MediumChargedIsoPFTau20 (F)                             *
+  *     hltHpsOverlapFilterIsoMu27MediumChargedIsoPFTau20                                    *
+  *                                                                                          *
+  *   HLT_IsoMu27_TightChargedIsoPFTauHPS20_Trk1_eta2p1_SingleL1                             *
+  *     -> hltHpsOverlapFilterIsoMu27TightChargedIsoPFTau20 (F)                              *
+  *     hltHpsOverlapFilterIsoMu27TightChargedIsoPFTau20                                     *
+  *                                                                                          *
+  *   HLT_Tau3Mu_Mu7_Mu1_TkMu1_IsoTau15                                                      *
+  *     hltTau3MuIsoFilter                                                                   *
+  *                                                                                          *
+  *   HLT_Tau3Mu_Mu7_Mu1_TkMu1_IsoTau15_Charge1                                              *
+  *     hltTau3MuIsoFilterCharge1                                                            *
+  *                                                                                          *
+  *   HLT_Tau3Mu_Mu7_Mu1_TkMu1_Tau15                                                         *
+  *     hltTau3MuPreFilter                                                                   *
+  *                                                                                          *
+  *   HLT_Tau3Mu_Mu7_Mu1_TkMu1_Tau15_Charge1                                                 *
+  *     hltTau3MuPreFilterCharge1                                                            *
+  *                                                                                          *
+  ********************************************************************************************
+
+  **** Summary of filters per trigger in '[1m80X_dataRun2_HLT_v12[0m' ******************************
+  *                                                                                          *
+  *   HLT_DoubleMu3_Trk_Tau3mu                                                               *
+  *     hltTau3muTkVertexFilter                                                              *
+  *                                                                                          *
+  *   HLT_Ele20_eta2p1_WPLoose_Gsf_LooseIsoPFTau28                                           *
+  *     -> hltOverlapFilterIsoEle20WPLooseGsfLooseIsoPFTau28 (F)                             *
+  *     hltOverlapFilterIsoEle20WPLooseGsfLooseIsoPFTau28                                    *
+  *                                                                                          *
+  *   HLT_Ele22_eta2p1_WPLoose_Gsf_LooseIsoPFTau29                                           *
+  *     -> hltOverlapFilterIsoEle22WPLooseGsfLooseIsoPFTau29 (F)                             *
+  *     hltOverlapFilterIsoEle22WPLooseGsfLooseIsoPFTau29                                    *
+  *                                                                                          *
+  *   HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_L1JetTauSeeded                               *
+  *     hltEle23Ele12CaloIdLTrackIdLIsoVLDZL1TauJetSeededFilter                              *
+  *                                                                                          *
+  *   HLT_Ele24_eta2p1_WPLoose_Gsf_LooseIsoPFTau30                                           *
+  *     -> hltOverlapFilterIsoEle24WPLooseGsfLooseIsoPFTau30 (F)                             *
+  *     hltOverlapFilterIsoEle24WPLooseGsfLooseIsoPFTau30                                    *
+  *                                                                                          *
+  *   HLT_Ele27_WPTight_Gsf_L1JetTauSeeded                                                   *
+  *     hltEle27WPTightGsfTrackIsoL1TauJetSeededFilter                                       *
+  *                                                                                          *
+  *   HLT_Ele36_eta2p1_WPLoose_Gsf_LooseIsoPFTau20_SingleL1                                  *
+  *     hltOverlapFilterSingleIsoEle36WPLooseGsfLooseIsoPFTau20                              *
+  *                                                                                          *
+  *   HLT_IsoMu16_eta2p1_MET30_LooseIsoPFTau50_Trk30_eta2p1                                  *
+  *     hltPFTau50TrackPt30LooseAbsOrRelIso                                                  *
+  *                                                                                          *
+  *   HLT_IsoMu19_eta2p1_LooseCombinedIsoPFTau20                                             *
+  *     -> hltOverlapFilterIsoMu19LooseCombinedIsoPFTau20 (F)                                *
+  *     hltOverlapFilterIsoMu19LooseCombinedIsoPFTau20                                       *
+  *                                                                                          *
+  *   HLT_IsoMu19_eta2p1_LooseIsoPFTau20                                                     *
+  *     -> hltOverlapFilterIsoMu19LooseIsoPFTau20 (F)                                        *
+  *     hltOverlapFilterIsoMu19LooseIsoPFTau20                                               *
+  *                                                                                          *
+  *   HLT_IsoMu19_eta2p1_LooseIsoPFTau20_SingleL1                                            *
+  *     hltOverlapFilterSingleIsoMu19LooseIsoPFTau20                                         *
+  *                                                                                          *
+  *   HLT_IsoMu19_eta2p1_MediumCombinedIsoPFTau32_Trk1_eta2p1_Reg                            *
+  *     -> hltOverlapFilterIsoMu19MediumCombinedIsoPFTau32Reg (F)                            *
+  *     hltOverlapFilterIsoMu19MediumCombinedIsoPFTau32Reg                                   *
+  *                                                                                          *
+  *   HLT_IsoMu19_eta2p1_MediumIsoPFTau32_Trk1_eta2p1_Reg                                    *
+  *     -> hltOverlapFilterIsoMu19MediumIsoPFTau32Reg (F)                                    *
+  *     hltOverlapFilterIsoMu19MediumIsoPFTau32Reg                                           *
+  *                                                                                          *
+  *   HLT_IsoMu19_eta2p1_TightCombinedIsoPFTau32_Trk1_eta2p1_Reg                             *
+  *     -> hltOverlapFilterIsoMu19TightCombinedIsoPFTau32Reg (F)                             *
+  *     hltOverlapFilterIsoMu19TightCombinedIsoPFTau32Reg                                    *
+  *                                                                                          *
+  *   HLT_IsoMu21_eta2p1_LooseIsoPFTau20_SingleL1                                            *
+  *     hltOverlapFilterSingleIsoMu21LooseIsoPFTau20                                         *
+  *                                                                                          *
+  *   HLT_IsoMu21_eta2p1_LooseIsoPFTau50_Trk30_eta2p1_SingleL1                               *
+  *     hltPFTau50TrackPt30LooseAbsOrRelIso                                                  *
+  *                                                                                          *
+  *   HLT_IsoMu21_eta2p1_MediumCombinedIsoPFTau32_Trk1_eta2p1_Reg                            *
+  *     -> hltOverlapFilterIsoMu21MediumCombinedIsoPFTau32Reg (F)                            *
+  *     hltOverlapFilterIsoMu21MediumCombinedIsoPFTau32Reg                                   *
+  *                                                                                          *
+  *   HLT_IsoMu21_eta2p1_MediumIsoPFTau32_Trk1_eta2p1_Reg                                    *
+  *     -> hltOverlapFilterIsoMu21MediumIsoPFTau32Reg (F)                                    *
+  *     hltOverlapFilterIsoMu21MediumIsoPFTau32Reg                                           *
+  *                                                                                          *
+  *   HLT_IsoMu21_eta2p1_TightCombinedIsoPFTau32_Trk1_eta2p1_Reg                             *
+  *     -> hltOverlapFilterIsoMu21TightCombinedIsoPFTau32Reg (F)                             *
+  *     hltOverlapFilterIsoMu21TightCombinedIsoPFTau32Reg                                    *
+  *                                                                                          *
+  ********************************************************************************************
+
+  **** Summary of filters per trigger in '[1m92X_dataRun2_HLT_v4[0m' *******************************
+  *                                                                                          *
+  *   HLT_DoubleMu3_Trk_Tau3mu                                                               *
+  *     hltTau3muTkVertexFilter                                                              *
+  *                                                                                          *
+  *   HLT_DoubleMu3_Trk_Tau3mu_NoL1Mass                                                      *
+  *     hltTau3muNoL1MassTkVertexFilter                                                      *
+  *                                                                                          *
+  *   HLT_Ele24_eta2p1_WPTight_Gsf_LooseChargedIsoPFTau30_eta2p1_CrossL1                     *
+  *     -> hltOverlapFilterIsoEle24WPTightGsfLooseIsoPFTau30 (F)                             *
+  *     hltOverlapFilterIsoEle24WPTightGsfLooseIsoPFTau30                                    *
+  *                                                                                          *
+  *   HLT_Ele24_eta2p1_WPTight_Gsf_LooseChargedIsoPFTau30_eta2p1_TightID_CrossL1             *
+  *     -> hltOverlapFilterIsoEle24WPTightGsfLooseIsoTightOOSCPhotonsPFTau30 (F)             *
+  *     hltOverlapFilterIsoEle24WPTightGsfLooseIsoTightOOSCPhotonsPFTau30                    *
+  *                                                                                          *
+  *   HLT_Ele24_eta2p1_WPTight_Gsf_MediumChargedIsoPFTau30_eta2p1_CrossL1                    *
+  *     -> hltOverlapFilterIsoEle24WPTightGsfMediumChargedIsoPFTau30 (F)                     *
+  *     hltOverlapFilterIsoEle24WPTightGsfMediumChargedIsoPFTau30                            *
+  *                                                                                          *
+  *   HLT_Ele24_eta2p1_WPTight_Gsf_MediumChargedIsoPFTau30_eta2p1_TightID_CrossL1            *
+  *     -> hltOverlapFilterIsoEle24WPTightGsfMediumIsoTightOOSCPhotonsPFTau30 (F)            *
+  *     hltOverlapFilterIsoEle24WPTightGsfMediumIsoTightOOSCPhotonsPFTau30                   *
+  *                                                                                          *
+  *   HLT_Ele24_eta2p1_WPTight_Gsf_TightChargedIsoPFTau30_eta2p1_CrossL1                     *
+  *     -> hltOverlapFilterIsoEle24WPTightGsfTightChargedIsoPFTau30 (F)                      *
+  *     hltOverlapFilterIsoEle24WPTightGsfTightChargedIsoPFTau30                             *
+  *                                                                                          *
+  *   HLT_Ele24_eta2p1_WPTight_Gsf_TightChargedIsoPFTau30_eta2p1_TightID_CrossL1             *
+  *     -> hltOverlapFilterIsoEle24WPTightGsfTightIsoTightOOSCPhotonsPFTau30 (F)             *
+  *     hltOverlapFilterIsoEle24WPTightGsfTightIsoTightOOSCPhotonsPFTau30                    *
+  *                                                                                          *
+  *   HLT_IsoMu20_eta2p1_LooseChargedIsoPFTau27_eta2p1_CrossL1                               *
+  *     -> hltOverlapFilterIsoMu20LooseChargedIsoPFTau27L1Seeded (F)                         *
+  *     hltOverlapFilterIsoMu20LooseChargedIsoPFTau27L1Seeded                                *
+  *                                                                                          *
+  *   HLT_IsoMu20_eta2p1_LooseChargedIsoPFTau27_eta2p1_TightID_CrossL1                       *
+  *     -> hltOverlapFilterIsoMu20LooseChargedIsoTightOOSCPhotonsPFTau27L1Seeded (F)         *
+  *     hltOverlapFilterIsoMu20LooseChargedIsoTightOOSCPhotonsPFTau27L1Seeded                *
+  *                                                                                          *
+  *   HLT_IsoMu20_eta2p1_MediumChargedIsoPFTau27_eta2p1_CrossL1                              *
+  *     -> hltOverlapFilterIsoMu20MediumChargedIsoPFTau27L1Seeded (F)                        *
+  *     hltOverlapFilterIsoMu20MediumChargedIsoPFTau27L1Seeded                               *
+  *                                                                                          *
+  *   HLT_IsoMu20_eta2p1_MediumChargedIsoPFTau27_eta2p1_TightID_CrossL1                      *
+  *     -> hltOverlapFilterIsoMu20MediumChargedIsoTightOOSCPhotonsPFTau27L1Seeded (F)        *
+  *     hltOverlapFilterIsoMu20MediumChargedIsoTightOOSCPhotonsPFTau27L1Seeded               *
+  *                                                                                          *
+  *   HLT_IsoMu20_eta2p1_TightChargedIsoPFTau27_eta2p1_CrossL1                               *
+  *     -> hltOverlapFilterIsoMu20TightChargedIsoPFTau27L1Seeded (F)                         *
+  *     hltOverlapFilterIsoMu20TightChargedIsoPFTau27L1Seeded                                *
+  *                                                                                          *
+  *   HLT_IsoMu20_eta2p1_TightChargedIsoPFTau27_eta2p1_TightID_CrossL1                       *
+  *     -> hltOverlapFilterIsoMu20TightChargedIsoTightOOSCPhotonsPFTau27L1Seeded (F)         *
+  *     hltOverlapFilterIsoMu20TightChargedIsoTightOOSCPhotonsPFTau27L1Seeded                *
+  *                                                                                          *
+  *   HLT_IsoMu24_eta2p1_LooseChargedIsoPFTau20_SingleL1                                     *
+  *     -> hltOverlapFilterIsoMu24LooseChargedIsoPFTau20 (F)                                 *
+  *     hltOverlapFilterIsoMu24LooseChargedIsoPFTau20                                        *
+  *                                                                                          *
+  *   HLT_IsoMu24_eta2p1_LooseChargedIsoPFTau20_TightID_SingleL1                             *
+  *     -> hltOverlapFilterIsoMu24LooseChargedIsoTightOOSCPhotonsPFTau20 (F)                 *
+  *     hltOverlapFilterIsoMu24LooseChargedIsoTightOOSCPhotonsPFTau20                        *
+  *                                                                                          *
+  *   HLT_IsoMu24_eta2p1_LooseChargedIsoPFTau35_Trk1_TightID_eta2p1_Reg_CrossL1              *
+  *     -> hltOverlapFilterIsoMu24LooseChargedIsoAndTightOOSCPhotonsPFTau35MonitoringReg (F) *
+  *     hltOverlapFilterIsoMu24LooseChargedIsoAndTightOOSCPhotonsPFTau35MonitoringReg        *
+  *                                                                                          *
+  *   HLT_IsoMu24_eta2p1_LooseChargedIsoPFTau35_Trk1_eta2p1_Reg_CrossL1                      *
+  *     -> hltOverlapFilterIsoMu24LooseChargedIsoPFTau35MonitoringReg (F)                    *
+  *     hltOverlapFilterIsoMu24LooseChargedIsoPFTau35MonitoringReg                           *
+  *                                                                                          *
+  *   HLT_IsoMu24_eta2p1_MediumChargedIsoPFTau20_SingleL1                                    *
+  *     -> hltOverlapFilterIsoMu24MediumChargedIsoPFTau20 (F)                                *
+  *     hltOverlapFilterIsoMu24MediumChargedIsoPFTau20                                       *
+  *                                                                                          *
+  *   HLT_IsoMu24_eta2p1_MediumChargedIsoPFTau20_TightID_SingleL1                            *
+  *     -> hltOverlapFilterIsoMu24MediumChargedIsoTightOOSCPhotonsPFTau20 (F)                *
+  *     hltOverlapFilterIsoMu24MediumChargedIsoTightOOSCPhotonsPFTau20                       *
+  *                                                                                          *
+  *   HLT_IsoMu24_eta2p1_MediumChargedIsoPFTau35_Trk1_TightID_eta2p1_Reg_CrossL1             *
+  *     -> hltOverlapFilterIsoMu24MediumChargedIsoAndTightOOSCPhotonsPFTau35MonitoringReg (F)*
+  *     hltOverlapFilterIsoMu24MediumChargedIsoAndTightOOSCPhotonsPFTau35MonitoringReg       *
+  *                                                                                          *
+  *   HLT_IsoMu24_eta2p1_MediumChargedIsoPFTau35_Trk1_eta2p1_Reg_CrossL1                     *
+  *     -> hltOverlapFilterIsoMu24MediumChargedIsoPFTau35MonitoringReg (F)                   *
+  *     hltOverlapFilterIsoMu24MediumChargedIsoPFTau35MonitoringReg                          *
+  *                                                                                          *
+  *   HLT_IsoMu24_eta2p1_MediumChargedIsoPFTau50_Trk30_eta2p1_1pr                            *
+  *     hltSelectedPFTau50MediumChargedIsolationL1HLTMatchedMu22IsoTau40                     *
+  *                                                                                          *
+  *   HLT_IsoMu24_eta2p1_TightChargedIsoPFTau20_SingleL1                                     *
+  *     -> hltOverlapFilterIsoMu24TightChargedIsoPFTau20 (F)                                 *
+  *     hltOverlapFilterIsoMu24TightChargedIsoPFTau20                                        *
+  *                                                                                          *
+  *   HLT_IsoMu24_eta2p1_TightChargedIsoPFTau20_TightID_SingleL1                             *
+  *     -> hltOverlapFilterIsoMu24TightChargedIsoTightOOSCPhotonsPFTau20 (F)                 *
+  *     hltOverlapFilterIsoMu24TightChargedIsoTightOOSCPhotonsPFTau20                        *
+  *                                                                                          *
+  *   HLT_IsoMu24_eta2p1_TightChargedIsoPFTau35_Trk1_TightID_eta2p1_Reg_CrossL1              *
+  *     -> hltOverlapFilterIsoMu24TightChargedIsoAndTightOOSCPhotonsPFTau35MonitoringReg (F) *
+  *     hltOverlapFilterIsoMu24TightChargedIsoAndTightOOSCPhotonsPFTau35MonitoringReg        *
+  *                                                                                          *
+  *   HLT_IsoMu24_eta2p1_TightChargedIsoPFTau35_Trk1_eta2p1_Reg_CrossL1                      *
+  *     -> hltOverlapFilterIsoMu24TightChargedIsoPFTau35MonitoringReg (F)                    *
+  *     hltOverlapFilterIsoMu24TightChargedIsoPFTau35MonitoringReg                           *
+  *                                                                                          *
+  ********************************************************************************************
+
+  **** Summary of filters per trigger in '[1m92X_dataRun2_HLT_v7[0m' *******************************
+  *                                                                                          *
+  *   HLT_DoubleMu3_TkMu_DsTau3Mu                                                            *
+  *     hltdstau3muDisplaced3muFltr                                                          *
+  *                                                                                          *
+  *   HLT_DoubleMu3_Trk_Tau3mu                                                               *
+  *     hltTau3muTkVertexFilter                                                              *
+  *                                                                                          *
+  *   HLT_DoubleMu3_Trk_Tau3mu_NoL1Mass                                                      *
+  *     hltTau3muNoL1MassTkVertexFilter                                                      *
+  *                                                                                          *
+  *   HLT_Ele24_eta2p1_WPTight_Gsf_LooseChargedIsoPFTau30_eta2p1_CrossL1                     *
+  *     -> hltOverlapFilterIsoEle24WPTightGsfLooseIsoPFTau30 (F)                             *
+  *     hltOverlapFilterIsoEle24WPTightGsfLooseIsoPFTau30                                    *
+  *                                                                                          *
+  *   HLT_Ele24_eta2p1_WPTight_Gsf_LooseChargedIsoPFTau30_eta2p1_TightID_CrossL1             *
+  *     -> hltOverlapFilterIsoEle24WPTightGsfLooseIsoTightOOSCPhotonsPFTau30 (F)             *
+  *     hltOverlapFilterIsoEle24WPTightGsfLooseIsoTightOOSCPhotonsPFTau30                    *
+  *                                                                                          *
+  *   HLT_Ele24_eta2p1_WPTight_Gsf_MediumChargedIsoPFTau30_eta2p1_CrossL1                    *
+  *     -> hltOverlapFilterIsoEle24WPTightGsfMediumChargedIsoPFTau30 (F)                     *
+  *     hltOverlapFilterIsoEle24WPTightGsfMediumChargedIsoPFTau30                            *
+  *                                                                                          *
+  *   HLT_Ele24_eta2p1_WPTight_Gsf_MediumChargedIsoPFTau30_eta2p1_TightID_CrossL1            *
+  *     -> hltOverlapFilterIsoEle24WPTightGsfMediumIsoTightOOSCPhotonsPFTau30 (F)            *
+  *     hltOverlapFilterIsoEle24WPTightGsfMediumIsoTightOOSCPhotonsPFTau30                   *
+  *                                                                                          *
+  *   HLT_Ele24_eta2p1_WPTight_Gsf_TightChargedIsoPFTau30_eta2p1_CrossL1                     *
+  *     -> hltOverlapFilterIsoEle24WPTightGsfTightChargedIsoPFTau30 (F)                      *
+  *     hltOverlapFilterIsoEle24WPTightGsfTightChargedIsoPFTau30                             *
+  *                                                                                          *
+  *   HLT_Ele24_eta2p1_WPTight_Gsf_TightChargedIsoPFTau30_eta2p1_TightID_CrossL1             *
+  *     -> hltOverlapFilterIsoEle24WPTightGsfTightIsoTightOOSCPhotonsPFTau30 (F)             *
+  *     hltOverlapFilterIsoEle24WPTightGsfTightIsoTightOOSCPhotonsPFTau30                    *
+  *                                                                                          *
+  *   HLT_IsoMu20_eta2p1_LooseChargedIsoPFTau27_eta2p1_CrossL1                               *
+  *     -> hltOverlapFilterIsoMu20LooseChargedIsoPFTau27L1Seeded (F)                         *
+  *     hltOverlapFilterIsoMu20LooseChargedIsoPFTau27L1Seeded                                *
+  *                                                                                          *
+  *   HLT_IsoMu20_eta2p1_LooseChargedIsoPFTau27_eta2p1_TightID_CrossL1                       *
+  *     -> hltOverlapFilterIsoMu20LooseChargedIsoTightOOSCPhotonsPFTau27L1Seeded (F)         *
+  *     hltOverlapFilterIsoMu20LooseChargedIsoTightOOSCPhotonsPFTau27L1Seeded                *
+  *                                                                                          *
+  *   HLT_IsoMu20_eta2p1_MediumChargedIsoPFTau27_eta2p1_CrossL1                              *
+  *     -> hltOverlapFilterIsoMu20MediumChargedIsoPFTau27L1Seeded (F)                        *
+  *     hltOverlapFilterIsoMu20MediumChargedIsoPFTau27L1Seeded                               *
+  *                                                                                          *
+  *   HLT_IsoMu20_eta2p1_MediumChargedIsoPFTau27_eta2p1_TightID_CrossL1                      *
+  *     -> hltOverlapFilterIsoMu20MediumChargedIsoTightOOSCPhotonsPFTau27L1Seeded (F)        *
+  *     hltOverlapFilterIsoMu20MediumChargedIsoTightOOSCPhotonsPFTau27L1Seeded               *
+  *                                                                                          *
+  *   HLT_IsoMu20_eta2p1_TightChargedIsoPFTau27_eta2p1_CrossL1                               *
+  *     -> hltOverlapFilterIsoMu20TightChargedIsoPFTau27L1Seeded (F)                         *
+  *     hltOverlapFilterIsoMu20TightChargedIsoPFTau27L1Seeded                                *
+  *                                                                                          *
+  *   HLT_IsoMu20_eta2p1_TightChargedIsoPFTau27_eta2p1_TightID_CrossL1                       *
+  *     -> hltOverlapFilterIsoMu20TightChargedIsoTightOOSCPhotonsPFTau27L1Seeded (F)         *
+  *     hltOverlapFilterIsoMu20TightChargedIsoTightOOSCPhotonsPFTau27L1Seeded                *
+  *                                                                                          *
+  *   HLT_IsoMu24_eta2p1_LooseChargedIsoPFTau20_SingleL1                                     *
+  *     -> hltOverlapFilterIsoMu24LooseChargedIsoPFTau20 (F)                                 *
+  *     hltOverlapFilterIsoMu24LooseChargedIsoPFTau20                                        *
+  *                                                                                          *
+  *   HLT_IsoMu24_eta2p1_LooseChargedIsoPFTau20_TightID_SingleL1                             *
+  *     -> hltOverlapFilterIsoMu24LooseChargedIsoTightOOSCPhotonsPFTau20 (F)                 *
+  *     hltOverlapFilterIsoMu24LooseChargedIsoTightOOSCPhotonsPFTau20                        *
+  *                                                                                          *
+  *   HLT_IsoMu24_eta2p1_LooseChargedIsoPFTau35_Trk1_TightID_eta2p1_Reg_CrossL1              *
+  *     -> hltOverlapFilterIsoMu24LooseChargedIsoAndTightOOSCPhotonsPFTau35MonitoringReg (F) *
+  *     hltOverlapFilterIsoMu24LooseChargedIsoAndTightOOSCPhotonsPFTau35MonitoringReg        *
+  *                                                                                          *
+  *   HLT_IsoMu24_eta2p1_LooseChargedIsoPFTau35_Trk1_eta2p1_Reg_CrossL1                      *
+  *     -> hltOverlapFilterIsoMu24LooseChargedIsoPFTau35MonitoringReg (F)                    *
+  *     hltOverlapFilterIsoMu24LooseChargedIsoPFTau35MonitoringReg                           *
+  *                                                                                          *
+  *   HLT_IsoMu24_eta2p1_MediumChargedIsoPFTau20_SingleL1                                    *
+  *     -> hltOverlapFilterIsoMu24MediumChargedIsoPFTau20 (F)                                *
+  *     hltOverlapFilterIsoMu24MediumChargedIsoPFTau20                                       *
+  *                                                                                          *
+  *   HLT_IsoMu24_eta2p1_MediumChargedIsoPFTau20_TightID_SingleL1                            *
+  *     -> hltOverlapFilterIsoMu24MediumChargedIsoTightOOSCPhotonsPFTau20 (F)                *
+  *     hltOverlapFilterIsoMu24MediumChargedIsoTightOOSCPhotonsPFTau20                       *
+  *                                                                                          *
+  *   HLT_IsoMu24_eta2p1_MediumChargedIsoPFTau35_Trk1_TightID_eta2p1_Reg_CrossL1             *
+  *     -> hltOverlapFilterIsoMu24MediumChargedIsoAndTightOOSCPhotonsPFTau35MonitoringReg (F)*
+  *     hltOverlapFilterIsoMu24MediumChargedIsoAndTightOOSCPhotonsPFTau35MonitoringReg       *
+  *                                                                                          *
+  *   HLT_IsoMu24_eta2p1_MediumChargedIsoPFTau35_Trk1_eta2p1_Reg_CrossL1                     *
+  *     -> hltOverlapFilterIsoMu24MediumChargedIsoPFTau35MonitoringReg (F)                   *
+  *     hltOverlapFilterIsoMu24MediumChargedIsoPFTau35MonitoringReg                          *
+  *                                                                                          *
+  *   HLT_IsoMu24_eta2p1_MediumChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg_CrossL1             *
+  *     -> hltOverlapFilterIsoMu24MediumChargedIsoAndTightOOSCPhotonsPFTau40MonitoringReg (F)*
+  *     hltOverlapFilterIsoMu24MediumChargedIsoAndTightOOSCPhotonsPFTau40MonitoringReg       *
+  *                                                                                          *
+  *   HLT_IsoMu24_eta2p1_MediumChargedIsoPFTau40_Trk1_eta2p1_Reg_CrossL1                     *
+  *     -> hltOverlapFilterIsoMu24MediumChargedIsoPFTau40MonitoringReg (F)                   *
+  *     hltOverlapFilterIsoMu24MediumChargedIsoPFTau40MonitoringReg                          *
+  *                                                                                          *
+  *   HLT_IsoMu24_eta2p1_MediumChargedIsoPFTau50_Trk30_eta2p1_1pr                            *
+  *     hltSelectedPFTau50MediumChargedIsolationL1HLTMatchedMu22IsoTau40                     *
+  *                                                                                          *
+  *   HLT_IsoMu24_eta2p1_TightChargedIsoPFTau20_SingleL1                                     *
+  *     -> hltOverlapFilterIsoMu24TightChargedIsoPFTau20 (F)                                 *
+  *     hltOverlapFilterIsoMu24TightChargedIsoPFTau20                                        *
+  *                                                                                          *
+  *   HLT_IsoMu24_eta2p1_TightChargedIsoPFTau20_TightID_SingleL1                             *
+  *     -> hltOverlapFilterIsoMu24TightChargedIsoTightOOSCPhotonsPFTau20 (F)                 *
+  *     hltOverlapFilterIsoMu24TightChargedIsoTightOOSCPhotonsPFTau20                        *
+  *                                                                                          *
+  *   HLT_IsoMu24_eta2p1_TightChargedIsoPFTau35_Trk1_TightID_eta2p1_Reg_CrossL1              *
+  *     -> hltOverlapFilterIsoMu24TightChargedIsoAndTightOOSCPhotonsPFTau35MonitoringReg (F) *
+  *     hltOverlapFilterIsoMu24TightChargedIsoAndTightOOSCPhotonsPFTau35MonitoringReg        *
+  *                                                                                          *
+  *   HLT_IsoMu24_eta2p1_TightChargedIsoPFTau35_Trk1_eta2p1_Reg_CrossL1                      *
+  *     -> hltOverlapFilterIsoMu24TightChargedIsoPFTau35MonitoringReg (F)                    *
+  *     hltOverlapFilterIsoMu24TightChargedIsoPFTau35MonitoringReg                           *
+  *                                                                                          *
+  *   HLT_IsoMu24_eta2p1_TightChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg_CrossL1              *
+  *     -> hltOverlapFilterIsoMu24TightChargedIsoAndTightOOSCPhotonsPFTau40MonitoringReg (F) *
+  *     hltOverlapFilterIsoMu24TightChargedIsoAndTightOOSCPhotonsPFTau40MonitoringReg        *
+  *                                                                                          *
+  *   HLT_IsoMu24_eta2p1_TightChargedIsoPFTau40_Trk1_eta2p1_Reg_CrossL1                      *
+  *     -> hltOverlapFilterIsoMu24TightChargedIsoPFTau40MonitoringReg (F)                    *
+  *     hltOverlapFilterIsoMu24TightChargedIsoPFTau40MonitoringReg                           *
+  *                                                                                          *
+  *   HLT_IsoMu27_LooseChargedIsoPFTau20_SingleL1                                            *
+  *     -> hltOverlapFilterIsoMu27LooseChargedIsoPFTau20 (F)                                 *
+  *     hltOverlapFilterIsoMu27LooseChargedIsoPFTau20                                        *
+  *                                                                                          *
+  *   HLT_IsoMu27_MediumChargedIsoPFTau20_SingleL1                                           *
+  *     -> hltOverlapFilterIsoMu27MediumChargedIsoPFTau20 (F)                                *
+  *     hltOverlapFilterIsoMu27MediumChargedIsoPFTau20                                       *
+  *                                                                                          *
+  *   HLT_IsoMu27_TightChargedIsoPFTau20_SingleL1                                            *
+  *     -> hltOverlapFilterIsoMu27TightChargedIsoPFTau20 (F)                                 *
+  *     hltOverlapFilterIsoMu27TightChargedIsoPFTau20                                        *
+  *                                                                                          *
+  *   HLT_Tau3Mu_Mu7_Mu1_TkMu1_IsoTau15                                                      *
+  *     hltTau3MuIsoFilter                                                                   *
+  *                                                                                          *
+  *   HLT_Tau3Mu_Mu7_Mu1_TkMu1_IsoTau15_Charge1                                              *
+  *     hltTau3MuIsoFilterCharge1                                                            *
+  *                                                                                          *
+  *   HLT_Tau3Mu_Mu7_Mu1_TkMu1_Tau15                                                         *
+  *     hltTau3MuPreFilter                                                                   *
+  *                                                                                          *
+  *   HLT_Tau3Mu_Mu7_Mu1_TkMu1_Tau15_Charge1                                                 *
+  *     hltTau3MuPreFilterCharge1                                                            *
+  *                                                                                          *
+  ********************************************************************************************
+
+  **** Summary of filters per trigger in '[1m101X_dataRun2_HLT_v7[0m' ******************************
+  *                                                                                          *
+  *   HLT_DoubleMu3_TkMu_DsTau3Mu                                                            *
+  *     hltdstau3muDisplaced3muFltr                                                          *
+  *                                                                                          *
+  *   HLT_DoubleMu3_Trk_Tau3mu                                                               *
+  *     hltTau3muTkVertexFilter                                                              *
+  *                                                                                          *
+  *   HLT_DoubleMu3_Trk_Tau3mu_NoL1Mass                                                      *
+  *     hltTau3muNoL1MassTkVertexFilter                                                      *
+  *                                                                                          *
+  *   HLT_Ele24_eta2p1_WPTight_Gsf_LooseChargedIsoPFTauHPS30_eta2p1_CrossL1                  *
+  *     -> hltHpsOverlapFilterIsoEle24WPTightGsfLooseIsoPFTau30 (F)                          *
+  *     hltHpsOverlapFilterIsoEle24WPTightGsfLooseIsoPFTau30                                 *
+  *                                                                                          *
+  *   HLT_Ele24_eta2p1_WPTight_Gsf_LooseChargedIsoPFTauHPS30_eta2p1_TightID_CrossL1          *
+  *     -> hltHpsOverlapFilterIsoEle24WPTightGsfLooseIsoTightOOSCPhotonsPFTau30 (F)          *
+  *     hltHpsOverlapFilterIsoEle24WPTightGsfLooseIsoTightOOSCPhotonsPFTau30                 *
+  *                                                                                          *
+  *   HLT_Ele24_eta2p1_WPTight_Gsf_MediumChargedIsoPFTauHPS30_eta2p1_CrossL1                 *
+  *     -> hltHpsOverlapFilterIsoEle24WPTightGsfMediumIsoPFTau30 (F)                         *
+  *     hltHpsOverlapFilterIsoEle24WPTightGsfMediumIsoPFTau30                                *
+  *                                                                                          *
+  *   HLT_Ele24_eta2p1_WPTight_Gsf_MediumChargedIsoPFTauHPS30_eta2p1_TightID_CrossL1         *
+  *     -> hltHpsOverlapFilterIsoEle24WPTightGsfMediumIsoTightOOSCPhotonsPFTau30 (F)         *
+  *     hltHpsOverlapFilterIsoEle24WPTightGsfMediumIsoTightOOSCPhotonsPFTau30                *
+  *                                                                                          *
+  *   HLT_Ele24_eta2p1_WPTight_Gsf_TightChargedIsoPFTauHPS30_eta2p1_CrossL1                  *
+  *     -> hltHpsOverlapFilterIsoEle24WPTightGsfTightIsoPFTau30 (F)                          *
+  *     hltHpsOverlapFilterIsoEle24WPTightGsfTightIsoPFTau30                                 *
+  *                                                                                          *
+  *   HLT_Ele24_eta2p1_WPTight_Gsf_TightChargedIsoPFTauHPS30_eta2p1_TightID_CrossL1          *
+  *     -> hltHpsOverlapFilterIsoEle24WPTightGsfTightIsoTightOOSCPhotonsPFTau30 (F)          *
+  *     hltHpsOverlapFilterIsoEle24WPTightGsfTightIsoTightOOSCPhotonsPFTau30                 *
+  *                                                                                          *
+  *   HLT_IsoMu20_eta2p1_LooseChargedIsoPFTauHPS27_eta2p1_CrossL1                            *
+  *     -> hltHpsOverlapFilterIsoMu20LooseChargedIsoPFTau27L1Seeded (F)                      *
+  *     hltHpsOverlapFilterIsoMu20LooseChargedIsoPFTau27L1Seeded                             *
+  *                                                                                          *
+  *   HLT_IsoMu20_eta2p1_LooseChargedIsoPFTauHPS27_eta2p1_TightID_CrossL1                    *
+  *     -> hltHpsOverlapFilterIsoMu20LooseChargedIsoTightOOSCPhotonsPFTau27L1Seeded (F)      *
+  *     hltHpsOverlapFilterIsoMu20LooseChargedIsoTightOOSCPhotonsPFTau27L1Seeded             *
+  *                                                                                          *
+  *   HLT_IsoMu20_eta2p1_MediumChargedIsoPFTauHPS27_eta2p1_CrossL1                           *
+  *     -> hltHpsOverlapFilterIsoMu20MediumChargedIsoPFTau27L1Seeded (F)                     *
+  *     hltHpsOverlapFilterIsoMu20MediumChargedIsoPFTau27L1Seeded                            *
+  *                                                                                          *
+  *   HLT_IsoMu20_eta2p1_MediumChargedIsoPFTauHPS27_eta2p1_TightID_CrossL1                   *
+  *     -> hltHpsOverlapFilterIsoMu20MediumChargedIsoTightOOSCPhotonsPFTau27L1Seeded (F)     *
+  *     hltHpsOverlapFilterIsoMu20MediumChargedIsoTightOOSCPhotonsPFTau27L1Seeded            *
+  *                                                                                          *
+  *   HLT_IsoMu20_eta2p1_TightChargedIsoPFTauHPS27_eta2p1_CrossL1                            *
+  *     -> hltHpsOverlapFilterIsoMu20TightChargedIsoPFTau27L1Seeded (F)                      *
+  *     hltHpsOverlapFilterIsoMu20TightChargedIsoPFTau27L1Seeded                             *
+  *                                                                                          *
+  *   HLT_IsoMu20_eta2p1_TightChargedIsoPFTauHPS27_eta2p1_TightID_CrossL1                    *
+  *     -> hltHpsOverlapFilterIsoMu20TightChargedIsoTightOOSCPhotonsPFTau27L1Seeded (F)      *
+  *     hltHpsOverlapFilterIsoMu20TightChargedIsoTightOOSCPhotonsPFTau27L1Seeded             *
+  *                                                                                          *
+  *   HLT_IsoMu24_eta2p1_MediumChargedIsoPFTau50_Trk30_eta2p1_1pr                            *
+  *     hltSelectedPFTau50MediumChargedIsolationL1HLTMatchedMu22IsoTau40                     *
+  *                                                                                          *
+  *   HLT_IsoMu24_eta2p1_MediumChargedIsoPFTauHPS35_Trk1_TightID_eta2p1_Reg_CrossL1          *
+  *     -> hltHpsOverlapFilterIsoMu24MediumChargedIsoAndTightOOSCPhotonsPFTau35MonitoringReg (F)*
+  *     hltHpsOverlapFilterIsoMu24MediumChargedIsoAndTightOOSCPhotonsPFTau35MonitoringReg    *
+  *                                                                                          *
+  *   HLT_IsoMu24_eta2p1_MediumChargedIsoPFTauHPS35_Trk1_eta2p1_Reg_CrossL1                  *
+  *     -> hltHpsOverlapFilterIsoMu24MediumChargedIsoPFTau35MonitoringReg (F)                *
+  *     hltHpsOverlapFilterIsoMu24MediumChargedIsoPFTau35MonitoringReg                       *
+  *                                                                                          *
+  *   HLT_IsoMu24_eta2p1_TightChargedIsoPFTauHPS35_Trk1_TightID_eta2p1_Reg_CrossL1           *
+  *     -> hltHpsOverlapFilterIsoMu24TightChargedIsoAndTightOOSCPhotonsPFTau35MonitoringReg (F)*
+  *     hltHpsOverlapFilterIsoMu24TightChargedIsoAndTightOOSCPhotonsPFTau35MonitoringReg     *
+  *                                                                                          *
+  *   HLT_IsoMu24_eta2p1_TightChargedIsoPFTauHPS35_Trk1_eta2p1_Reg_CrossL1                   *
+  *     -> hltHpsOverlapFilterIsoMu24TightChargedIsoPFTau35MonitoringReg (F)                 *
+  *     hltHpsOverlapFilterIsoMu24TightChargedIsoPFTau35MonitoringReg                        *
+  *                                                                                          *
+  *   HLT_IsoMu27_LooseChargedIsoPFTauHPS20_Trk1_eta2p1_SingleL1                             *
+  *     -> hltHpsOverlapFilterIsoMu27LooseChargedIsoPFTau20 (F)                              *
+  *     hltHpsOverlapFilterIsoMu27LooseChargedIsoPFTau20                                     *
+  *                                                                                          *
+  *   HLT_IsoMu27_MediumChargedIsoPFTauHPS20_Trk1_eta2p1_SingleL1                            *
+  *     -> hltHpsOverlapFilterIsoMu27MediumChargedIsoPFTau20 (F)                             *
+  *     hltHpsOverlapFilterIsoMu27MediumChargedIsoPFTau20                                    *
+  *                                                                                          *
+  *   HLT_IsoMu27_TightChargedIsoPFTauHPS20_Trk1_eta2p1_SingleL1                             *
+  *     -> hltHpsOverlapFilterIsoMu27TightChargedIsoPFTau20 (F)                              *
+  *     hltHpsOverlapFilterIsoMu27TightChargedIsoPFTau20                                     *
+  *                                                                                          *
+  *   HLT_Tau3Mu_Mu7_Mu1_TkMu1_IsoTau15                                                      *
+  *     hltTau3MuIsoFilter                                                                   *
+  *                                                                                          *
+  *   HLT_Tau3Mu_Mu7_Mu1_TkMu1_IsoTau15_Charge1                                              *
+  *     hltTau3MuIsoFilterCharge1                                                            *
+  *                                                                                          *
+  *   HLT_Tau3Mu_Mu7_Mu1_TkMu1_Tau15                                                         *
+  *     hltTau3MuPreFilter                                                                   *
+  *                                                                                          *
+  *   HLT_Tau3Mu_Mu7_Mu1_TkMu1_Tau15_Charge1                                                 *
+  *     hltTau3MuPreFilterCharge1                                                            *
+  *                                                                                          *
+  ********************************************************************************************
+
+  **** Summary of filters per trigger in '[1mAll[0m' ***********************************************
+  *                                                                                          *
+  *   HLT_DoubleMu3_TkMu_DsTau3Mu                                                            *
+  *     hltdstau3muDisplaced3muFltr                                                          *
+  *                                                                                          *
+  *   HLT_DoubleMu3_Trk_Tau3mu                                                               *
+  *     hltTau3muTkVertexFilter                                                              *
+  *                                                                                          *
+  *   HLT_DoubleMu3_Trk_Tau3mu_NoL1Mass                                                      *
+  *     hltTau3muNoL1MassTkVertexFilter                                                      *
+  *                                                                                          *
+  *   HLT_Ele20_eta2p1_WPLoose_Gsf_LooseIsoPFTau28                                           *
+  *     -> hltOverlapFilterIsoEle20WPLooseGsfLooseIsoPFTau28 (F)                             *
+  *     hltOverlapFilterIsoEle20WPLooseGsfLooseIsoPFTau28                                    *
+  *                                                                                          *
+  *   HLT_Ele22_eta2p1_WPLoose_Gsf_LooseIsoPFTau20_SingleL1                                  *
+  *     hltOverlapFilterSingleIsoEle22WPLooseGsfLooseIsoPFTau20                              *
+  *                                                                                          *
+  *   HLT_Ele22_eta2p1_WPLoose_Gsf_LooseIsoPFTau29                                           *
+  *     -> hltOverlapFilterIsoEle22WPLooseGsfLooseIsoPFTau29 (F)                             *
+  *     hltOverlapFilterIsoEle22WPLooseGsfLooseIsoPFTau29                                    *
+  *                                                                                          *
+  *   HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_L1JetTauSeeded                               *
+  *     hltEle23Ele12CaloIdLTrackIdLIsoVLDZL1TauJetSeededFilter                              *
+  *                                                                                          *
+  *   HLT_Ele24_eta2p1_WPLoose_Gsf_LooseIsoPFTau20                                           *
+  *     -> hltOverlapFilterIsoEle24WPLooseGsfLooseIsoPFTau20 (F)                             *
+  *     hltOverlapFilterIsoEle24WPLooseGsfLooseIsoPFTau20                                    *
+  *                                                                                          *
+  *   HLT_Ele24_eta2p1_WPLoose_Gsf_LooseIsoPFTau20_SingleL1                                  *
+  *     hltOverlapFilterSingleIsoEle24WPLooseGsfLooseIsoPFTau20                              *
+  *                                                                                          *
+  *   HLT_Ele24_eta2p1_WPLoose_Gsf_LooseIsoPFTau30                                           *
+  *     -> hltOverlapFilterIsoEle24WPLooseGsfLooseIsoPFTau30 (F)                             *
+  *     hltOverlapFilterIsoEle24WPLooseGsfLooseIsoPFTau30                                    *
+  *                                                                                          *
+  *   HLT_Ele24_eta2p1_WPTight_Gsf_LooseChargedIsoPFTau30_eta2p1_CrossL1                     *
+  *     -> hltOverlapFilterIsoEle24WPTightGsfLooseIsoPFTau30 (F)                             *
+  *     hltOverlapFilterIsoEle24WPTightGsfLooseIsoPFTau30                                    *
+  *                                                                                          *
+  *   HLT_Ele24_eta2p1_WPTight_Gsf_LooseChargedIsoPFTau30_eta2p1_TightID_CrossL1             *
+  *     -> hltOverlapFilterIsoEle24WPTightGsfLooseIsoTightOOSCPhotonsPFTau30 (F)             *
+  *     hltOverlapFilterIsoEle24WPTightGsfLooseIsoTightOOSCPhotonsPFTau30                    *
+  *                                                                                          *
+  *   HLT_Ele24_eta2p1_WPTight_Gsf_LooseChargedIsoPFTauHPS30_eta2p1_CrossL1                  *
+  *     -> hltHpsOverlapFilterIsoEle24WPTightGsfLooseIsoPFTau30 (F)                          *
+  *     hltHpsOverlapFilterIsoEle24WPTightGsfLooseIsoPFTau30                                 *
+  *                                                                                          *
+  *   HLT_Ele24_eta2p1_WPTight_Gsf_LooseChargedIsoPFTauHPS30_eta2p1_TightID_CrossL1          *
+  *     -> hltHpsOverlapFilterIsoEle24WPTightGsfLooseIsoTightOOSCPhotonsPFTau30 (F)          *
+  *     hltHpsOverlapFilterIsoEle24WPTightGsfLooseIsoTightOOSCPhotonsPFTau30                 *
+  *                                                                                          *
+  *   HLT_Ele24_eta2p1_WPTight_Gsf_MediumChargedIsoPFTau30_eta2p1_CrossL1                    *
+  *     -> hltOverlapFilterIsoEle24WPTightGsfMediumChargedIsoPFTau30 (F)                     *
+  *     hltOverlapFilterIsoEle24WPTightGsfMediumChargedIsoPFTau30                            *
+  *                                                                                          *
+  *   HLT_Ele24_eta2p1_WPTight_Gsf_MediumChargedIsoPFTau30_eta2p1_TightID_CrossL1            *
+  *     -> hltOverlapFilterIsoEle24WPTightGsfMediumIsoTightOOSCPhotonsPFTau30 (F)            *
+  *     hltOverlapFilterIsoEle24WPTightGsfMediumIsoTightOOSCPhotonsPFTau30                   *
+  *                                                                                          *
+  *   HLT_Ele24_eta2p1_WPTight_Gsf_MediumChargedIsoPFTauHPS30_eta2p1_CrossL1                 *
+  *     -> hltHpsOverlapFilterIsoEle24WPTightGsfMediumIsoPFTau30 (F)                         *
+  *     hltHpsOverlapFilterIsoEle24WPTightGsfMediumIsoPFTau30                                *
+  *                                                                                          *
+  *   HLT_Ele24_eta2p1_WPTight_Gsf_MediumChargedIsoPFTauHPS30_eta2p1_TightID_CrossL1         *
+  *     -> hltHpsOverlapFilterIsoEle24WPTightGsfMediumIsoTightOOSCPhotonsPFTau30 (F)         *
+  *     hltHpsOverlapFilterIsoEle24WPTightGsfMediumIsoTightOOSCPhotonsPFTau30                *
+  *                                                                                          *
+  *   HLT_Ele24_eta2p1_WPTight_Gsf_TightChargedIsoPFTau30_eta2p1_CrossL1                     *
+  *     -> hltOverlapFilterIsoEle24WPTightGsfTightChargedIsoPFTau30 (F)                      *
+  *     hltOverlapFilterIsoEle24WPTightGsfTightChargedIsoPFTau30                             *
+  *                                                                                          *
+  *   HLT_Ele24_eta2p1_WPTight_Gsf_TightChargedIsoPFTau30_eta2p1_TightID_CrossL1             *
+  *     -> hltOverlapFilterIsoEle24WPTightGsfTightIsoTightOOSCPhotonsPFTau30 (F)             *
+  *     hltOverlapFilterIsoEle24WPTightGsfTightIsoTightOOSCPhotonsPFTau30                    *
+  *                                                                                          *
+  *   HLT_Ele24_eta2p1_WPTight_Gsf_TightChargedIsoPFTauHPS30_eta2p1_CrossL1                  *
+  *     -> hltHpsOverlapFilterIsoEle24WPTightGsfTightIsoPFTau30 (F)                          *
+  *     hltHpsOverlapFilterIsoEle24WPTightGsfTightIsoPFTau30                                 *
+  *                                                                                          *
+  *   HLT_Ele24_eta2p1_WPTight_Gsf_TightChargedIsoPFTauHPS30_eta2p1_TightID_CrossL1          *
+  *     -> hltHpsOverlapFilterIsoEle24WPTightGsfTightIsoTightOOSCPhotonsPFTau30 (F)          *
+  *     hltHpsOverlapFilterIsoEle24WPTightGsfTightIsoTightOOSCPhotonsPFTau30                 *
+  *                                                                                          *
+  *   HLT_Ele27_WPTight_Gsf_L1JetTauSeeded                                                   *
+  *     hltEle27WPTightGsfTrackIsoL1TauJetSeededFilter                                       *
+  *                                                                                          *
+  *   HLT_Ele27_eta2p1_WPLoose_Gsf_DoubleMediumIsoPFTau32_Trk1_eta2p1_Reg                    *
+  *     hltDoublePFTau32TrackPt1MediumIsolationNoL1MatchDz02Reg                              *
+  *                                                                                          *
+  *   HLT_Ele27_eta2p1_WPLoose_Gsf_DoubleMediumIsoPFTau35_Trk1_eta2p1_Reg                    *
+  *     hltDoublePFTau35TrackPt1MediumIsolationNoL1MatchDz02Reg                              *
+  *                                                                                          *
+  *   HLT_Ele27_eta2p1_WPLoose_Gsf_DoubleMediumIsoPFTau40_Trk1_eta2p1_Reg                    *
+  *     hltDoublePFTau40TrackPt1MediumIsolationNoL1MatchDz02Reg                              *
+  *                                                                                          *
+  *   HLT_Ele27_eta2p1_WPLoose_Gsf_LooseIsoPFTau20_SingleL1                                  *
+  *     -> hltOverlapFilterIsoEle27WPLooseGsfLooseIsoPFTau20 (F)                             *
+  *     hltOverlapFilterIsoEle27WPLooseGsfLooseIsoPFTau20                                    *
+  *                                                                                          *
+  *   HLT_Ele32_eta2p1_WPLoose_Gsf_LooseIsoPFTau20_SingleL1                                  *
+  *     -> hltOverlapFilterIsoEle32WPLooseGsfLooseIsoPFTau20 (F)                             *
+  *     hltOverlapFilterIsoEle32WPLooseGsfLooseIsoPFTau20                                    *
+  *                                                                                          *
+  *   HLT_Ele36_eta2p1_WPLoose_Gsf_LooseIsoPFTau20_SingleL1                                  *
+  *     hltOverlapFilterSingleIsoEle36WPLooseGsfLooseIsoPFTau20                              *
+  *                                                                                          *
+  *   HLT_Ele45_WPLoose_Gsf_L1JetTauSeeded                                                   *
+  *     hltEle45WPLooseGsfTrackIsoL1TauJetSeededFilter                                       *
+  *                                                                                          *
+  *   HLT_IsoMu16_eta2p1_MET30_LooseIsoPFTau50_Trk30_eta2p1                                  *
+  *     hltPFTau50TrackPt30LooseAbsOrRelIso                                                  *
+  *                                                                                          *
+  *   HLT_IsoMu17_eta2p1_LooseIsoPFTau20                                                     *
+  *     -> hltOverlapFilterIsoMu17LooseIsoPFTau20 (F)                                        *
+  *     hltOverlapFilterIsoMu17LooseIsoPFTau20                                               *
+  *                                                                                          *
+  *   HLT_IsoMu17_eta2p1_LooseIsoPFTau20_SingleL1                                            *
+  *     hltOverlapFilterSingleIsoMu17LooseIsoPFTau20                                         *
+  *                                                                                          *
+  *   HLT_IsoMu19_eta2p1_LooseCombinedIsoPFTau20                                             *
+  *     -> hltOverlapFilterIsoMu19LooseCombinedIsoPFTau20 (F)                                *
+  *     hltOverlapFilterIsoMu19LooseCombinedIsoPFTau20                                       *
+  *                                                                                          *
+  *   HLT_IsoMu19_eta2p1_LooseIsoPFTau20                                                     *
+  *     -> hltOverlapFilterIsoMu19LooseIsoPFTau20 (F)                                        *
+  *     hltOverlapFilterIsoMu19LooseIsoPFTau20                                               *
+  *                                                                                          *
+  *   HLT_IsoMu19_eta2p1_LooseIsoPFTau20_SingleL1                                            *
+  *     hltOverlapFilterSingleIsoMu19LooseIsoPFTau20                                         *
+  *                                                                                          *
+  *   HLT_IsoMu19_eta2p1_MediumCombinedIsoPFTau32_Trk1_eta2p1_Reg                            *
+  *     -> hltOverlapFilterIsoMu19MediumCombinedIsoPFTau32Reg (F)                            *
+  *     hltOverlapFilterIsoMu19MediumCombinedIsoPFTau32Reg                                   *
+  *                                                                                          *
+  *   HLT_IsoMu19_eta2p1_MediumIsoPFTau32_Trk1_eta2p1_Reg                                    *
+  *     -> hltOverlapFilterIsoMu19MediumIsoPFTau32Reg (F)                                    *
+  *     hltOverlapFilterIsoMu19MediumIsoPFTau32Reg                                           *
+  *                                                                                          *
+  *   HLT_IsoMu19_eta2p1_TightCombinedIsoPFTau32_Trk1_eta2p1_Reg                             *
+  *     -> hltOverlapFilterIsoMu19TightCombinedIsoPFTau32Reg (F)                             *
+  *     hltOverlapFilterIsoMu19TightCombinedIsoPFTau32Reg                                    *
+  *                                                                                          *
+  *   HLT_IsoMu20_eta2p1_LooseChargedIsoPFTau27_eta2p1_CrossL1                               *
+  *     -> hltOverlapFilterIsoMu20LooseChargedIsoPFTau27L1Seeded (F)                         *
+  *     hltOverlapFilterIsoMu20LooseChargedIsoPFTau27L1Seeded                                *
+  *                                                                                          *
+  *   HLT_IsoMu20_eta2p1_LooseChargedIsoPFTau27_eta2p1_TightID_CrossL1                       *
+  *     -> hltOverlapFilterIsoMu20LooseChargedIsoTightOOSCPhotonsPFTau27L1Seeded (F)         *
+  *     hltOverlapFilterIsoMu20LooseChargedIsoTightOOSCPhotonsPFTau27L1Seeded                *
+  *                                                                                          *
+  *   HLT_IsoMu20_eta2p1_LooseChargedIsoPFTauHPS27_eta2p1_CrossL1                            *
+  *     -> hltHpsOverlapFilterIsoMu20LooseChargedIsoPFTau27L1Seeded (F)                      *
+  *     hltHpsOverlapFilterIsoMu20LooseChargedIsoPFTau27L1Seeded                             *
+  *                                                                                          *
+  *   HLT_IsoMu20_eta2p1_LooseChargedIsoPFTauHPS27_eta2p1_TightID_CrossL1                    *
+  *     -> hltHpsOverlapFilterIsoMu20LooseChargedIsoTightOOSCPhotonsPFTau27L1Seeded (F)      *
+  *     hltHpsOverlapFilterIsoMu20LooseChargedIsoTightOOSCPhotonsPFTau27L1Seeded             *
+  *                                                                                          *
+  *   HLT_IsoMu20_eta2p1_MediumChargedIsoPFTau27_eta2p1_CrossL1                              *
+  *     -> hltOverlapFilterIsoMu20MediumChargedIsoPFTau27L1Seeded (F)                        *
+  *     hltOverlapFilterIsoMu20MediumChargedIsoPFTau27L1Seeded                               *
+  *                                                                                          *
+  *   HLT_IsoMu20_eta2p1_MediumChargedIsoPFTau27_eta2p1_TightID_CrossL1                      *
+  *     -> hltOverlapFilterIsoMu20MediumChargedIsoTightOOSCPhotonsPFTau27L1Seeded (F)        *
+  *     hltOverlapFilterIsoMu20MediumChargedIsoTightOOSCPhotonsPFTau27L1Seeded               *
+  *                                                                                          *
+  *   HLT_IsoMu20_eta2p1_MediumChargedIsoPFTauHPS27_eta2p1_CrossL1                           *
+  *     -> hltHpsOverlapFilterIsoMu20MediumChargedIsoPFTau27L1Seeded (F)                     *
+  *     hltHpsOverlapFilterIsoMu20MediumChargedIsoPFTau27L1Seeded                            *
+  *                                                                                          *
+  *   HLT_IsoMu20_eta2p1_MediumChargedIsoPFTauHPS27_eta2p1_TightID_CrossL1                   *
+  *     -> hltHpsOverlapFilterIsoMu20MediumChargedIsoTightOOSCPhotonsPFTau27L1Seeded (F)     *
+  *     hltHpsOverlapFilterIsoMu20MediumChargedIsoTightOOSCPhotonsPFTau27L1Seeded            *
+  *                                                                                          *
+  *   HLT_IsoMu20_eta2p1_TightChargedIsoPFTau27_eta2p1_CrossL1                               *
+  *     -> hltOverlapFilterIsoMu20TightChargedIsoPFTau27L1Seeded (F)                         *
+  *     hltOverlapFilterIsoMu20TightChargedIsoPFTau27L1Seeded                                *
+  *                                                                                          *
+  *   HLT_IsoMu20_eta2p1_TightChargedIsoPFTau27_eta2p1_TightID_CrossL1                       *
+  *     -> hltOverlapFilterIsoMu20TightChargedIsoTightOOSCPhotonsPFTau27L1Seeded (F)         *
+  *     hltOverlapFilterIsoMu20TightChargedIsoTightOOSCPhotonsPFTau27L1Seeded                *
+  *                                                                                          *
+  *   HLT_IsoMu20_eta2p1_TightChargedIsoPFTauHPS27_eta2p1_CrossL1                            *
+  *     -> hltHpsOverlapFilterIsoMu20TightChargedIsoPFTau27L1Seeded (F)                      *
+  *     hltHpsOverlapFilterIsoMu20TightChargedIsoPFTau27L1Seeded                             *
+  *                                                                                          *
+  *   HLT_IsoMu20_eta2p1_TightChargedIsoPFTauHPS27_eta2p1_TightID_CrossL1                    *
+  *     -> hltHpsOverlapFilterIsoMu20TightChargedIsoTightOOSCPhotonsPFTau27L1Seeded (F)      *
+  *     hltHpsOverlapFilterIsoMu20TightChargedIsoTightOOSCPhotonsPFTau27L1Seeded             *
+  *                                                                                          *
+  *   HLT_IsoMu21_eta2p1_LooseIsoPFTau20_SingleL1                                            *
+  *     hltOverlapFilterSingleIsoMu21LooseIsoPFTau20                                         *
+  *                                                                                          *
+  *   HLT_IsoMu21_eta2p1_LooseIsoPFTau50_Trk30_eta2p1_SingleL1                               *
+  *     hltPFTau50TrackPt30LooseAbsOrRelIso                                                  *
+  *                                                                                          *
+  *   HLT_IsoMu21_eta2p1_MediumCombinedIsoPFTau32_Trk1_eta2p1_Reg                            *
+  *     -> hltOverlapFilterIsoMu21MediumCombinedIsoPFTau32Reg (F)                            *
+  *     hltOverlapFilterIsoMu21MediumCombinedIsoPFTau32Reg                                   *
+  *                                                                                          *
+  *   HLT_IsoMu21_eta2p1_MediumIsoPFTau32_Trk1_eta2p1_Reg                                    *
+  *     -> hltOverlapFilterIsoMu21MediumIsoPFTau32Reg (F)                                    *
+  *     hltOverlapFilterIsoMu21MediumIsoPFTau32Reg                                           *
+  *                                                                                          *
+  *   HLT_IsoMu21_eta2p1_TightCombinedIsoPFTau32_Trk1_eta2p1_Reg                             *
+  *     -> hltOverlapFilterIsoMu21TightCombinedIsoPFTau32Reg (F)                             *
+  *     hltOverlapFilterIsoMu21TightCombinedIsoPFTau32Reg                                    *
+  *                                                                                          *
+  *   HLT_IsoMu24_eta2p1_LooseChargedIsoPFTau20_SingleL1                                     *
+  *     -> hltOverlapFilterIsoMu24LooseChargedIsoPFTau20 (F)                                 *
+  *     hltOverlapFilterIsoMu24LooseChargedIsoPFTau20                                        *
+  *                                                                                          *
+  *   HLT_IsoMu24_eta2p1_LooseChargedIsoPFTau20_TightID_SingleL1                             *
+  *     -> hltOverlapFilterIsoMu24LooseChargedIsoTightOOSCPhotonsPFTau20 (F)                 *
+  *     hltOverlapFilterIsoMu24LooseChargedIsoTightOOSCPhotonsPFTau20                        *
+  *                                                                                          *
+  *   HLT_IsoMu24_eta2p1_LooseChargedIsoPFTau35_Trk1_TightID_eta2p1_Reg_CrossL1              *
+  *     -> hltOverlapFilterIsoMu24LooseChargedIsoAndTightOOSCPhotonsPFTau35MonitoringReg (F) *
+  *     hltOverlapFilterIsoMu24LooseChargedIsoAndTightOOSCPhotonsPFTau35MonitoringReg        *
+  *                                                                                          *
+  *   HLT_IsoMu24_eta2p1_LooseChargedIsoPFTau35_Trk1_eta2p1_Reg_CrossL1                      *
+  *     -> hltOverlapFilterIsoMu24LooseChargedIsoPFTau35MonitoringReg (F)                    *
+  *     hltOverlapFilterIsoMu24LooseChargedIsoPFTau35MonitoringReg                           *
+  *                                                                                          *
+  *   HLT_IsoMu24_eta2p1_MediumChargedIsoPFTau20_SingleL1                                    *
+  *     -> hltOverlapFilterIsoMu24MediumChargedIsoPFTau20 (F)                                *
+  *     hltOverlapFilterIsoMu24MediumChargedIsoPFTau20                                       *
+  *                                                                                          *
+  *   HLT_IsoMu24_eta2p1_MediumChargedIsoPFTau20_TightID_SingleL1                            *
+  *     -> hltOverlapFilterIsoMu24MediumChargedIsoTightOOSCPhotonsPFTau20 (F)                *
+  *     hltOverlapFilterIsoMu24MediumChargedIsoTightOOSCPhotonsPFTau20                       *
+  *                                                                                          *
+  *   HLT_IsoMu24_eta2p1_MediumChargedIsoPFTau35_Trk1_TightID_eta2p1_Reg_CrossL1             *
+  *     -> hltOverlapFilterIsoMu24MediumChargedIsoAndTightOOSCPhotonsPFTau35MonitoringReg (F)*
+  *     hltOverlapFilterIsoMu24MediumChargedIsoAndTightOOSCPhotonsPFTau35MonitoringReg       *
+  *                                                                                          *
+  *   HLT_IsoMu24_eta2p1_MediumChargedIsoPFTau35_Trk1_eta2p1_Reg_CrossL1                     *
+  *     -> hltOverlapFilterIsoMu24MediumChargedIsoPFTau35MonitoringReg (F)                   *
+  *     hltOverlapFilterIsoMu24MediumChargedIsoPFTau35MonitoringReg                          *
+  *                                                                                          *
+  *   HLT_IsoMu24_eta2p1_MediumChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg_CrossL1             *
+  *     -> hltOverlapFilterIsoMu24MediumChargedIsoAndTightOOSCPhotonsPFTau40MonitoringReg (F)*
+  *     hltOverlapFilterIsoMu24MediumChargedIsoAndTightOOSCPhotonsPFTau40MonitoringReg       *
+  *                                                                                          *
+  *   HLT_IsoMu24_eta2p1_MediumChargedIsoPFTau40_Trk1_eta2p1_Reg_CrossL1                     *
+  *     -> hltOverlapFilterIsoMu24MediumChargedIsoPFTau40MonitoringReg (F)                   *
+  *     hltOverlapFilterIsoMu24MediumChargedIsoPFTau40MonitoringReg                          *
+  *                                                                                          *
+  *   HLT_IsoMu24_eta2p1_MediumChargedIsoPFTau50_Trk30_eta2p1_1pr                            *
+  *     hltSelectedPFTau50MediumChargedIsolationL1HLTMatchedMu22IsoTau40                     *
+  *                                                                                          *
+  *   HLT_IsoMu24_eta2p1_MediumChargedIsoPFTauHPS35_Trk1_TightID_eta2p1_Reg_CrossL1          *
+  *     -> hltHpsOverlapFilterIsoMu24MediumChargedIsoAndTightOOSCPhotonsPFTau35MonitoringReg (F)*
+  *     hltHpsOverlapFilterIsoMu24MediumChargedIsoAndTightOOSCPhotonsPFTau35MonitoringReg    *
+  *                                                                                          *
+  *   HLT_IsoMu24_eta2p1_MediumChargedIsoPFTauHPS35_Trk1_eta2p1_Reg_CrossL1                  *
+  *     -> hltHpsOverlapFilterIsoMu24MediumChargedIsoPFTau35MonitoringReg (F)                *
+  *     hltHpsOverlapFilterIsoMu24MediumChargedIsoPFTau35MonitoringReg                       *
+  *                                                                                          *
+  *   HLT_IsoMu24_eta2p1_TightChargedIsoPFTau20_SingleL1                                     *
+  *     -> hltOverlapFilterIsoMu24TightChargedIsoPFTau20 (F)                                 *
+  *     hltOverlapFilterIsoMu24TightChargedIsoPFTau20                                        *
+  *                                                                                          *
+  *   HLT_IsoMu24_eta2p1_TightChargedIsoPFTau20_TightID_SingleL1                             *
+  *     -> hltOverlapFilterIsoMu24TightChargedIsoTightOOSCPhotonsPFTau20 (F)                 *
+  *     hltOverlapFilterIsoMu24TightChargedIsoTightOOSCPhotonsPFTau20                        *
+  *                                                                                          *
+  *   HLT_IsoMu24_eta2p1_TightChargedIsoPFTau35_Trk1_TightID_eta2p1_Reg_CrossL1              *
+  *     -> hltOverlapFilterIsoMu24TightChargedIsoAndTightOOSCPhotonsPFTau35MonitoringReg (F) *
+  *     hltOverlapFilterIsoMu24TightChargedIsoAndTightOOSCPhotonsPFTau35MonitoringReg        *
+  *                                                                                          *
+  *   HLT_IsoMu24_eta2p1_TightChargedIsoPFTau35_Trk1_eta2p1_Reg_CrossL1                      *
+  *     -> hltOverlapFilterIsoMu24TightChargedIsoPFTau35MonitoringReg (F)                    *
+  *     hltOverlapFilterIsoMu24TightChargedIsoPFTau35MonitoringReg                           *
+  *                                                                                          *
+  *   HLT_IsoMu24_eta2p1_TightChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg_CrossL1              *
+  *     -> hltOverlapFilterIsoMu24TightChargedIsoAndTightOOSCPhotonsPFTau40MonitoringReg (F) *
+  *     hltOverlapFilterIsoMu24TightChargedIsoAndTightOOSCPhotonsPFTau40MonitoringReg        *
+  *                                                                                          *
+  *   HLT_IsoMu24_eta2p1_TightChargedIsoPFTau40_Trk1_eta2p1_Reg_CrossL1                      *
+  *     -> hltOverlapFilterIsoMu24TightChargedIsoPFTau40MonitoringReg (F)                    *
+  *     hltOverlapFilterIsoMu24TightChargedIsoPFTau40MonitoringReg                           *
+  *                                                                                          *
+  *   HLT_IsoMu24_eta2p1_TightChargedIsoPFTauHPS35_Trk1_TightID_eta2p1_Reg_CrossL1           *
+  *     -> hltHpsOverlapFilterIsoMu24TightChargedIsoAndTightOOSCPhotonsPFTau35MonitoringReg (F)*
+  *     hltHpsOverlapFilterIsoMu24TightChargedIsoAndTightOOSCPhotonsPFTau35MonitoringReg     *
+  *                                                                                          *
+  *   HLT_IsoMu24_eta2p1_TightChargedIsoPFTauHPS35_Trk1_eta2p1_Reg_CrossL1                   *
+  *     -> hltHpsOverlapFilterIsoMu24TightChargedIsoPFTau35MonitoringReg (F)                 *
+  *     hltHpsOverlapFilterIsoMu24TightChargedIsoPFTau35MonitoringReg                        *
+  *                                                                                          *
+  *   HLT_IsoMu27_LooseChargedIsoPFTau20_SingleL1                                            *
+  *     -> hltOverlapFilterIsoMu27LooseChargedIsoPFTau20 (F)                                 *
+  *     hltOverlapFilterIsoMu27LooseChargedIsoPFTau20                                        *
+  *                                                                                          *
+  *   HLT_IsoMu27_LooseChargedIsoPFTau20_Trk1_eta2p1_SingleL1                                *
+  *     -> hltOverlapFilterIsoMu27LooseChargedIsoPFTau20 (F)                                 *
+  *     hltOverlapFilterIsoMu27LooseChargedIsoPFTau20                                        *
+  *                                                                                          *
+  *   HLT_IsoMu27_LooseChargedIsoPFTauHPS20_Trk1_eta2p1_SingleL1                             *
+  *     -> hltHpsOverlapFilterIsoMu27LooseChargedIsoPFTau20 (F)                              *
+  *     hltHpsOverlapFilterIsoMu27LooseChargedIsoPFTau20                                     *
+  *                                                                                          *
+  *   HLT_IsoMu27_MediumChargedIsoPFTau20_SingleL1                                           *
+  *     -> hltOverlapFilterIsoMu27MediumChargedIsoPFTau20 (F)                                *
+  *     hltOverlapFilterIsoMu27MediumChargedIsoPFTau20                                       *
+  *                                                                                          *
+  *   HLT_IsoMu27_MediumChargedIsoPFTau20_Trk1_eta2p1_SingleL1                               *
+  *     -> hltOverlapFilterIsoMu27MediumChargedIsoPFTau20 (F)                                *
+  *     hltOverlapFilterIsoMu27MediumChargedIsoPFTau20                                       *
+  *                                                                                          *
+  *   HLT_IsoMu27_MediumChargedIsoPFTauHPS20_Trk1_eta2p1_SingleL1                            *
+  *     -> hltHpsOverlapFilterIsoMu27MediumChargedIsoPFTau20 (F)                             *
+  *     hltHpsOverlapFilterIsoMu27MediumChargedIsoPFTau20                                    *
+  *                                                                                          *
+  *   HLT_IsoMu27_TightChargedIsoPFTau20_SingleL1                                            *
+  *     -> hltOverlapFilterIsoMu27TightChargedIsoPFTau20 (F)                                 *
+  *     hltOverlapFilterIsoMu27TightChargedIsoPFTau20                                        *
+  *                                                                                          *
+  *   HLT_IsoMu27_TightChargedIsoPFTau20_Trk1_eta2p1_SingleL1                                *
+  *     -> hltOverlapFilterIsoMu27TightChargedIsoPFTau20 (F)                                 *
+  *     hltOverlapFilterIsoMu27TightChargedIsoPFTau20                                        *
+  *                                                                                          *
+  *   HLT_IsoMu27_TightChargedIsoPFTauHPS20_Trk1_eta2p1_SingleL1                             *
+  *     -> hltHpsOverlapFilterIsoMu27TightChargedIsoPFTau20 (F)                              *
+  *     hltHpsOverlapFilterIsoMu27TightChargedIsoPFTau20                                     *
+  *                                                                                          *
+  *   HLT_Tau3Mu_Mu5_Mu1_TkMu1_IsoTau10                                                      *
+  *     hltTau3MuIsoFilter                                                                   *
+  *                                                                                          *
+  *   HLT_Tau3Mu_Mu5_Mu1_TkMu1_IsoTau10_Charge1                                              *
+  *     hltTau3MuIsoFilterCharge1                                                            *
+  *                                                                                          *
+  *   HLT_Tau3Mu_Mu5_Mu1_TkMu1_Tau10                                                         *
+  *     hltTau3MuPreFilter                                                                   *
+  *                                                                                          *
+  *   HLT_Tau3Mu_Mu5_Mu1_TkMu1_Tau10_Charge1                                                 *
+  *     hltTau3MuPreFilterCharge1                                                            *
+  *                                                                                          *
+  *   HLT_Tau3Mu_Mu7_Mu1_TkMu1_IsoTau15                                                      *
+  *     hltTau3MuIsoFilter                                                                   *
+  *                                                                                          *
+  *   HLT_Tau3Mu_Mu7_Mu1_TkMu1_IsoTau15_Charge1                                              *
+  *     hltTau3MuIsoFilterCharge1                                                            *
+  *                                                                                          *
+  *   HLT_Tau3Mu_Mu7_Mu1_TkMu1_Tau15                                                         *
+  *     hltTau3MuPreFilter                                                                   *
+  *                                                                                          *
+  *   HLT_Tau3Mu_Mu7_Mu1_TkMu1_Tau15_Charge1                                                 *
+  *     hltTau3MuPreFilterCharge1                                                            *
+  *                                                                                          *
+  ********************************************************************************************
