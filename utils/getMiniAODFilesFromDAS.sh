@@ -11,7 +11,7 @@ while getopts c:d:m: option; do case "${option}" in
 esac; done
 
 for dataset in $MCSAMPLES; do
-  for daspath in `dasgoclient -query="dataset=/DYJetsToLL_M-50_TuneC*_13TeV-madgraphMLM-pythia8/RunII*NanoAODv5*/NANO*"`; do
+  for daspath in `dasgoclient -query="dataset=/$dataset/RunII*NanoAODv5*/NANO*"`; do
     echo
     echo -e "\e[1m\e[32m$dataset\e[0m"
     parent=`dasgoclient -query="dataset=$daspath parent"`
