@@ -1,6 +1,7 @@
 #keep * # start with all
 drop * # start with nothing
 keep event
+keep run
 keep *Jet*
 drop HLT_*
 keep *Electron*
