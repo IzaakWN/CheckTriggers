@@ -54,6 +54,9 @@ def ensureTFileAndTH1(filename,histname,verbose=True,setdir=True):
   hist = extractTH1(file,histname,setdir=setdir)
   return file, hist
   
+def bold(string):
+  return '\033[1m'+string+'\033[0m'
+  
 def warning(string,**kwargs):
   """Print warning with color."""
   pre    = kwargs.get('pre',  "") + "\033[1m\033[93mWarning!\033[0m \033[93m"
