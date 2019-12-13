@@ -65,7 +65,7 @@ def createTauTriggerJSON(year):
         ('Mu50',                 1024), # hltL3fL1sMu*L3Filtered50* || hltL3fL1sMu*TkFiltered50*
       ])
       data['filterbits']['Tau'] = OrderedDict([
-        ('LooseIso',                1), # *LooseIso* - *VLooseIso*
+        ('LooseIso',                1), # *LooseIso* || !*VLooseIso*
         ('MediumIso',               2), # *Medium*Iso*
         ('VLooseIso',               4), # *VLooseIso*
         #('None',                    8), # None
