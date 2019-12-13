@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 # Author: Izaak Neutelings (August 2019)
 # Description: Create JSON files for tau triggers with fixed ordering and format.
-# Source:
+# Sources:
 #   https://github.com/cms-tau-pog/TauTriggerSFs/blob/run2_SFs/python/getTauTriggerSFs.py
 import json
 from collections import OrderedDict

@@ -1,13 +1,14 @@
 # Author: Izaak Neutelings (November, 2019)
-# Description: Check tau triggers in nanoAOD
-# Source:
+# Description: Tools to match reco objects to trigger objects in nanoAOD,
+#              and to read JSON file containing trigger information
+# Sources:
 #   https://github.com/cms-sw/cmssw/blob/master/PhysicsTools/NanoAOD/python/triggerObjects_cff.py
 #   https://cms-nanoaod-integration.web.cern.ch/integration/master-106X/mc106X_doc.html#TrigObj
 import os, sys, yaml #, json
 from utils import bold
 from collections import namedtuple
 from PhysicsTools.NanoAODTools.postprocessing.framework.datamodel import Collection
-TriggerData = namedtuple('TriggerData',['trigdict','combdict']) # container
+TriggerData = namedtuple('TriggerData',['trigdict','combdict']) # simple container class
 objectTypes = { 1: 'Jet', 6: 'FatJet', 2: 'MET', 3: 'HT', 4: 'MHT',
                 11: 'Electron', 13: 'Muon', 15: 'Tau', 22: 'Photon', } 
 objectIds   = { t: i for i,t in objectTypes.iteritems() }
@@ -38,7 +39,7 @@ def loadTriggerDataFromJSON(filename,isData=True,verbose=False):
              -> 'etamax':     offline cut on eta (optional)
              -> 'filterbits': list of shorthands for filter patterns
     
-    Returns a named tuple 'TriggerData'
+    Returns a named tuple 'TriggerData' with attributes
       trigdict = dict of trigger path -> 'Trigger' object
       combdict = dict of channel -> list of combined triggers ('Trigger' object)
     """
@@ -164,12 +165,8 @@ class TriggerFilter:
         if not isinstance(filters,list):
           filters = [filters]
         assert all(isinstance(f,str) for f in filters), "Filter bits should be a list of strings! Received: %r."%(filters)
-        if isinstance(obj,int):
-          id_        = obj
-          type_      = objectTypes[obj]
-        else:
-          id_        = objectIds[obj]
-          type_      = obj
+        if isinstance(obj,int): id_, type_ = obj, objectTypes[obj]
+        else:                   id_, type_ = objectIds[obj], obj
         self.id      = id_                   # nanoAOD object ID (e.g. 11, 13, 15, ...)
         self.type    = type_                 # nanoAOD object type (e.g. 'Muon', 'Tau', ...)
         self.name    = '_'.join(filters)     # name of this object
@@ -235,7 +232,7 @@ class TrigObjMatcher:
             if itrig==0:
               ids.append(filter.id)
               types.append(filter.type)
-              bits = bits | filter.bits # 'OR' combination
+              bits = bits | filter.bits # bitwise 'OR' combination
             elif filter.id!=ids[ifilt]:
               raise IOError("Filter ID does not correspond between triggers '%s' (%d) and '%s' (%d)"%(
                             triggers[0].path,ids[ifilt],trigger.path,filter.id))
@@ -255,7 +252,7 @@ class TrigObjMatcher:
         self.triggers = triggers       # list of triggers
         self.ids      = ids            # list of nanoAOD object ID, one per leg
         self.types    = types          # list of nanoAOD object type, one per leg
-        self.bits     = bits           # 'OR'-combination of all filter bits
+        self.bits     = bits           # bitwise 'OR'-combination of all filter bits
         self.nlegs    = nlegs          # number of legs = number of filters
         self.path     = path           # human readable trigger combination
         self.patheval = patheval       # trigger evaluation per event 'e'
