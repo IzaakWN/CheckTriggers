@@ -8,7 +8,7 @@
 import os, re
 import numpy as np
 import ROOT; ROOT.PyConfig.IgnoreCommandLineOptions = True
-from ROOT import gROOT, gDirectory, gStyle, TFile, TCanvas, TLegend, TLatex, TH1F, kBlue, kGreen, kRed, kOrange
+from ROOT import gROOT, gDirectory, gStyle, TFile, TCanvas, TLegend, TLatex, TH1D, kBlue, kGreen, kRed, kOrange
 from math import sqrt, pi
 from utils import ensureDirectory, bold
 from PhysicsTools.NanoAODTools.postprocessing.framework.postprocessor import PostProcessor
@@ -26,12 +26,15 @@ parser.add_argument('-n', '--nmax',    type=int, default=-1, action='store',
                                        help="maximum number of events (per file)" )
 parser.add_argument('-f', '--nfiles',  type=int, default=1, action='store',
                                        help="number of files to run over" )
+parser.add_argument('-o', '--plot',    dest='run', default=True, action='store_false',
+                                       help="plot only, without running the post-processor" )
 args      = parser.parse_args()
 director = 'root://xrootd-cms.infn.it/'
 gROOT.SetBatch(True)
 gStyle.SetOptTitle(False)
 gStyle.SetOptStat(False)
-gStyle.SetEndErrorSize(3)
+gStyle.SetErrorX(0)
+gStyle.SetEndErrorSize(5)
 
 
 
@@ -52,7 +55,7 @@ class TauTriggerChecks(Module):
           triggers[channel]    = trigdata.combdict[channel]
           trigmatcher[channel] = TrigObjMatcher(triggers[channel])
           print ">>> %s:"%bold("'%s' trigger object matcher"%channel)
-          print ">>>   %s"%(trigmatcher[channel].path)
+          print ">>>   '%s'"%(trigmatcher[channel].path)
         
         self.eleptmin    = 25
         self.muptmin     = 21
@@ -65,6 +68,8 @@ class TauTriggerChecks(Module):
         
     def beginFile(self, inputFile, outputFile, inputTree, wrappedOutputTree):
         """Create branches in output tree."""
+        #outputFile.cd()
+        self.cutflows = { }
         self.out = wrappedOutputTree
         self.out.branch("nElectron_select",                    'I',title="number of electrons passing basic selections")
         self.out.branch("nMuon_select",                        'I',title="number of muons passing basic selections")
@@ -84,6 +89,31 @@ class TauTriggerChecks(Module):
           self.out.branch("nPair_select_"+channel,             'I',title="number of %s pairs selected"%string)
           self.out.branch("nPair_select_match_"+channel,       'I',title="number of %s pairs selected and matched to a %s trigger object"%(string,channel))
         
+          # CUTFLOW
+          cutflow = TH1D('cutflow_%s'%channel, '%s cutflow'%channel, 8, 0, 8)
+          self.Nocut   = 0
+          self.Trigger = 1
+          self.Leg1    = 2
+          self.Leg2    = 3
+          self.Pair    = 4
+          self.Matched = 5
+          #leg1 = 'Muon' if channel=='mutau' else 'Electron' if channel=='etau' else 'Tau'
+          #leg2 = 'Tau'
+          cutflow.GetXaxis().SetBinLabel(1+self.Nocut,   "No cut"  )
+          cutflow.GetXaxis().SetBinLabel(1+self.Trigger, "Trigger" ) # "%s trigger"%channel
+          cutflow.GetXaxis().SetBinLabel(1+self.Leg1,    "Leg 1"   ) # "%s object"%leg1
+          cutflow.GetXaxis().SetBinLabel(1+self.Leg2,    "Leg 2"   ) # "%s object"%leg2
+          cutflow.GetXaxis().SetBinLabel(1+self.Pair,    "Pair"    ) # "%s pair"%channel
+          cutflow.GetXaxis().SetBinLabel(1+self.Matched, "Matched" )
+          cutflow.GetXaxis().SetLabelSize(0.041)
+          self.cutflows[channel] = cutflow
+        
+    def endFile(self, inputFile, outputFile, inputTree, wrappedOutputTree):
+        """Create branches in output tree."""
+        #for channel in self.channels:
+        #  self.cutflows[channel].Write()
+        outputFile.Write()
+        
     def analyze(self, event):
         """Process event, return True (pass, go to next module) or False (fail, go to next event)."""
         
@@ -91,8 +121,8 @@ class TauTriggerChecks(Module):
         channel           = 'etau'
         electrons         = Collection(event,'Electron')
         eles_select       = [ ]
-        eles_match        = { c: [ ] for c in self.channels }
-        eles_select_match = { c: [ ] for c in self.channels }
+        eles_match        = { channel: [ ] }
+        eles_select_match = { channel: [ ] }
         for electron in electrons:
           if self.trigmatcher[channel].match(event,electron,leg=1):
             eles_match[channel].append(electron)
@@ -111,8 +141,8 @@ class TauTriggerChecks(Module):
         channel            = 'mutau'
         muons              = Collection(event,'Muon')
         muons_select       = [ ]
-        muons_match        = { c: [ ] for c in self.channels }
-        muons_select_match = { c: [ ] for c in self.channels }
+        muons_match        = { channel: [ ] }
+        muons_select_match = { channel: [ ] }
         for muon in muons:
           if self.trigmatcher[channel].match(event,muon,leg=1):
             muons_match[channel].append(muon)
@@ -139,7 +169,9 @@ class TauTriggerChecks(Module):
           if abs(tau.dz) > 0.2: continue
           if tau.decayMode not in [0,1,10,11]: continue
           #if abs(tau.charge)!=1: continue
-          if tau.idDeepTau2017v2p1VSjet<=16: continue
+          if tau.idDeepTau2017v2p1VSjet<=16: continue # Medium
+          if tau.idDeepTau2017v2p1VSmu<=1: continue   # VLoose
+          if tau.idDeepTau2017v2p1VSe<=4: continue    # VLoose
           taus_select.append(tau)
           for channel in self.channels:
             if tau in taus_match[channel]:
@@ -166,8 +198,14 @@ class TauTriggerChecks(Module):
               npair_select_match['ditau'] += 1
         
         # FILL BRANCHES
+        triggers = { }
+        self.out.fillBranch("nElectron_select",                    len(eles_select))
+        self.out.fillBranch("nMuon_select",                        len(muons_select))
+        self.out.fillBranch("nTau_select",                         len(taus_select))
         for channel in self.channels:
-          self.out.fillBranch("trigger_"+channel,                  self.trigmatcher[channel].fired(event))
+          self.cutflows[channel].Fill(self.Nocut)
+          triggers[channel] = self.trigmatcher[channel].fired(event)
+          self.out.fillBranch("trigger_"+channel,                  triggers[channel])
           if 'e' in channel:
             self.out.fillBranch("nElectron_match_"+channel,        len(eles_match[channel]))
             self.out.fillBranch("nElectron_select_match_"+channel, len(eles_select_match[channel]))
@@ -179,9 +217,34 @@ class TauTriggerChecks(Module):
             self.out.fillBranch("nTau_select_match_"+channel,      len(taus_select_match[channel]))
           self.out.fillBranch("nPair_select_"+channel,             npair_select[channel])
           self.out.fillBranch("nPair_select_match_"+channel,       npair_select_match[channel])
-        self.out.fillBranch("nElectron_select",                    len(eles_select))
-        self.out.fillBranch("nMuon_select",                        len(muons_select))
-        self.out.fillBranch("nTau_select",                         len(taus_select))
+          
+          # FILL CUTFLOW
+          if triggers[channel]:
+            self.cutflows[channel].Fill(self.Trigger)
+            if channel=='mutau' and len(muons_select)>=1:
+              self.cutflows[channel].Fill(self.Leg1)
+              if len(taus_select)>=1:
+                self.cutflows[channel].Fill(self.Leg2)
+                if npair_select[channel]>=1:
+                  self.cutflows[channel].Fill(self.Pair)
+                  if npair_select_match[channel]>=1:
+                    self.cutflows[channel].Fill(self.Matched)
+            elif channel=='etau' and len(eles_select)>=1:
+              self.cutflows[channel].Fill(self.Leg1)
+              if len(taus_select)>=1:
+                self.cutflows[channel].Fill(self.Leg2)
+                if npair_select[channel]>=1:
+                  self.cutflows[channel].Fill(self.Pair)
+                  if npair_select_match[channel]>=1:
+                    self.cutflows[channel].Fill(self.Matched)
+            elif channel=='ditau' and len(taus_select)>=1:
+              self.cutflows[channel].Fill(self.Leg1)
+              if len(taus_select)>=2:
+                self.cutflows[channel].Fill(self.Leg2)
+                if npair_select[channel]>=1:
+                  self.cutflows[channel].Fill(self.Pair)
+                  if npair_select_match[channel]>=1:
+                    self.cutflows[channel].Fill(self.Matched)
         
         return True
 
@@ -212,16 +275,66 @@ infiles = [
   director+'/store/mc/RunIISummer16NanoAODv6/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/NANOAODSIM/PUMoriond17_Nano25Oct2019_102X_mcRun2_asymptotic_v7_ext2-v1/270000/58F937F2-BB51-B848-AB24-1F7E87CCF145.root',
   
   # 2017 DY
-  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/15/myNanoProdMc2017_NANO_1614.root',
-  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/19/myNanoProdMc2017_NANO_1818.root',
-  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/21/myNanoProdMc2017_NANO_1720.root',
-  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/22/myNanoProdMc2017_NANO_1221.root',
-  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/27/myNanoProdMc2017_NANO_526.root',
-  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/38/myNanoProdMc2017_NANO_37.root',
-  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/45/myNanoProdMc2017_NANO_644.root',
-  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/52/myNanoProdMc2017_NANO_651.root',
-  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/91/myNanoProdMc2017_NANO_1090.root',
-  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/93/myNanoProdMc2017_NANO_792.root',
+  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/10/myNanoProdMc2017_NANO_1909.root',
+  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/13/myNanoProdMc2017_NANO_112.root',
+  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/13/myNanoProdMc2017_NANO_212.root',
+  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/15/myNanoProdMc2017_NANO_1914.root',
+  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/18/myNanoProdMc2017_NANO_1017.root',
+  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/18/myNanoProdMc2017_NANO_1217.root',
+  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/21/myNanoProdMc2017_NANO_1820.root',
+  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/22/myNanoProdMc2017_NANO_721.root',
+  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/23/myNanoProdMc2017_NANO_322.root',
+  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/24/myNanoProdMc2017_NANO_1023.root',
+  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/25/myNanoProdMc2017_NANO_424.root',
+  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/25/myNanoProdMc2017_NANO_924.root',
+  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/27/myNanoProdMc2017_NANO_1026.root',
+  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/29/myNanoProdMc2017_NANO_1428.root',
+  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/3/myNanoProdMc2017_NANO_102.root',
+  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/31/myNanoProdMc2017_NANO_1430.root',
+  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/31/myNanoProdMc2017_NANO_430.root',
+  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/33/myNanoProdMc2017_NANO_1932.root',
+  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/35/myNanoProdMc2017_NANO_1834.root',
+  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/39/myNanoProdMc2017_NANO_1338.root',
+  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/4/myNanoProdMc2017_NANO_1303.root',
+  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/41/myNanoProdMc2017_NANO_1540.root',
+  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/43/myNanoProdMc2017_NANO_242.root',
+  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/44/myNanoProdMc2017_NANO_43.root',
+  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/45/myNanoProdMc2017_NANO_744.root',
+  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/46/myNanoProdMc2017_NANO_245.root',
+  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/48/myNanoProdMc2017_NANO_947.root',
+  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/49/myNanoProdMc2017_NANO_148.root',
+  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/5/myNanoProdMc2017_NANO_1804.root',
+  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/50/myNanoProdMc2017_NANO_1649.root',
+  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/51/myNanoProdMc2017_NANO_950.root',
+  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/54/myNanoProdMc2017_NANO_1153.root',
+  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/57/myNanoProdMc2017_NANO_156.root',
+  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/57/myNanoProdMc2017_NANO_1656.root',
+  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/58/myNanoProdMc2017_NANO_157.root',
+  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/59/myNanoProdMc2017_NANO_1658.root',
+  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/59/myNanoProdMc2017_NANO_658.root',
+  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/62/myNanoProdMc2017_NANO_661.root',
+  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/63/myNanoProdMc2017_NANO_262.root',
+  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/64/myNanoProdMc2017_NANO_1163.root',
+  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/66/myNanoProdMc2017_NANO_565.root',
+  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/67/myNanoProdMc2017_NANO_166.root',
+  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/7/myNanoProdMc2017_NANO_1206.root',
+  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/70/myNanoProdMc2017_NANO_1669.root',
+  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/74/myNanoProdMc2017_NANO_873.root',
+  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/75/myNanoProdMc2017_NANO_1874.root',
+  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/82/myNanoProdMc2017_NANO_1281.root',
+  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/84/myNanoProdMc2017_NANO_983.root',
+  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/86/myNanoProdMc2017_NANO_1085.root',
+  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/86/myNanoProdMc2017_NANO_1385.root',
+  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/86/myNanoProdMc2017_NANO_1685.root',
+  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/86/myNanoProdMc2017_NANO_1885.root',
+  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/9/myNanoProdMc2017_NANO_1308.root',
+  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/9/myNanoProdMc2017_NANO_208.root',
+  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/91/myNanoProdMc2017_NANO_1290.root',
+  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/91/myNanoProdMc2017_NANO_690.root',
+  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/93/myNanoProdMc2017_NANO_1092.root',
+  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/94/myNanoProdMc2017_NANO_1493.root',
+  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/96/myNanoProdMc2017_NANO_1395.root',
+  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/98/myNanoProdMc2017_NANO_1497.root',
   
   # 2018 DY
   director+'/store/mc/RunIIAutumn18NanoAODv6/DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/NANOAODSIM/Nano25Oct2019_102X_upgrade2018_realistic_v20-v1/40000/6D7BB75E-C44F-7E47-99E1-954DBC5320E9.root',
@@ -275,38 +388,24 @@ print ">>> %-10s = '%s'"%('postfix',postfix)
 print ">>> %-10s = %s"%('branchsel',branchsel)
 
 module = TauTriggerChecks(year,dtype=dtype)
-p = PostProcessor('.', infiles, None, branchsel=branchsel, outputbranchsel=branchsel, haddFileName=outfile,
-                  modules=[module], provenance=False, postfix=postfix, maxEntries=maxEvts)
-p.run()
+if args.run:
+  p = PostProcessor('.', infiles, None, branchsel=branchsel, outputbranchsel=branchsel, haddFileName=outfile,
+                    modules=[module], provenance=False, postfix=postfix, maxEntries=maxEvts)
+  p.run()
 
 
 
 # PLOT
 if plot:
   
-  def plotMatches(tree,histset,xtitle,plotname,header,ctexts=[ ]):
-        
-      # HISTOGRAM
+  def plotHists(hists,xtitle,plotname,header,ctexts=[ ],otext="",logy=False,y1=0.70):
       colors = [ kBlue, kRed, kGreen+2, kOrange ]
-      hists  = [ ]
-      for i, (branch, cut, htitle) in enumerate(histset):
-        hname = "h%s_%s"%(i,branch)
-        hist  = TH1F(hname,htitle,5,0,5)
-        out   = tree.Draw("%s >> %s"%(branch,hname),cut,'gOff')
-        if hist.Integral()>0:
-          hist.Scale(100./hist.Integral())
-        else:
-          print "Warning! Histogram '%s' is empty!"%hist.GetName()
-        hist.SetLineWidth(2)
-        hist.SetLineColor(colors[i%len(colors)])
-        hists.append(hist)
-      
-      # CANVAS
-      canvas   = TCanvas('canvas','canvas',100,100,800,600)
-      canvas.SetMargin(0.12,0.09,0.13,0.03)
+      canvas   = TCanvas('canvas','canvas',100,100,800,700)
+      canvas.SetMargin(0.12,0.03,0.14,0.06 if otext else 0.03)
       textsize = 0.040
       height   = 1.28*(len(hists)+1)*textsize
-      legend   = TLegend(0.65,0.70,0.88,0.70-height)
+      y1
+      legend   = TLegend(0.65,y1,0.88,y1-height)
       legend.SetTextSize(textsize)
       legend.SetBorderSize(0)
       legend.SetFillStyle(0)
@@ -322,25 +421,33 @@ if plot:
       frame = hists[0]
       frame.GetXaxis().SetTitle(xtitle)
       frame.GetYaxis().SetTitle("Fraction [%]")
-      for ibin in xrange(1,frame.GetXaxis().GetNbins()+1):
-        xbin = frame.GetBinLowEdge(ibin)
-        frame.GetXaxis().SetBinLabel(ibin,str(int(xbin)))
       frame.GetXaxis().SetLabelSize(0.074)
       frame.GetYaxis().SetLabelSize(0.046)
-      frame.GetXaxis().SetTitleSize(0.046)
+      frame.GetXaxis().SetTitleSize(0.048)
       frame.GetYaxis().SetTitleSize(0.052)
       frame.GetXaxis().SetTitleOffset(1.38)
       frame.GetYaxis().SetTitleOffset(1.12)
       frame.GetXaxis().SetLabelOffset(0.009)
       frame.SetMaximum(1.25*max(h.GetMaximum() for h in hists))
-      for hist in hists:
+      if logy:
+        canvas.SetLogy()
+        frame.SetMinimum(1e-3)
+      else:
+        frame.SetMinimum(0)
+      for i, hist in enumerate(hists):
         hist.Draw('HISTE0E1SAME')
+        hist.SetLineWidth(2)
+        hist.SetLineColor(colors[i%len(colors)])
         legend.AddEntry(hist,hist.GetTitle(),'le')
       legend.Draw()
       for i, text in enumerate(ctexts):
         textsize = 0.024 #if i>0 else 0.044
         latex.SetTextSize(textsize)
-        latex.DrawLatex(0.14,0.95-1.7*i*textsize,text)
+        latex.DrawLatex(0.14,0.98-canvas.GetTopMargin()-1.7*i*textsize,text)
+      if otext:
+        latex.SetTextSize(0.05)
+        latex.SetTextAlign(31)
+        latex.DrawLatex(1.-canvas.GetRightMargin(),1.-0.84*canvas.GetTopMargin(),otext)
       canvas.SaveAs(plotname+".png")
       canvas.SaveAs(plotname+".pdf")
       canvas.Close()
@@ -354,6 +461,8 @@ if plot:
   runexp     = re.compile(r"run>=(\d+) && run<=(\d+) && (\w+)")
   
   # PLOT PAIRS
+  cutflows   = [ ]
+  otext      = "%s (%s)"%('#font[82]{Tau} dataset' if dtype=='data' else "#font[82]{DYJetsToLL_M-50}",year)
   for channel in module.channels:
     print ">>> plotting filter pair for '%s'"%(channel)
     header   = "Selected object"
@@ -364,13 +473,52 @@ if plot:
     ctexts   = path.replace('||','\n||').split('\n') #"#kern[-0.3]{%s}"
     histset  = [ ]
     if 'mu' in channel:
-      histset.append(("nMuon_select_match_%s"%channel,"trigger_%s && nMuon_select"%channel,"Muon"))
+      histset.append(("nMuon_select_match_%s"%channel,"trigger_%s && nMuon_select>=1"%channel,"Muon"))
     if 'e' in channel:
-      histset.append(("nElectron_select_match_%s"%channel,"trigger_%s && nElectron_select"%channel,"Electron"))
+      histset.append(("nElectron_select_match_%s"%channel,"trigger_%s && nElectron_select>=1"%channel,"Electron"))
     if 'tau' in channel:
-      histset.append(("nTau_select_match_%s"%channel,"trigger_%s && nTau_select"%channel,"#tau_{h}"))
-    histset.append(("nPair_select_match_%s"%channel,"trigger_%s && nPair_select_%s"%(channel,channel),"%s pair"%chanstr))
-    plotMatches(tree,histset,xtitle,plotname,header,ctexts)
+      histset.append(("nTau_select_match_%s"%channel,"trigger_%s && nTau_select>=1"%channel,"#tau_{h}"))
+      #histset.append(("nTau_select_match_%s"%channel,"trigger_%s && nTau_select>=2"%channel,"#geq2 #tau_{h}"))
+    histset.append(("nPair_select_match_%s"%channel,"trigger_%s && nPair_select_%s>=1"%(channel,channel),"%s pair"%chanstr))    
+    hists  = [ ]
+    for i, (branch, cut, htitle) in enumerate(histset):
+      hname = "h%s_%s"%(i,branch)
+      hist  = TH1D(hname,htitle,5,0,5)
+      out   = tree.Draw("%s >> %s"%(branch,hname),cut,'gOff')
+      if hist.Integral()>0:
+        hist.Scale(100./hist.Integral())
+      else:
+        print "Warning! Histogram '%s' is empty!"%hist.GetName()
+      hists.append(hist)
+    frame = hists[0]
+    for ibin in xrange(1,frame.GetXaxis().GetNbins()+1):
+      xbin = frame.GetBinLowEdge(ibin)
+      frame.GetXaxis().SetBinLabel(ibin,str(int(xbin)))
+    plotHists(hists,xtitle,plotname,header,ctexts,otext=otext)
+    
+    # CUTFLOW
+    cutflow = file.Get("cutflow_%s"%channel)
+    cutflow.SetTitle(chanstr)
+    cutflow.GetXaxis().SetRange(1,8)
+    pair  = cutflow.GetBinContent(5)
+    match = cutflow.GetBinContent(6)
+    if pair:
+      eff   = match/pair
+      error = sqrt(eff*(1.-eff)/pair)*100.0
+      print ">>> %s pair selection -> trigger-matching = %d/%d = %.2f +- %.2f%%"%(channel,match,pair,100.0*(match-pair)/pair,error)
+    else:
+      print ">>> %s pair selection -> trigger-matching = %d/%d ..."%(channel,match,pair)
+    if cutflow.GetBinContent(1)>0:
+      cutflow.Scale(100./cutflow.GetBinContent(1))
+    else:
+      print "Warning! Cutflow '%s' is empty!"%cutflow.GetName()
+    cutflows.append(cutflow)
+  
+  # PLOT CUTFLOW
+  print ">>> plotting filter pair for '%s'"%(channel)
+  header   = "Channel"
+  plotname = "%s/cutflow_%d_%s"%(outdir,year,dtype)
+  plotHists(cutflows,"",plotname,header,logy=True,otext=otext,y1=0.8)
   
   file.Close()
   
