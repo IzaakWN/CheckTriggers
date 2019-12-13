@@ -22,6 +22,8 @@ parser.add_argument('-y', '--year',    type=int, choices=[2016,2017,2018],defaul
                                        help="year" )
 parser.add_argument('-d', '--dtype',   type=str, choices=['mc','data'], default='data', action='store',
                                        help="data type" )
+parser.add_argument('-e', '--era',     type=str, default="", action='store',
+                                       help="era" )
 parser.add_argument('-n', '--nmax',    type=int, default=-1, action='store',
                                        help="maximum number of events (per file)" )
 parser.add_argument('-f', '--nfiles',  type=int, default=1, action='store',
@@ -252,13 +254,15 @@ class TauTriggerChecks(Module):
 # POST-PROCESSOR
 year      = args.year
 dtype     = args.dtype
+era       = args.era.upper()
 maxEvts   = args.nmax
 nFiles    = args.nfiles
-postfix   = '_trigger_%s_%s'%(year,dtype)
+postfix   = '_trigger_%s%s_%s'%(year,era,dtype)
 branchsel = "python/keep_and_drop_taus.txt"
 if not os.path.isfile(branchsel): branchsel = None
 plot      = True #and False
-outfile   = "trigObjMatch_%s_%s.root"%(year,dtype) if nFiles>1 else None
+outdir    = ensureDirectory("nanoAOD")
+outfile   = "%s/trigObjMatch_%s%s_%s.root"%(outdir,year,era,dtype) if nFiles>1 else None
 
 infiles = [
   
@@ -349,26 +353,51 @@ infiles = [
   director+'/store/mc/RunIIAutumn18NanoAODv6/DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/NANOAODSIM/Nano25Oct2019_102X_upgrade2018_realistic_v20-v1/40000/7819958E-10E4-3145-8EA4-17995BDEDBB2.root',
   
   # 2016 TAU datasets
+  director+'/store/data/Run2016B_ver2/Tau/NANOAOD/Nano25Oct2019_ver2-v1/230000/9EA5DE09-0868-7245-AE80-5AC68135D7E3.root',
   director+'/store/data/Run2016C/Tau/NANOAOD/Nano25Oct2019-v1/240000/7A0ECC95-F727-E141-B18E-CF50750A36B9.root',
   director+'/store/data/Run2016D/Tau/NANOAOD/Nano25Oct2019-v1/610000/51104D29-A379-4A4F-B69E-0A0E689FC9F8.root',
   director+'/store/data/Run2016E/Tau/NANOAOD/Nano25Oct2019-v1/240000/363237E5-AF0D-B447-9518-F1A09D612F01.root',
   director+'/store/data/Run2016F/Tau/NANOAOD/Nano25Oct2019-v1/240000/46C77806-2DC0-F043-B087-629DBB11A03D.root',
   director+'/store/data/Run2016G/Tau/NANOAOD/Nano25Oct2019-v1/230000/8EC88AE7-C1E7-824F-8EFA-9F9436888A8B.root',
   director+'/store/data/Run2016H/Tau/NANOAOD/Nano25Oct2019-v1/240000/8BBBDA37-C456-F74F-B698-2BECADC6C9E7.root',
+  director+'/store/data/Run2016B_ver2/Tau/NANOAOD/Nano25Oct2019_ver2-v1/230000/9E5CE54D-977A-3D4F-98B9-0BC34BB19146.root',
+  director+'/store/data/Run2016C/Tau/NANOAOD/Nano25Oct2019-v1/240000/9AC16D2F-2850-6C40-9718-3152B342BBF0.root',
+  director+'/store/data/Run2016D/Tau/NANOAOD/Nano25Oct2019-v1/230000/8E05898F-0C0C-7345-A347-E08CBD9498D4.root',
+  director+'/store/data/Run2016E/Tau/NANOAOD/Nano25Oct2019-v1/240000/80F016B8-94E3-9340-8550-D81E787725F0.root',
+  director+'/store/data/Run2016F/Tau/NANOAOD/Nano25Oct2019-v1/240000/B0ABBCE9-13F5-6249-943F-F68D7946489E.root',
+  director+'/store/data/Run2016G/Tau/NANOAOD/Nano25Oct2019-v1/230000/DF8A3ACF-9664-3146-9525-600E9EFDB194.root',
+  director+'/store/data/Run2016H/Tau/NANOAOD/Nano25Oct2019-v1/240000/9C2AAA23-7A7F-E843-A57F-5EB3268B04C3.root',
   
   # 2017 TAU datasets
+  director+'/store/data/Run2017B/Tau/NANOAOD/Nano25Oct2019-v1/20000/DFFA8503-494D-3D49-A29B-5BD0FCB57B7F.root',
   director+'/store/data/Run2017C/Tau/NANOAOD/Nano25Oct2019-v1/20000/9A7D3B9E-8D0E-3D44-8A35-63BF5502F650.root',
+  director+'/store/data/Run2017C/Tau/NANOAOD/Nano25Oct2019-v1/20000/E7242E35-397C-BB44-BC66-C52C3B9FA03A.root',
   director+'/store/data/Run2017D/Tau/NANOAOD/Nano25Oct2019-v1/40000/55FB0789-94FF-9D4C-807A-2EDF0222DC4A.root',
   director+'/store/data/Run2017E/Tau/NANOAOD/Nano25Oct2019-v1/20000/A8D2B2F3-E4F4-4940-B8BE-AD1389089C7A.root',
+  director+'/store/data/Run2017E/Tau/NANOAOD/Nano25Oct2019-v1/20000/F985612B-BA38-DC49-991B-90C488654769.root',
   director+'/store/data/Run2017F/Tau/NANOAOD/Nano25Oct2019-v1/40000/0AB69EEB-F250-F74B-8D19-3512D890B280.root',
-  director+'/store/data/Run2017B/Tau/NANOAOD/Nano25Oct2019-v1/20000/DFFA8503-494D-3D49-A29B-5BD0FCB57B7F.root',
+  director+'/store/data/Run2017B/Tau/NANOAOD/Nano25Oct2019-v1/20000/1EFF9E85-E490-5349-91E6-3853889F673B.root',
+  director+'/store/data/Run2017B/Tau/NANOAOD/Nano25Oct2019-v1/20000/A9E82BDF-B285-2245-8D98-7830942CC81C.root',
+  director+'/store/data/Run2017C/Tau/NANOAOD/Nano25Oct2019-v1/20000/0D89E755-96D4-1844-8195-699735B60795.root',
+  director+'/store/data/Run2017D/Tau/NANOAOD/Nano25Oct2019-v1/40000/9E40F8AA-A8DC-0945-8F45-794E3DF3599A.root',
+  director+'/store/data/Run2017D/Tau/NANOAOD/Nano25Oct2019-v1/40000/EB86F17F-5F85-DC40-85F0-BD5528E4BC6F.root',
+  director+'/store/data/Run2017E/Tau/NANOAOD/Nano25Oct2019-v1/20000/E9695414-242C-384E-9E6D-C5FCFF492A3A.root',
+  director+'/store/data/Run2017F/Tau/NANOAOD/Nano25Oct2019-v1/40000/5489ED35-9878-1F40-9D29-43B17A56A35B.root',
+  director+'/store/data/Run2017F/Tau/NANOAOD/Nano25Oct2019-v1/40000/22DC61A6-531C-BD4F-8763-087D1ED1F89F.root',
   
   # 2018 TAU datasets
   director+'/store/data/Run2018A/Tau/NANOAOD/Nano25Oct2019-v1/230000/02785FC8-0354-A04D-8996-3AD8D18DCF7A.root',
   director+'/store/data/Run2018B/Tau/NANOAOD/Nano25Oct2019-v1/40000/6EDFEEE6-256C-194C-8EF8-D8C1FEC661C8.root',
   director+'/store/data/Run2018C/Tau/NANOAOD/Nano25Oct2019-v1/20000/4743A903-DA75-6944-81AD-1D54153BD6BA.root',
   director+'/store/data/Run2018D/Tau/NANOAOD/Nano25Oct2019_ver2-v1/240000/249F2470-26AD-E246-B8CB-734D0D58CFB9.root',
-  director+'/store/data/Run2018D/Tau/NANOAOD/Nano25Oct2019_ver2-v1/240000/249F2470-26AD-E246-B8CB-734D0D58CFB9.root',
+  director+'/store/data/Run2018A/Tau/NANOAOD/Nano25Oct2019-v1/230000/2F84A098-E543-EF4A-99C9-856E5D82C12C.root',
+  director+'/store/data/Run2018A/Tau/NANOAOD/Nano25Oct2019-v1/230000/01B80DB1-DB92-AF46-99F9-33F4AAD5E6D0.root',
+  director+'/store/data/Run2018B/Tau/NANOAOD/Nano25Oct2019-v1/40000/3AA2BE40-B2A0-614F-888D-2A0ACA19D318.root',
+  director+'/store/data/Run2018B/Tau/NANOAOD/Nano25Oct2019-v1/40000/692F9F65-1379-E74D-9D2A-952D734163D5.root',
+  director+'/store/data/Run2018C/Tau/NANOAOD/Nano25Oct2019-v1/20000/D8FB82B6-3FD9-664B-B0BB-AE68DA4A5AD0.root',
+  director+'/store/data/Run2018C/Tau/NANOAOD/Nano25Oct2019-v1/20000/C3ECE53E-31D1-6E4F-A437-D9AC7F115C0F.root',
+  director+'/store/data/Run2018D/Tau/NANOAOD/Nano25Oct2019_ver2-v1/240000/27C2F90A-3286-C845-B95B-B8E57D5E71B0.root',
+  director+'/store/data/Run2018D/Tau/NANOAOD/Nano25Oct2019_ver2-v1/240000/B07044AF-DC62-EC43-9050-607ADD1C03C0.root',
   
 ]
 if   year==2016:    infiles = filter(lambda f: 'RunIISummer16' in f or '/Run2016' in f,infiles)
@@ -376,10 +405,12 @@ elif year==2017:    infiles = filter(lambda f: 'RunIIFall17'   in f or '/Run2017
 elif year==2018:    infiles = filter(lambda f: 'RunIIAutumn'   in f or '/Run2018' in f,infiles)
 if   dtype=='data': infiles = filter(lambda f: '/store/data/'     in f,infiles)
 elif dtype=='mc':   infiles = filter(lambda f: '/store/data/' not in f,infiles)
+if   era:           infiles = filter(lambda f: any("Run%d%s"%(year,e) in f for e in era),infiles)
 infiles = infiles[:nFiles]
 
 print ">>> %-10s = %s"%('year',year)
 print ">>> %-10s = '%s'"%('dtype',dtype)
+print ">>> %-10s = '%s'"%('era',era)
 print ">>> %-10s = %s"%('maxEvts',maxEvts)
 print ">>> %-10s = %s"%('nFiles',nFiles)
 print ">>> %-10s = %s"%('infiles',infiles)
@@ -387,9 +418,9 @@ print ">>> %-10s = %s"%('outfile',"'%s'"%outfile if outfile else None)
 print ">>> %-10s = '%s'"%('postfix',postfix)
 print ">>> %-10s = %s"%('branchsel',branchsel)
 
-module = TauTriggerChecks(year,dtype=dtype)
+module = TauTriggerChecks(year,dtype=dtype,verbose=True)
 if args.run:
-  p = PostProcessor('.', infiles, None, branchsel=branchsel, outputbranchsel=branchsel, haddFileName=outfile,
+  p = PostProcessor(outdir, infiles, None, branchsel=branchsel, outputbranchsel=branchsel, haddFileName=outfile,
                     modules=[module], provenance=False, postfix=postfix, maxEntries=maxEvts)
   p.run()
 
@@ -462,13 +493,13 @@ if plot:
   
   # PLOT PAIRS
   cutflows   = [ ]
-  otext      = "%s (%s)"%('#font[82]{Tau} dataset' if dtype=='data' else "#font[82]{DYJetsToLL_M-50}",year)
+  otext      = "%s (%d%s)"%('#font[82]{Tau} dataset' if dtype=='data' else "#font[82]{DYJetsToLL_M-50}",year,era)
   for channel in module.channels:
     print ">>> plotting filter pair for '%s'"%(channel)
     header   = "Selected object"
     chanstr  = channel.replace('mu',"#mu").replace('di',"tau").replace('tau',"#tau_{h}") # "Medium muon and medium #tau_{h} DeepTau"
     xtitle   = ("Number matched to %s trigger (if selected)"%chanstr.replace('e',"#kern[-0.8]{e}").replace('#mu',"#kern[-0.6]{#mu}")).replace(' #tau_{h}'," #kern[-0.6]{#tau_{h}}")
-    plotname = "%s/%s_pair_matched_%d_%s"%(outdir,channel,year,dtype)
+    plotname = "%s/%s_pair_matched_%d%s_%s"%(outdir,channel,year,era,dtype)
     path     = runexp.sub(r"\3 && \1 #leq run #leq \2",module.trigmatcher[channel].path)
     ctexts   = path.replace('||','\n||').split('\n') #"#kern[-0.3]{%s}"
     histset  = [ ]
@@ -517,7 +548,7 @@ if plot:
   # PLOT CUTFLOW
   print ">>> plotting filter pair for '%s'"%(channel)
   header   = "Channel"
-  plotname = "%s/cutflow_%d_%s"%(outdir,year,dtype)
+  plotname = "%s/cutflow_%d%s_%s"%(outdir,year,era,dtype)
   plotHists(cutflows,"",plotname,header,logy=True,otext=otext,y1=0.8)
   
   file.Close()
