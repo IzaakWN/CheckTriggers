@@ -91,7 +91,7 @@ def loadTriggerDataFromJSON(filename,isData=True,verbose=False):
       for trigger in triggers:
         print ">>>   %s"%(trigger.path)
         for filter in trigger.filters:
-          print ">>>     %-8s %r"%(filter.type+':',filter.name)
+          print ">>>     %-9s %r"%(filter.type+':',filter.name) #,"bits=%s"%filter.bits
       print ">>> %s:"%bold("trigger combinations for %s"%datatype)
       for channel, triglist in combdict.iteritems():
         print ">>>   %s"%(channel)
