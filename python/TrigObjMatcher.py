@@ -16,7 +16,7 @@ objects     = [ 'Electron', 'Muon', 'Tau', 'Photon', 'Jet', 'FatJet', 'MET', 'HT
 
 
 
-def loadTriggerDataFromJSON(filename,isData=True,verbose=False):
+def loadTriggerDataFromJSON(filename,channel=None,isData=True,verbose=False):
     """Help function to load trigger path and object information from a JSON file.
     
     The JSON format is as follows:
@@ -46,6 +46,7 @@ def loadTriggerDataFromJSON(filename,isData=True,verbose=False):
     if verbose:
       print ">>> loadTriggerDataFromJSON: loading '%s'"%(filename)
     datatype = 'data' if isData else 'mc'
+    channel_ = channel
     triggers = [ ]
     combdict = { }
     trigdict = { }
@@ -81,7 +82,10 @@ def loadTriggerDataFromJSON(filename,isData=True,verbose=False):
     
     # COMBINATIONS OF HLT PATHS
     if 'hltcombs' in data:
+      if channel_:
+        assert channel_ in data['hltcombs'][datatype], "Did not find channel '%s' in JSON file! Available: '%s'"%(channel_,"', '".join(data['hltcombs'][datatype].keys()))
       for channel, paths in data['hltcombs'][datatype].iteritems():
+        if channel_ and channel!=channel_: continue
         #combtrigs = [trigdict[p] for p in paths]
         combdict[channel] = [trigdict[p] for p in paths] #TriggerCombination(combtrigs)
     
@@ -90,17 +94,18 @@ def loadTriggerDataFromJSON(filename,isData=True,verbose=False):
     if verbose:
       print ">>> %s:"%bold("triggers & filters")
       for trigger in triggers:
+        if channel_ and trigger not in combdict[channel_]: continue
         print ">>>   %s"%(trigger.path)
         for filter in trigger.filters:
           print ">>>     %-9s %r"%(filter.type+':',filter.name) #,"bits=%s"%filter.bits
       print ">>> %s:"%bold("trigger combinations for %s"%datatype)
       for channel, triglist in combdict.iteritems():
+        if channel_ and channel!=channel_: continue
         print ">>>   %s"%(channel)
         for trigger in triglist:
           path     = "'%s'"%trigger.path
-          runrange = trigger.runrange
           if trigger.runrange:
-            path += ", %d <= run <= %d"%(runrange[0],runrange[1])
+            path += ", %d <= run <= %d"%(trigger.runrange[0],trigger.runrange[1])
           print ">>>     "+path
     
     return TriggerData(trigdict,combdict)
@@ -132,6 +137,13 @@ class Trigger:
     def __repr__(self):
         """Returns string representation of Trigger object."""
         return "<%s('%s') at %s>"%(self.__class__.__name__,self.path,hex(id(self)))
+        
+    def __str__(self):
+        """String representation of trigger."""
+        trigstr = "'%s'"%self.path
+        if self.runrange:
+          trigstr += ", %d <= run <= %d"%(self.runrange[0],self.runrange[1])
+        print trigstr
     
 
 ###class TriggerCombination:
@@ -220,10 +232,11 @@ class TrigObjMatcher:
           "Triggers should be a list of instances of the 'Trigger' class! Received: %r."%(triggers)
         
         # SET BITS & SANITY CHECKS
+        nlegs    = len(triggers[0].filters) # one filter per leg
         ids      = [ ]
         types    = [ ]
+        ptmins   = [ ]
         bits     = 0
-        nlegs    = len(triggers[0].filters) # one filter per leg
         for itrig, trigger in enumerate(triggers):
           if itrig!=0 and len(trigger.filters)!=nlegs:
             raise IOError("Triggers '%s' and '%s' do not have the same number of filters; %d and %d, resp."%(
@@ -232,10 +245,14 @@ class TrigObjMatcher:
             if itrig==0:
               ids.append(filter.id)
               types.append(filter.type)
+              ptmins.append(filter.ptmin)
               bits = bits | filter.bits # bitwise 'OR' combination
-            elif filter.id!=ids[ifilt]:
-              raise IOError("Filter ID does not correspond between triggers '%s' (%d) and '%s' (%d)"%(
-                            triggers[0].path,ids[ifilt],trigger.path,filter.id))
+            else:
+              if filter.ptmin<ptmins[ifilt]:
+                ptmins[ifilt] = filter.ptmin
+              if filter.id!=ids[ifilt]:
+                raise IOError("Filter ID does not correspond between triggers '%s' (%d) and '%s' (%d)"%(
+                              triggers[0].path,ids[ifilt],trigger.path,filter.id))
         
         # TRIGGER COMBINATION
         patheval = ""
@@ -250,10 +267,11 @@ class TrigObjMatcher:
         firedef = "self.fired = lambda e: "+patheval
         
         self.triggers = triggers       # list of triggers
+        self.nlegs    = nlegs          # number of legs = number of filters
         self.ids      = ids            # list of nanoAOD object ID, one per leg
         self.types    = types          # list of nanoAOD object type, one per leg
+        self.ptmins   = ptmins         # list of smallest minimum pT, one per legs
         self.bits     = bits           # bitwise 'OR'-combination of all filter bits
-        self.nlegs    = nlegs          # number of legs = number of filters
         self.path     = path           # human readable trigger combination
         self.patheval = patheval       # trigger evaluation per event 'e'
         self.fireddef = firedef        # exact definition of 'fired' function
@@ -266,7 +284,10 @@ class TrigObjMatcher:
     def printTriggersAndFilters(self,indent=">>> "):
         """Print triggers & their respective filters."""
         for trigger in self.triggers:
-          print indent+trigger.path
+          trigstr = indent + "'%s'"%trigger.path
+          if trigger.runrange:
+            trigstr += ", %d <= run <= %d"%(trigger.runrange[0],trigger.runrange[1])
+          print trigstr
           for i, filter in enumerate(trigger.filters,1):
             print "%s  leg %d: %s, %r"%(indent,i,filter.type,filter.name)
         
