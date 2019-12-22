@@ -4,6 +4,8 @@ keep event
 keep run
 keep *Jet*
 drop HLT_*
+keep HLT_Ele*
+keep HLT_Iso*Mu*
 keep *Electron*
 keep *Muon*
 keep *Tau*
