@@ -289,6 +289,7 @@ def createTauTriggerJSON(year):
         # https://twiki.cern.ch/twiki/bin/view/CMS/EgHLTRunIISummary#2017
         ('HLT_Ele32_WPTight_Gsf', orderDict({
            'filter': "hltEle32WPTightGsfTrackIsoFilter",
+           'runrange': (302026,306460),
            'Electron': orderDict({
              'ptmin':      33,
              'filterbits': ['WPTightTrackIso']

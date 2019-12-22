@@ -93,6 +93,10 @@
   "hltpaths": {
     "HLT_Ele32_WPTight_Gsf": {
       "filter": "hltEle32WPTightGsfTrackIsoFilter", 
+      "runrange": [
+        302026, 
+        306460
+      ], 
       "Electron": {
         "ptmin": 33, 
         "filterbits": [
