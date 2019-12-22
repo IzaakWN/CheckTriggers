@@ -8,13 +8,13 @@
 import os, re
 import numpy as np
 import ROOT; ROOT.PyConfig.IgnoreCommandLineOptions = True
-from ROOT import gROOT, gDirectory, gStyle, TFile, TCanvas, TLegend, TLatex, TH1D, kBlue, kGreen, kRed, kOrange
+from ROOT import gROOT, gDirectory, gStyle, TFile, TCanvas, TLegend, TLatex, TH1D, kBlue, kGreen, kRed, kOrange, kMagenta
 from math import sqrt, pi
 from utils import ensureDirectory, bold
 from PhysicsTools.NanoAODTools.postprocessing.framework.postprocessor import PostProcessor
 from PhysicsTools.NanoAODTools.postprocessing.framework.datamodel import Collection
 from PhysicsTools.NanoAODTools.postprocessing.framework.eventloop import Module
-from trigObjMatcher import loadTriggerDataFromJSON, TrigObjMatcher
+from TrigObjMatcher import loadTriggerDataFromJSON, TrigObjMatcher
 from argparse import ArgumentParser
 usage = """Test 'TrigObjMatcher' class in nanoAO post-processor."""
 parser = ArgumentParser(prog="testTrigObjMatcherNanoAOD", description=usage, epilog="Succes!")
@@ -28,6 +28,8 @@ parser.add_argument('-n', '--nmax',    type=int, default=-1, action='store',
                                        help="maximum number of events (per file)" )
 parser.add_argument('-f', '--nfiles',  type=int, default=1, action='store',
                                        help="number of files to run over" )
+parser.add_argument('-s', '--sample',  type=str, default=None, action='store',
+                                       help="sample pattern" )
 parser.add_argument('-o', '--plot',    dest='run', default=True, action='store_false',
                                        help="plot only, without running the post-processor" )
 args      = parser.parse_args()
@@ -49,12 +51,12 @@ class TauTriggerChecks(Module):
         
         isData      = dtype=='data'
         jsonfile    = "json/tau_triggers_%d.json"%year
-        channels    = ['etau','mutau','ditau']
+        channels    = ['etau','mutau','ditau','mutau_SingleMuon','etau_SingleElectron']
         trigdata    = loadTriggerDataFromJSON(jsonfile,isData=isData,verbose=verbose)
         triggers    = { }
         trigmatcher = { }
         for channel in channels:
-          triggers[channel]    = trigdata.combdict[channel]
+          triggers[channel]    = trigdata.combdict[channel.replace('etau_','').replace('mutau_','')]
           trigmatcher[channel] = TrigObjMatcher(triggers[channel])
           print ">>> %s:"%bold("'%s' trigger object matcher"%channel)
           print ">>>   '%s'"%(trigmatcher[channel].path)
@@ -63,6 +65,7 @@ class TauTriggerChecks(Module):
         self.muptmin     = 21
         self.tauptmin    = 40
         self.channels    = channels
+        self.crosstrigs  = [c for c in channels if 'Single' not in c]
         self.isData      = isData
         self.verbose     = verbose
         self.triggers    = trigdata
@@ -78,19 +81,20 @@ class TauTriggerChecks(Module):
         self.out.branch("nTau_select",                         'I',title="number of taus passing basic selections")
         for channel in self.channels:
           self.out.branch("trigger_"+channel,                  'O')
-          if 'e' in channel:
+          if 'etau' in channel:
             self.out.branch("nElectron_match_"+channel,        'I',title="number of electrons matched to a %s trigger object"%channel)
             self.out.branch("nElectron_select_match_"+channel, 'I',title="number of electrons passing basic selections and matched to an %s trigger object"%channel)
           if 'mu' in channel:
             self.out.branch("nMuon_match_"+channel,            'I',title="number of muons matched to a %s trigger object"%channel)
             self.out.branch("nMuon_select_match_"+channel,     'I',title="number of muons passing basic selections and matched to a %s trigger object"%channel)
           if 'tau' in channel:
-            self.out.branch("nTau_match_"+channel,             'I',title="number of taus matched to a %s trigger object"%channel)
-            self.out.branch("nTau_select_match_"+channel,      'I',title="number of taus passing basic selections and matched to a %s trigger object"%channel)
-          string = 'electron-tau' if channel=='etau' else 'muon-tau' if channel=='mutau' else "tau"
-          self.out.branch("nPair_select_"+channel,             'I',title="number of %s pairs selected"%string)
-          self.out.branch("nPair_select_match_"+channel,       'I',title="number of %s pairs selected and matched to a %s trigger object"%(string,channel))
-        
+            string = 'electron-tau' if 'etau' in channel else 'muon-tau' if 'mutau' in channel else "tau"
+            if 'Single' not in channel:
+              self.out.branch("nTau_match_"+channel,           'I',title="number of taus matched to a %s trigger object"%channel)
+              self.out.branch("nTau_select_match_"+channel,    'I',title="number of taus passing basic selections and matched to a %s trigger object"%channel)
+            self.out.branch("nPair_select_"+channel,           'I',title="number of %s pairs selected"%string)
+            self.out.branch("nPair_select_match_"+channel,     'I',title="number of %s pairs selected and matched to a %s trigger object"%(string,channel))
+          
           # CUTFLOW
           cutflow = TH1D('cutflow_%s'%channel, '%s cutflow'%channel, 8, 0, 8)
           self.Nocut   = 0
@@ -120,14 +124,15 @@ class TauTriggerChecks(Module):
         """Process event, return True (pass, go to next module) or False (fail, go to next event)."""
         
         # MATCH & SELECT ELECTRONS
-        channel           = 'etau'
+        channels          = ['etau','etau_SingleElectron']
         electrons         = Collection(event,'Electron')
         eles_select       = [ ]
-        eles_match        = { channel: [ ] }
-        eles_select_match = { channel: [ ] }
+        eles_match        = { c: [ ] for c in channels }
+        eles_select_match = { c: [ ] for c in channels }
         for electron in electrons:
-          if self.trigmatcher[channel].match(event,electron,leg=1):
-            eles_match[channel].append(electron)
+          for channel in eles_match:
+            if self.trigmatcher[channel].match(event,electron,leg=1):
+              eles_match[channel].append(electron)
           if abs(electron.pt) < self.eleptmin: continue
           if abs(electron.eta) > 2.4: continue
           if abs(electron.dz) > 0.2: continue
@@ -136,33 +141,36 @@ class TauTriggerChecks(Module):
           if electron.lostHits > 1: continue
           if not electron.mvaFall17V2noIso_WP90: continue
           eles_select.append(electron)
-          if electron in eles_match[channel]:
-            eles_select_match[channel].append(electron)
+          for channel in eles_match:
+            if electron in eles_match[channel]:
+              eles_select_match[channel].append(electron)
         
         # MATCH & SELECT Muon
-        channel            = 'mutau'
+        channels           = ['mutau','mutau_SingleMuon']
         muons              = Collection(event,'Muon')
         muons_select       = [ ]
-        muons_match        = { channel: [ ] }
-        muons_select_match = { channel: [ ] }
+        muons_match        = { c: [ ] for c in channels }
+        muons_select_match = { c: [ ] for c in channels }
         for muon in muons:
-          if self.trigmatcher[channel].match(event,muon,leg=1):
-            muons_match[channel].append(muon)
+          for channel in channels:
+            if self.trigmatcher[channel].match(event,muon,leg=1):
+              muons_match[channel].append(muon)
           if abs(muon.pt) < self.muptmin: continue
           if abs(muon.eta) > 2.3: continue
           if abs(muon.dz) > 0.2: continue
           if not muon.mediumId: continue
           muons_select.append(muon)
-          if muon in muons_match[channel]:
-            muons_select_match[channel].append(muon)
+          for channel in channels:
+            if muon in muons_match[channel]:
+              muons_select_match[channel].append(muon)
         
         # MATCH & SELECT TAUS
         taus              = Collection(event,'Tau')
         taus_select       = [ ]
-        taus_match        = { c: [ ] for c in self.channels }
-        taus_select_match = { c: [ ] for c in self.channels }
+        taus_match        = { c: [ ] for c in self.crosstrigs }
+        taus_select_match = { c: [ ] for c in self.crosstrigs }
         for tau in taus:
-          for channel in self.channels:
+          for channel in self.crosstrigs:
             leg = 1 if channel=='ditau' else 2
             if self.trigmatcher[channel].match(event,tau,leg=leg):
               taus_match[channel].append(tau)
@@ -175,7 +183,7 @@ class TauTriggerChecks(Module):
           if tau.idDeepTau2017v2p1VSmu<=1: continue   # VLoose
           if tau.idDeepTau2017v2p1VSe<=4: continue    # VLoose
           taus_select.append(tau)
-          for channel in self.channels:
+          for channel in self.crosstrigs:
             if tau in taus_match[channel]:
               taus_select_match[channel].append(tau)
         
@@ -185,12 +193,18 @@ class TauTriggerChecks(Module):
         for i, tau in enumerate(taus_select):
           for electron in eles_select:
             if tau.DeltaR(electron)<0.5: continue
+            npair_select['etau_SingleElectron'] += 1
             npair_select['etau'] += 1
+            if electron in eles_select_match['etau_SingleElectron']:
+              npair_select_match['etau_SingleElectron'] += 1
             if electron in eles_select_match['etau'] and tau in taus_select_match['etau']:
               npair_select_match['etau'] += 1
           for muon in muons_select:
             if tau.DeltaR(muon)<0.5: continue
+            npair_select['mutau_SingleMuon'] += 1
             npair_select['mutau'] += 1
+            if muon in muons_select_match['mutau_SingleMuon']:
+              npair_select_match['mutau_SingleMuon'] += 1
             if muon in muons_select_match['mutau'] and tau in taus_select_match['mutau']:
               npair_select_match['mutau'] += 1
           for tau2 in taus_select[:i]:
@@ -208,22 +222,23 @@ class TauTriggerChecks(Module):
           self.cutflows[channel].Fill(self.Nocut)
           triggers[channel] = self.trigmatcher[channel].fired(event)
           self.out.fillBranch("trigger_"+channel,                  triggers[channel])
-          if 'e' in channel:
+          if 'etau' in channel:
             self.out.fillBranch("nElectron_match_"+channel,        len(eles_match[channel]))
             self.out.fillBranch("nElectron_select_match_"+channel, len(eles_select_match[channel]))
           if 'mu' in channel:
             self.out.fillBranch("nMuon_match_"+channel,            len(muons_match[channel]))
             self.out.fillBranch("nMuon_select_match_"+channel,     len(muons_select_match[channel]))
           if 'tau' in channel:
-            self.out.fillBranch("nTau_match_"+channel,             len(taus_match[channel]))
-            self.out.fillBranch("nTau_select_match_"+channel,      len(taus_select_match[channel]))
-          self.out.fillBranch("nPair_select_"+channel,             npair_select[channel])
-          self.out.fillBranch("nPair_select_match_"+channel,       npair_select_match[channel])
+            if 'Single' not in channel:
+              self.out.fillBranch("nTau_match_"+channel,           len(taus_match[channel]))
+              self.out.fillBranch("nTau_select_match_"+channel,    len(taus_select_match[channel]))
+            self.out.fillBranch("nPair_select_"+channel,           npair_select[channel])
+            self.out.fillBranch("nPair_select_match_"+channel,     npair_select_match[channel])
           
           # FILL CUTFLOW
           if triggers[channel]:
             self.cutflows[channel].Fill(self.Trigger)
-            if channel=='mutau' and len(muons_select)>=1:
+            if 'mutau' in channel and len(muons_select)>=1:
               self.cutflows[channel].Fill(self.Leg1)
               if len(taus_select)>=1:
                 self.cutflows[channel].Fill(self.Leg2)
@@ -231,7 +246,7 @@ class TauTriggerChecks(Module):
                   self.cutflows[channel].Fill(self.Pair)
                   if npair_select_match[channel]>=1:
                     self.cutflows[channel].Fill(self.Matched)
-            elif channel=='etau' and len(eles_select)>=1:
+            elif 'etau' in channel and len(eles_select)>=1:
               self.cutflows[channel].Fill(self.Leg1)
               if len(taus_select)>=1:
                 self.cutflows[channel].Fill(self.Leg2)
@@ -252,17 +267,18 @@ class TauTriggerChecks(Module):
 
 
 # POST-PROCESSOR
-year      = args.year
-dtype     = args.dtype
-era       = args.era.upper()
-maxEvts   = args.nmax
-nFiles    = args.nfiles
-postfix   = '_trigger_%s%s_%s'%(year,era,dtype)
-branchsel = "python/keep_and_drop_taus.txt"
+year       = args.year
+dtype      = args.dtype
+era        = args.era.upper()
+maxEvts    = args.nmax
+nFiles     = args.nfiles
+sample     = args.sample
+postfix    = '_trigger_%s%s_%s'%(year,era,dtype) + ('_'+sample if sample else "")
+branchsel  = "python/keep_and_drop_taus.txt"
 if not os.path.isfile(branchsel): branchsel = None
-plot      = True #and False
-outdir    = ensureDirectory("nanoAOD")
-outfile   = "%s/trigObjMatch_%s%s_%s.root"%(outdir,year,era,dtype) if nFiles>1 else None
+plot       = True #and False
+outdir     = ensureDirectory("nanoAOD")
+outfile    = "%s/trigObjMatch_%s%s_%s.root"%(outdir,year,era,dtype) if nFiles>1 else None
 
 infiles = [
   
@@ -279,66 +295,16 @@ infiles = [
   director+'/store/mc/RunIISummer16NanoAODv6/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/NANOAODSIM/PUMoriond17_Nano25Oct2019_102X_mcRun2_asymptotic_v7_ext2-v1/270000/58F937F2-BB51-B848-AB24-1F7E87CCF145.root',
   
   # 2017 DY
-  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/10/myNanoProdMc2017_NANO_1909.root',
-  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/13/myNanoProdMc2017_NANO_112.root',
-  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/13/myNanoProdMc2017_NANO_212.root',
-  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/15/myNanoProdMc2017_NANO_1914.root',
-  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/18/myNanoProdMc2017_NANO_1017.root',
-  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/18/myNanoProdMc2017_NANO_1217.root',
-  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/21/myNanoProdMc2017_NANO_1820.root',
-  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/22/myNanoProdMc2017_NANO_721.root',
-  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/23/myNanoProdMc2017_NANO_322.root',
-  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/24/myNanoProdMc2017_NANO_1023.root',
-  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/25/myNanoProdMc2017_NANO_424.root',
-  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/25/myNanoProdMc2017_NANO_924.root',
-  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/27/myNanoProdMc2017_NANO_1026.root',
-  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/29/myNanoProdMc2017_NANO_1428.root',
-  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/3/myNanoProdMc2017_NANO_102.root',
-  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/31/myNanoProdMc2017_NANO_1430.root',
-  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/31/myNanoProdMc2017_NANO_430.root',
-  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/33/myNanoProdMc2017_NANO_1932.root',
-  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/35/myNanoProdMc2017_NANO_1834.root',
-  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/39/myNanoProdMc2017_NANO_1338.root',
-  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/4/myNanoProdMc2017_NANO_1303.root',
-  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/41/myNanoProdMc2017_NANO_1540.root',
-  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/43/myNanoProdMc2017_NANO_242.root',
-  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/44/myNanoProdMc2017_NANO_43.root',
-  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/45/myNanoProdMc2017_NANO_744.root',
-  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/46/myNanoProdMc2017_NANO_245.root',
-  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/48/myNanoProdMc2017_NANO_947.root',
-  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/49/myNanoProdMc2017_NANO_148.root',
-  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/5/myNanoProdMc2017_NANO_1804.root',
-  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/50/myNanoProdMc2017_NANO_1649.root',
-  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/51/myNanoProdMc2017_NANO_950.root',
-  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/54/myNanoProdMc2017_NANO_1153.root',
-  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/57/myNanoProdMc2017_NANO_156.root',
-  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/57/myNanoProdMc2017_NANO_1656.root',
-  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/58/myNanoProdMc2017_NANO_157.root',
-  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/59/myNanoProdMc2017_NANO_1658.root',
-  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/59/myNanoProdMc2017_NANO_658.root',
-  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/62/myNanoProdMc2017_NANO_661.root',
-  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/63/myNanoProdMc2017_NANO_262.root',
-  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/64/myNanoProdMc2017_NANO_1163.root',
-  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/66/myNanoProdMc2017_NANO_565.root',
-  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/67/myNanoProdMc2017_NANO_166.root',
-  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/7/myNanoProdMc2017_NANO_1206.root',
-  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/70/myNanoProdMc2017_NANO_1669.root',
-  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/74/myNanoProdMc2017_NANO_873.root',
-  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/75/myNanoProdMc2017_NANO_1874.root',
-  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/82/myNanoProdMc2017_NANO_1281.root',
-  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/84/myNanoProdMc2017_NANO_983.root',
-  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/86/myNanoProdMc2017_NANO_1085.root',
-  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/86/myNanoProdMc2017_NANO_1385.root',
-  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/86/myNanoProdMc2017_NANO_1685.root',
-  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/86/myNanoProdMc2017_NANO_1885.root',
-  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/9/myNanoProdMc2017_NANO_1308.root',
-  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/9/myNanoProdMc2017_NANO_208.root',
-  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/91/myNanoProdMc2017_NANO_1290.root',
-  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/91/myNanoProdMc2017_NANO_690.root',
-  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/93/myNanoProdMc2017_NANO_1092.root',
-  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/94/myNanoProdMc2017_NANO_1493.root',
-  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/96/myNanoProdMc2017_NANO_1395.root',
-  director+'/store/user/jbechtel/taupog/nanoAOD-v2/DYJetsToLLM50_RunIIFall17MiniAODv2_PU2017RECOSIMstep_13TeV_MINIAOD_madgraph-pythia8_v1/98/myNanoProdMc2017_NANO_1497.root',
+  director+'/store/mc/RunIIFall17NanoAODv6/DY1JetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/NANOAODSIM/PU2017_12Apr2018_Nano25Oct2019_new_pmx_102X_mc2017_realistic_v7-v1/100000/30221C3B-07D9-734B-A5A4-CF2ACEC4C969.root',
+  director+'/store/mc/RunIIFall17NanoAODv6/DY1JetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/NANOAODSIM/PU2017_12Apr2018_Nano25Oct2019_new_pmx_102X_mc2017_realistic_v7-v1/100000/924FD4D8-6241-554C-B132-8AA474E58799.root',
+  director+'/store/mc/RunIIFall17NanoAODv6/DY1JetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/NANOAODSIM/PU2017_12Apr2018_Nano25Oct2019_new_pmx_102X_mc2017_realistic_v7-v1/100000/1153FACE-06FB-024E-8C85-3130E095FADE.root',
+  director+'/store/mc/RunIIFall17NanoAODv6/DY1JetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/NANOAODSIM/PU2017_12Apr2018_Nano25Oct2019_new_pmx_102X_mc2017_realistic_v7-v1/100000/398BE994-A38D-244F-BB8F-36756F6327C6.root',
+  director+'/store/mc/RunIIFall17NanoAODv6/DY1JetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/NANOAODSIM/PU2017_12Apr2018_Nano25Oct2019_new_pmx_102X_mc2017_realistic_v7-v1/100000/E7FAE0A0-4626-214F-B8F1-692B3BA44E77.root',
+  director+'/store/mc/RunIIFall17NanoAODv6/DY1JetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/NANOAODSIM/PU2017_12Apr2018_Nano25Oct2019_new_pmx_102X_mc2017_realistic_v7-v1/100000/CD5D0924-D2C1-A94D-AAD8-ED29EE62E86A.root',
+  director+'/store/mc/RunIIFall17NanoAODv6/DY1JetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/NANOAODSIM/PU2017_12Apr2018_Nano25Oct2019_new_pmx_102X_mc2017_realistic_v7-v1/100000/DB60B42C-4943-284D-B61D-275C7BB023A6.root',
+  director+'/store/mc/RunIIFall17NanoAODv6/DY1JetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/NANOAODSIM/PU2017_12Apr2018_Nano25Oct2019_new_pmx_102X_mc2017_realistic_v7-v1/100000/9732B167-5874-DC40-AEC2-A45EE39CA632.root',
+  director+'/store/mc/RunIIFall17NanoAODv6/DY1JetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/NANOAODSIM/PU2017_12Apr2018_Nano25Oct2019_new_pmx_102X_mc2017_realistic_v7-v1/100000/3D9EAA33-C7C9-EB4B-B920-1F6AF5580601.root',
+  director+'/store/mc/RunIIFall17NanoAODv6/DY1JetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/NANOAODSIM/PU2017_12Apr2018_Nano25Oct2019_new_pmx_102X_mc2017_realistic_v7-v1/100000/99A413B8-092B-5243-A463-6AC43CD8C60E.root',
   
   # 2018 DY
   director+'/store/mc/RunIIAutumn18NanoAODv6/DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/NANOAODSIM/Nano25Oct2019_102X_upgrade2018_realistic_v20-v1/40000/6D7BB75E-C44F-7E47-99E1-954DBC5320E9.root',
@@ -399,12 +365,63 @@ infiles = [
   director+'/store/data/Run2018D/Tau/NANOAOD/Nano25Oct2019_ver2-v1/240000/27C2F90A-3286-C845-B95B-B8E57D5E71B0.root',
   director+'/store/data/Run2018D/Tau/NANOAOD/Nano25Oct2019_ver2-v1/240000/B07044AF-DC62-EC43-9050-607ADD1C03C0.root',
   
+  # 2016 SingleMuon datasets
+  director+'/store/data/Run2016B_ver2/SingleMuon/NANOAOD/Nano25Oct2019_ver2-v1/20000/57AC2EEB-79CF-1940-9FDD-86017DE09B69.root',
+  director+'/store/data/Run2016C/SingleMuon/NANOAOD/Nano25Oct2019-v1/40000/ADE294FD-D468-EE40-9BAF-5129F05942A1.root',
+  director+'/store/data/Run2016D/SingleMuon/NANOAOD/Nano25Oct2019-v1/240000/A4A6C22B-6729-1B4B-A69B-327BD5C70D4C.root',
+  director+'/store/data/Run2016E/SingleMuon/NANOAOD/Nano25Oct2019-v1/20000/3BFD152F-D9BC-4540-810E-92939DD69EA4.root',
+  director+'/store/data/Run2016F/SingleMuon/NANOAOD/Nano25Oct2019-v1/30000/B18923B6-14E9-A84F-B20B-DDF942B5F3C5.root',
+  director+'/store/data/Run2016G/SingleMuon/NANOAOD/Nano25Oct2019-v1/40000/9D8EE183-A48A-BB47-ACFF-A06E0281400A.root',
+  director+'/store/data/Run2016H/SingleMuon/NANOAOD/Nano25Oct2019-v1/60000/0DE80F77-8D16-644A-8B60-752CEBAA16F0.root',
+  
+  # 2017 SingleMuon datasets
+  director+'/store/data/Run2017B/SingleMuon/NANOAOD/Nano25Oct2019-v1/40000/AA6BBB35-FB22-BD44-AF45-A99DE6427B9A.root',
+  director+'/store/data/Run2017C/SingleMuon/NANOAOD/Nano25Oct2019-v1/230000/B3075A16-D1D5-7A47-AE93-FA2570FD7FF8.root',
+  director+'/store/data/Run2017D/SingleMuon/NANOAOD/Nano25Oct2019-v1/40000/E2E45B6D-CAEC-944B-A859-8561F68EDD7F.root',
+  director+'/store/data/Run2017E/SingleMuon/NANOAOD/Nano25Oct2019-v1/260000/85E75AE8-CE76-4A4C-85B8-E524F778EA5B.root',
+  director+'/store/data/Run2017F/SingleMuon/NANOAOD/Nano25Oct2019-v1/30000/A9FF8C0B-2ABC-1E42-BF9A-A205E23BC3A3.root',
+  
+  # 2018 SingleMuon datasets
+  director+'/store/data/Run2018A/SingleMuon/NANOAOD/Nano25Oct2019-v1/20000/0B5A5B06-F545-5D45-AFFD-03C1245ABFA1.root',
+  director+'/store/data/Run2018B/SingleMuon/NANOAOD/Nano25Oct2019-v1/240000/2CD0A2F6-E2EC-9545-AA2D-C846ADB96F25.root',
+  director+'/store/data/Run2018C/SingleMuon/NANOAOD/Nano25Oct2019-v1/20000/D2F3F163-3DAA-6D43-8A07-1CEF72C53BB9.root',
+  director+'/store/data/Run2018D/SingleMuon/NANOAOD/Nano25Oct2019-v1/70000/B56197D5-60C7-2C42-9FB8-4C403F97B4B7.root',
+  director+'/store/data/Run2018D/SingleMuon/NANOAOD/Nano25Oct2019_ver2-v1/230000/D61D7458-D12C-E444-93A8-D17E2E53B63A.root',
+  director+'/store/data/Run2018D/SingleMuon/NANOAOD/Nano25Oct2019-v1/70000/B56197D5-60C7-2C42-9FB8-4C403F97B4B7.root',
+  director+'/store/data/Run2018D/SingleMuon/NANOAOD/Nano25Oct2019_ver2-v1/230000/D61D7458-D12C-E444-93A8-D17E2E53B63A.root',
+  
+  # 2016 SingleElectron datasets
+  director+'/store/data/Run2016B_ver2/SingleElectron/NANOAOD/Nano25Oct2019_ver2-v1/240000/F584F6A9-8A7D-2B44-A90A-6F39C43C3175.root',
+  director+'/store/data/Run2016C/SingleElectron/NANOAOD/Nano25Oct2019-v1/20000/AE304438-90B1-D247-B927-6AE0F92C0557.root',
+  director+'/store/data/Run2016D/SingleElectron/NANOAOD/Nano25Oct2019-v1/230000/FF746568-EC2F-8E41-8BF2-840FA8E95F9A.root',
+  director+'/store/data/Run2016E/SingleElectron/NANOAOD/Nano25Oct2019-v1/30000/E2A1B0A5-E281-EA40-9B51-6CB8C411B9B2.root',
+  director+'/store/data/Run2016F/SingleElectron/NANOAOD/Nano25Oct2019-v1/240000/0DE98C8C-D765-AC4E-9326-FFCCAF3469AB.root',
+  director+'/store/data/Run2016G/SingleElectron/NANOAOD/Nano25Oct2019-v1/20000/C78DE244-F217-434B-A6A8-05326EA69619.root',
+  director+'/store/data/Run2016H/SingleElectron/NANOAOD/Nano25Oct2019-v1/30000/353AD9B8-7D7C-EE41-B6ED-F31F3CE6B731.root',
+  
+  # 2017 SingleElectron datasets
+  director+'/store/data/Run2017B/SingleElectron/NANOAOD/Nano25Oct2019-v1/20000/9F7C3AE6-30E5-304F-9A95-19816136354F.root',
+  director+'/store/data/Run2017C/SingleElectron/NANOAOD/Nano25Oct2019-v1/20000/E2D6BB70-1616-CD43-9615-91E2454E8289.root',
+  director+'/store/data/Run2017D/SingleElectron/NANOAOD/Nano25Oct2019-v1/20000/6FF212AB-034B-F64A-9EDF-B6F5E0028FCC.root',
+  director+'/store/data/Run2017E/SingleElectron/NANOAOD/Nano25Oct2019-v1/20000/FFFE4662-B5B3-934E-950D-AED25AEDB03A.root',
+  director+'/store/data/Run2017F/SingleElectron/NANOAOD/Nano25Oct2019-v1/240000/73A5BCD8-25D4-7F44-9EEB-FCB71973195F.root',
+  
+  # 2018 SingleElectron datasets
+  director+'/store/data/Run2018A/EGamma/NANOAOD/Nano25Oct2019-v1/60000/6C6DE320-3C30-0242-99D1-9962FCF26767.root',
+  director+'/store/data/Run2018B/EGamma/NANOAOD/Nano25Oct2019-v1/230000/757C2392-1DC1-4546-978A-E59CBB4DD74B.root',
+  director+'/store/data/Run2018C/EGamma/NANOAOD/Nano25Oct2019-v1/20000/F2B58AB9-5F7E-D44F-B517-ABCC6FB22A20.root',
+  director+'/store/data/Run2018D/EGamma/NANOAOD/Nano25Oct2019-v1/70000/B191499B-8E10-E942-AB1B-54870EC511E7.root',
+  director+'/store/data/Run2018D/EGamma/NANOAOD/Nano25Oct2019_ver2-v1/240000/EE829DF1-B7EB-7C4B-95BC-8271DF9B775D.root',
+  director+'/store/data/Run2018D/EGamma/NANOAOD/Nano25Oct2019-v1/70000/B191499B-8E10-E942-AB1B-54870EC511E7.root',
+  director+'/store/data/Run2018D/EGamma/NANOAOD/Nano25Oct2019_ver2-v1/240000/EE829DF1-B7EB-7C4B-95BC-8271DF9B775D.root',
+
 ]
-if   year==2016:    infiles = filter(lambda f: 'RunIISummer16' in f or '/Run2016' in f,infiles)
-elif year==2017:    infiles = filter(lambda f: 'RunIIFall17'   in f or '/Run2017' in f,infiles)
-elif year==2018:    infiles = filter(lambda f: 'RunIIAutumn'   in f or '/Run2018' in f,infiles)
+if   year==2016:    infiles = filter(lambda f: 'RunIISummer16'    in f or '/Run2016' in f,infiles)
+elif year==2017:    infiles = filter(lambda f: 'RunIIFall17'      in f or '/Run2017' in f,infiles)
+elif year==2018:    infiles = filter(lambda f: 'RunIIAutumn'      in f or '/Run2018' in f,infiles)
 if   dtype=='data': infiles = filter(lambda f: '/store/data/'     in f,infiles)
 elif dtype=='mc':   infiles = filter(lambda f: '/store/data/' not in f,infiles)
+if   sample:        infiles = filter(lambda f: sample             in f,infiles)
 if   era:           infiles = filter(lambda f: any("Run%d%s"%(year,e) in f for e in era),infiles)
 infiles = infiles[:nFiles]
 
@@ -413,6 +430,7 @@ print ">>> %-10s = '%s'"%('dtype',dtype)
 print ">>> %-10s = '%s'"%('era',era)
 print ">>> %-10s = %s"%('maxEvts',maxEvts)
 print ">>> %-10s = %s"%('nFiles',nFiles)
+print ">>> %-10s = '%s'"%('sample',sample)
 print ">>> %-10s = %s"%('infiles',infiles)
 print ">>> %-10s = %s"%('outfile',"'%s'"%outfile if outfile else None)
 print ">>> %-10s = '%s'"%('postfix',postfix)
@@ -430,7 +448,7 @@ if args.run:
 if plot:
   
   def plotHists(hists,xtitle,plotname,header,ctexts=[ ],otext="",logy=False,y1=0.70):
-      colors = [ kBlue, kRed, kGreen+2, kOrange ]
+      colors = [ kBlue, kRed, kGreen+2, kOrange, kMagenta+1 ]
       canvas   = TCanvas('canvas','canvas',100,100,800,700)
       canvas.SetMargin(0.12,0.03,0.14,0.06 if otext else 0.03)
       textsize = 0.040
@@ -485,29 +503,36 @@ if plot:
       for hist in hists:
         gDirectory.Delete(hist.GetName())
   
-  filename   = outfile or infiles[0].split('/')[-1].replace(".root",postfix+".root")
+  filename   = outfile or "%s/%s"%(outdir,infiles[0].split('/')[-1].replace(".root",postfix+".root"))
   file       = TFile(filename)
   tree       = file.Get('Events')
+  postfix    = postfix.lstrip("_trigger")
   outdir     = ensureDirectory('plots')
   runexp     = re.compile(r"run>=(\d+) && run<=(\d+) && (\w+)")
   
   # PLOT PAIRS
   cutflows   = [ ]
-  otext      = "%s (%d%s)"%('#font[82]{Tau} dataset' if dtype=='data' else "#font[82]{DYJetsToLL_M-50}",year,era)
-  for channel in module.channels:
+  dataset    = re.findall(r"(DY\d?JetsToLL_M-50|Tau|SingleMuon|SingleElectron|EGamma)",infiles[0])[0]
+  otext      = "%s (%d%s)"%('#font[82]{%s} dataset'%dataset,year,era)
+  channels   = [c for c in module.channels if dtype=='mc'
+                                              or (not 'Single' in c) #and not 'Single' in sample and not 'EGamma')
+                                              or ('Single' in c and ('Single' in sample or 'EGamma' in sample)) ]
+  for channel in channels:
     print ">>> plotting filter pair for '%s'"%(channel)
     header   = "Selected object"
-    chanstr  = channel.replace('mu',"#mu").replace('di',"tau").replace('tau',"#tau_{h}") # "Medium muon and medium #tau_{h} DeepTau"
-    xtitle   = ("Number matched to %s trigger (if selected)"%chanstr.replace('e',"#kern[-0.8]{e}").replace('#mu',"#kern[-0.6]{#mu}")).replace(' #tau_{h}'," #kern[-0.6]{#tau_{h}}")
-    plotname = "%s/%s_pair_matched_%d%s_%s"%(outdir,channel,year,era,dtype)
+    chanstr  = channel.split('_')[0].replace('mu',"#mu").replace('di',"tau").replace('tau',"#tau_{h}")
+    trigger  = channel.split('_')[1] if 'Single' in channel else chanstr
+    print trigger, chanstr
+    xtitle   = ("Number matched to %s trigger (if selected)"%trigger.replace('e#tau',"e#tau").replace('#mu',"#kern[-0.6]{#mu}")).replace(' #tau_{h}'," #tau_{h}")##kern[-0.6]{
+    plotname = "%s/%s_pair_matched_%s"%(outdir,channel,postfix)
     path     = runexp.sub(r"\3 && \1 #leq run #leq \2",module.trigmatcher[channel].path)
     ctexts   = path.replace('||','\n||').split('\n') #"#kern[-0.3]{%s}"
     histset  = [ ]
     if 'mu' in channel:
       histset.append(("nMuon_select_match_%s"%channel,"trigger_%s && nMuon_select>=1"%channel,"Muon"))
-    if 'e' in channel:
+    if 'etau' in channel:
       histset.append(("nElectron_select_match_%s"%channel,"trigger_%s && nElectron_select>=1"%channel,"Electron"))
-    if 'tau' in channel:
+    if 'tau' in channel and 'Single' not in channel:
       histset.append(("nTau_select_match_%s"%channel,"trigger_%s && nTau_select>=1"%channel,"#tau_{h}"))
       #histset.append(("nTau_select_match_%s"%channel,"trigger_%s && nTau_select>=2"%channel,"#geq2 #tau_{h}"))
     histset.append(("nPair_select_match_%s"%channel,"trigger_%s && nPair_select_%s>=1"%(channel,channel),"%s pair"%chanstr))    
@@ -529,14 +554,14 @@ if plot:
     
     # CUTFLOW
     cutflow = file.Get("cutflow_%s"%channel)
-    cutflow.SetTitle(chanstr)
+    cutflow.SetTitle(trigger)
     cutflow.GetXaxis().SetRange(1,8)
     pair  = cutflow.GetBinContent(5)
     match = cutflow.GetBinContent(6)
     if pair:
       eff   = match/pair
       error = sqrt(eff*(1.-eff)/pair)*100.0
-      print ">>> %s pair selection -> trigger-matching = %d/%d = %.2f +- %.2f%%"%(channel,match,pair,100.0*(match-pair)/pair,error)
+      print ">>> %s pair selection -> trigger-matching = %d/%d = %s"%(channel,match,pair,bold("%.2f +- %.2f%%"%(100.0*(match-pair)/pair,error)))
     else:
       print ">>> %s pair selection -> trigger-matching = %d/%d ..."%(channel,match,pair)
     if cutflow.GetBinContent(1)>0:
@@ -546,9 +571,9 @@ if plot:
     cutflows.append(cutflow)
   
   # PLOT CUTFLOW
-  print ">>> plotting filter pair for '%s'"%(channel)
+  print ">>> plotting cutflows"
   header   = "Channel"
-  plotname = "%s/cutflow_%d%s_%s"%(outdir,year,era,dtype)
+  plotname = "%s/cutflow_%s"%(outdir,postfix)
   plotHists(cutflows,"",plotname,header,logy=True,otext=otext,y1=0.8)
   
   file.Close()
