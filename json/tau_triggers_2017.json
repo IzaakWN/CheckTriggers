@@ -47,8 +47,6 @@
   "hltcombs": {
     "data": {
       "SingleElectron": [
-        "HLT_Ele32_WPTight_Gsf", 
-        "HLT_Ele32_WPTight_Gsf_L1DoubleEG", 
         "HLT_Ele35_WPTight_Gsf"
       ], 
       "SingleMuon": [
@@ -69,8 +67,6 @@
     }, 
     "mc": {
       "SingleElectron": [
-        "HLT_Ele32_WPTight_Gsf", 
-        "HLT_Ele32_WPTight_Gsf_L1DoubleEG", 
         "HLT_Ele35_WPTight_Gsf"
       ], 
       "SingleMuon": [

@@ -271,8 +271,8 @@ def createTauTriggerJSON(year):
     elif year==2017:
       data['hltcombs'] = OrderedDict()
       data['hltcombs']['data'] = orderDict({
-        'SingleElectron': ['HLT_Ele32_WPTight_Gsf',
-                           'HLT_Ele32_WPTight_Gsf_L1DoubleEG',
+        'SingleElectron': [#'HLT_Ele32_WPTight_Gsf',
+                           #'HLT_Ele32_WPTight_Gsf_L1DoubleEG',
                            'HLT_Ele35_WPTight_Gsf'],
         'SingleMuon': ['HLT_IsoMu24',
                        'HLT_IsoMu27'],
