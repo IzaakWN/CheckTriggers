@@ -20,37 +20,38 @@ year     = options.year
 dtype    = options.dtype
 #trigtype = options.trigtype
 triggers = options.trigger.split(',') if options.trigger else [
-  
-  # SINGLE MUON
-  'HLT_IsoMu22',
-  'HLT_IsoMu22_eta2p1',
-  'HLT_IsoTkMu22',
-  'HLT_IsoTkMu22_eta2p1',
-  'HLT_IsoMu24',
-  'HLT_IsoMu27',
-  'HLT_Mu50',
-  'HLT_TkMu50',
-  'HLT_Mu100',
-  'HLT_OldMu100',
-  'HLT_TkMu100',
-  ###'HLT_*Mu50*',
-  ###'HLT_*Mu100*',
-  
-  # SINGLE ELECTRON
-  'HLT_Ele25_eta2p1_WPTight_Gsf',
-  'HLT_Ele27_WPTight_Gsf',
-  'HLT_Ele45_WPLoose_Gsf_L1JetTauSeeded',
-  'HLT_Ele35_WPTight_Gsf',
-  'HLT_Ele32_WPTight_Gsf',
-  'HLT_Ele32_WPTight_Gsf_L1DoubleEG',
-  'HLT_Ele45_CaloIdVT_GsfTrkIdT_PFJet200_PFJet50',
-  'HLT_Ele50_CaloIdVT_GsfTrkIdT_PFJet165',
-  ###'HLT_Ele50*',
-  'HLT_Ele105_CaloIdVT_GsfTrkIdT',
-  'HLT_Ele115_CaloIdVT_GsfTrkIdT',
-  'HLT_Photon175',
-  'HLT_Photon200',
-  
+#   
+#   # SINGLE MUON
+#   'HLT_IsoMu22',
+#   'HLT_IsoMu22_eta2p1',
+#   'HLT_IsoTkMu22',
+#   'HLT_IsoTkMu22_eta2p1',
+#   'HLT_IsoMu24',
+#   'HLT_IsoMu27',
+#   'HLT_Mu50',
+#   'HLT_TkMu50',
+#   'HLT_Mu100',
+#   'HLT_OldMu100',
+#   'HLT_TkMu100',
+#   ###'HLT_*Mu50*',
+#   ###'HLT_*Mu100*',
+#   
+#   # SINGLE ELECTRON
+    'HLT_Ele*'
+#   'HLT_Ele25_eta2p1_WPTight_Gsf',
+#   'HLT_Ele27_WPTight_Gsf',
+#   'HLT_Ele45_WPLoose_Gsf_L1JetTauSeeded',
+#   'HLT_Ele35_WPTight_Gsf',
+#   'HLT_Ele32_WPTight_Gsf',
+#   'HLT_Ele32_WPTight_Gsf_L1DoubleEG',
+#   'HLT_Ele45_CaloIdVT_GsfTrkIdT_PFJet200_PFJet50',
+#   'HLT_Ele50_CaloIdVT_GsfTrkIdT_PFJet165',
+#   ###'HLT_Ele50*',
+#   'HLT_Ele105_CaloIdVT_GsfTrkIdT',
+#   'HLT_Ele115_CaloIdVT_GsfTrkIdT',
+#   'HLT_Photon175',
+#   'HLT_Photon200',
+#   
   # MULTI LEPTON
 #   'HLT_*Mu17*IsoVVL*Mu8*IsoVVL*', # 2mu-0e
 #   'HLT_DoubleMu*',                # 2mu-0e
@@ -110,34 +111,37 @@ vetoTriggers = [
   #"HLT_*Upsilon*",
   #"HLT_*Jet*",
 ]
-filters = options.filter.split(',') if options.filter else [
-  'hltEgammaCandidates',
-  '*PixelMatchFilter',
+filters = [
   'hltEle*CaloIdVTGsfTrkIdTGsf*Filter',
-  '*RelTrkIso*Filtered0p4',
-  'hltL3cr*IsoFiltered0p09',
-  'hltL3f*IsoFiltered0p09',
-  'hlt*L3MuonCandidates', #'hltIterL3MuonCandidates', 'hltOldL3MuonCandidates',
-  'hltHighPtTkMuonCands',
-  'hlt*TkMuonCands',
-  'hlt*TrkMuonCands',
-  'hltEle*Ele*CaloIdLTrackIdLIsoVL*Filter',
-  'hltMu*TrkIsoVVL*Ele*CaloIdLTrackIdLIsoVL*Filter*',
-  'hlt*OverlapFilterIsoEle*PFTau*',
-  'hltEle*Ele*Ele*CaloIdLTrackIdLDphiLeg*Filter',
-  'hltL3fL1Mu*DoubleEG*Filtered*',
-  'hltMu*DiEle*CaloIdLTrackIdLElectronleg*Filter',
-  'hltL3fL1DoubleMu*EG*Filter*',
-  'hltDiMu*Ele*CaloIdLTrackIdLElectronleg*Filter',
-  'hltEle32L1DoubleEGWPTightGsfTrackIsoFilter',
-  'hltEGL1SingleEGOrFilter',
-  'hltDiMuon*Filtered*',
-  'hlt*OverlapFilterIsoMu*PFTau*',
-  'hltL3fL1TripleMu*',
-  'hltL3fL1DoubleMu*EG*Filtered*',
-  'hltDoublePFTau*TrackPt1*ChargedIsolation*',
 ]
-vetoFilters = [
+checkFilters = options.filter.split(',') if options.filter else [
+#   'hltEgammaCandidates',
+#   '*PixelMatchFilter',
+  'hltEle*CaloIdVTGsfTrkIdTGsf*Filter',
+#   '*RelTrkIso*Filtered0p4',
+#   'hltL3cr*IsoFiltered0p09',
+#   'hltL3f*IsoFiltered0p09',
+#   'hlt*L3MuonCandidates', #'hltIterL3MuonCandidates', 'hltOldL3MuonCandidates',
+#   'hltHighPtTkMuonCands',
+#   'hlt*TkMuonCands',
+#   'hlt*TrkMuonCands',
+#   'hltEle*Ele*CaloIdLTrackIdLIsoVL*Filter',
+#   'hltMu*TrkIsoVVL*Ele*CaloIdLTrackIdLIsoVL*Filter*',
+#   'hlt*OverlapFilterIsoEle*PFTau*',
+#   'hltEle*Ele*Ele*CaloIdLTrackIdLDphiLeg*Filter',
+#   'hltL3fL1Mu*DoubleEG*Filtered*',
+#   'hltMu*DiEle*CaloIdLTrackIdLElectronleg*Filter',
+#   'hltL3fL1DoubleMu*EG*Filter*',
+#   'hltDiMu*Ele*CaloIdLTrackIdLElectronleg*Filter',
+#   'hltEle32L1DoubleEGWPTightGsfTrackIsoFilter',
+#   'hltEGL1SingleEGOrFilter',
+#   'hltDiMuon*Filtered*',
+#   'hlt*OverlapFilterIsoMu*PFTau*',
+#   'hltL3fL1TripleMu*',
+#   'hltL3fL1DoubleMu*EG*Filtered*',
+#   'hltDoublePFTau*TrackPt1*ChargedIsolation*',
+]
+ignoreFilters = [
 ]
 
 # INPUT FILES
@@ -226,15 +230,16 @@ elif dtype=='mc':   files = filter(lambda f: '/store/data/' not in f,files)
 
 # PRINT
 print ">>> %s checkTriggers_cfg.py %s"%('-'*15,'-'*36)
-print ">>> year         = %s"%year
-print ">>> dtype        = '%s'"%dtype
-print ">>> verbose      = %s"%verbose
-print ">>> nlast        = %s"%nlast
-print ">>> triggers     = %s"%triggers
-print ">>> filters      = %s"%filters
-print ">>> vetoTriggers = %s"%vetoTriggers
-print ">>> vetoFilters  = %s"%vetoFilters
-print ">>> files        = [\n>>>   '%s"%("',\n>>>   '".join(files))+"'"
+print ">>> year          = %s"%year
+print ">>> dtype         = '%s'"%dtype
+print ">>> verbose       = %s"%verbose
+print ">>> nlast         = %s"%nlast
+print ">>> triggers      = %s"%triggers
+print ">>> filters       = %s"%filters
+print ">>> checkFilters  = %s"%checkFilters
+print ">>> vetoTriggers  = %s"%vetoTriggers
+print ">>> ignoreFilters = %s"%ignoreFilters
+print ">>> files         = [\n>>>   '%s"%("',\n>>>   '".join(files))+"'"
 print ">>> ]"
 print ">>> "+'-'*70
 
@@ -250,11 +255,12 @@ process.source = cms.Source('PoolSource',
   )
 )
 process.check = cms.EDAnalyzer('TriggerChecks',
-  triggers     = cms.untracked.vstring(*triggers),
-  checkFilters = cms.untracked.vstring(*filters),
-  vetoTriggers = cms.untracked.vstring(*vetoTriggers),
-  vetoFilters  = cms.untracked.vstring(*vetoFilters),
-  verbose      = cms.untracked.bool(verbose),
-  nlast        = cms.untracked.int32(nlast)
+  triggers      = cms.untracked.vstring(*triggers),
+  filters       = cms.untracked.vstring(*filters),
+  checkFilters  = cms.untracked.vstring(*checkFilters),
+  vetoTriggers  = cms.untracked.vstring(*vetoTriggers),
+  ignoreFilters = cms.untracked.vstring(*ignoreFilters),
+  verbose       = cms.untracked.bool(verbose),
+  nlast         = cms.untracked.int32(nlast)
 )
 process.p = cms.Path(process.check)

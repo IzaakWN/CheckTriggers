@@ -41,8 +41,9 @@ class TriggerChecks
     ~TriggerChecks() { }
     bool selectTrigger(const std::string&);
     bool selectFilter(const std::string&);
+    bool checkFilter(const std::string&);
     bool vetoTrigger(const std::string&);
-    bool vetoFilter(const std::string&);
+    bool ignoreFilter(const std::string&);
   
   private:
     virtual void beginJob() override { }
@@ -77,7 +78,8 @@ class TriggerChecks
       "HLT_IsoMu20_eta2p1_LooseChargedIsoPFTau27_eta2p1_CrossL1",
       "HLT_DoubleMediumChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg",
     };
-    std::vector<std::string> vetoFilters_;
+    std::vector<std::string> filters_;
+    std::vector<std::string> ignoreFilters_;
     std::vector<std::string> vetoTriggers_;
     std::vector<std::string> checkFilters_;
 };
@@ -92,15 +94,17 @@ TriggerChecks::TriggerChecks(const edm::ParameterSet& iConfig)
   verbose_           = iConfig.getUntrackedParameter<bool>("verbose",verbose_);
   nlast_             = std::max(iConfig.getUntrackedParameter<int>("nlast",nlast_),1);
   triggers_          = iConfig.getUntrackedParameter<std::vector<std::string>>("triggers",triggers_);
+  filters_           = iConfig.getUntrackedParameter<std::vector<std::string>>("filters",filters_);
   vetoTriggers_      = iConfig.getUntrackedParameter<std::vector<std::string>>("vetoTriggers",vetoTriggers_);
-  vetoFilters_       = iConfig.getUntrackedParameter<std::vector<std::string>>("vetoFilters",vetoFilters_);
-  checkFilters_      = iConfig.getUntrackedParameter<std::vector<std::string>>("checkFilters",checkFilters_);
+  checkFilters_      = iConfig.getUntrackedParameter<std::vector<std::string>>("checkFilters",checkFilters_); // for highlighting
+  ignoreFilters_     = iConfig.getUntrackedParameter<std::vector<std::string>>("ignoreFilters",ignoreFilters_);   // ignore in highlighting
   trigTables_["All"] = { };
   
   preparePatterns(triggers_,"_v");
   preparePatterns(vetoTriggers_,"_v");
+  preparePatterns(filters_,"");
   preparePatterns(checkFilters_,"");
-  preparePatterns(vetoFilters_,"");
+  preparePatterns(ignoreFilters_,"");
 }
 
 
@@ -129,9 +133,14 @@ void TriggerChecks::beginRun(const edm::Run& iRun, const edm::EventSetup& iSetup
           if(verbose_) std::cout << ">>>   \e[1m" << trigname << "\e[0m" << std::endl;
           std::vector<std::string> filters = hltConfig_.moduleLabels(trigname);
           std::string shortname  = removeVersionLabel(trigname);
+          bool selectedFilter = false;
           if(checkFilters_.size()>0){
             for(auto const& filter: filters){
-              if(selectFilter(filter) and !vetoFilter(filter)){
+              if(selectFilter(filter))
+                selectedFilter = true;
+              else
+                continue;
+              if(checkFilter(filter) and !ignoreFilter(filter)){ // highlight filter
                 std::string type = getTypelabel(filter);
                 if(verbose_) std::cout << ">>>     \e[1m" << filter << " " << type << "\e[0m" << std::endl;
                 std::string newfilter = "-> "+filter+" "+type;
@@ -145,6 +154,7 @@ void TriggerChecks::beginRun(const edm::Run& iRun, const edm::EventSetup& iSetup
           }else if(verbose_){
             for(auto const& filter: filters) std::cout << ">>>     " << filter << std::endl;
           }
+          if(!selectedFilter) continue;
           if(int(filters.size())>=nlast_+1){
             for(int i=nlast_; i>=1; i--){
               std::string lastfilter = filters[filters.size()-i-1];
@@ -233,6 +243,7 @@ std::string TriggerChecks::getTypelabel(const std::string& filter){
 
 
 bool TriggerChecks::select(const std::string& path, const std::vector<std::string> patterns){
+  //if(!patterns) return true;
   for(auto const& pattern: patterns){
     if(pattern.find("*")!=std::string::npos){
       std::smatch match;
@@ -247,13 +258,15 @@ bool TriggerChecks::select(const std::string& path, const std::vector<std::strin
 
 
 bool TriggerChecks::selectTrigger(const std::string& path){
+  if(triggers_.empty()) return true;
   bool selected = select(path,triggers_);
   return selected;
 }
 
 
-bool TriggerChecks::selectFilter(const std::string& path){
-  bool selected = select(path,checkFilters_);
+bool TriggerChecks::selectFilter(const std::string& path){ // for selecting
+  if(filters_.empty()) return true;
+  bool selected = select(path,filters_);
   return selected;
 }
 
@@ -264,8 +277,14 @@ bool TriggerChecks::vetoTrigger(const std::string& path){
 }
 
 
-bool TriggerChecks::vetoFilter(const std::string& path){
-  bool veto = select(path,vetoFilters_);
+bool TriggerChecks::checkFilter(const std::string& path){ // for highlighting
+  bool selected = select(path,checkFilters_);
+  return selected;
+}
+
+
+bool TriggerChecks::ignoreFilter(const std::string& path){ // ignore for highlighting
+  bool veto = select(path,ignoreFilters_);
   return veto;
 }
 
