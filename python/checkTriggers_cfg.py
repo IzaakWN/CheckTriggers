@@ -8,9 +8,9 @@ options = VarParsing('analysis')
 options.register('verbose',  0,  mytype=VarParsing.varType.int)
 options.register('nlast',    1,  mytype=VarParsing.varType.int)
 options.register('year',    -1,  mytype=VarParsing.varType.int)
-options.register('dtype',    "", mytype=VarParsing.varType.string)
-options.register('trigger',  "", mytype=VarParsing.varType.string)
-options.register('filter',   "", mytype=VarParsing.varType.string)
+options.register('dtype',   "", mytype=VarParsing.varType.string)
+options.register('trigger', "", mytype=VarParsing.varType.string)
+options.register('filter',  "", mytype=VarParsing.varType.string)
 #options.register('trigtype', "", mytype=VarParsing.varType.string)
 options.parseArguments()
 director = "file:root://xrootd-cms.infn.it/"
@@ -37,7 +37,7 @@ triggers = options.trigger.split(',') if options.trigger else [
 #   ###'HLT_*Mu100*',
 #   
 #   # SINGLE ELECTRON
-    'HLT_Ele*'
+#     'HLT_Ele*'
 #   'HLT_Ele25_eta2p1_WPTight_Gsf',
 #   'HLT_Ele27_WPTight_Gsf',
 #   'HLT_Ele45_WPLoose_Gsf_L1JetTauSeeded',
