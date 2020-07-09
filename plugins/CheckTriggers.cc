@@ -93,11 +93,11 @@ TriggerChecks::TriggerChecks(const edm::ParameterSet& iConfig)
 {
   verbose_           = iConfig.getUntrackedParameter<bool>("verbose",verbose_);
   nlast_             = std::max(iConfig.getUntrackedParameter<int>("nlast",nlast_),1);
-  triggers_          = iConfig.getUntrackedParameter<std::vector<std::string>>("triggers",triggers_);
-  filters_           = iConfig.getUntrackedParameter<std::vector<std::string>>("filters",filters_);
-  vetoTriggers_      = iConfig.getUntrackedParameter<std::vector<std::string>>("vetoTriggers",vetoTriggers_);
-  checkFilters_      = iConfig.getUntrackedParameter<std::vector<std::string>>("checkFilters",checkFilters_); // for highlighting
-  ignoreFilters_     = iConfig.getUntrackedParameter<std::vector<std::string>>("ignoreFilters",ignoreFilters_);   // ignore in highlighting
+  triggers_          = iConfig.getUntrackedParameter<std::vector<std::string>>("triggers",triggers_); // only check these triggers
+  filters_           = iConfig.getUntrackedParameter<std::vector<std::string>>("filters",filters_); // only show triggers with these filters
+  vetoTriggers_      = iConfig.getUntrackedParameter<std::vector<std::string>>("vetoTriggers",vetoTriggers_); // hide triggers with these filters
+  checkFilters_      = iConfig.getUntrackedParameter<std::vector<std::string>>("checkFilters",checkFilters_); // highlight these filters
+  ignoreFilters_     = iConfig.getUntrackedParameter<std::vector<std::string>>("ignoreFilters",ignoreFilters_); // hide these filters
   trigTables_["All"] = { };
   
   preparePatterns(triggers_,"_v");
@@ -133,7 +133,7 @@ void TriggerChecks::beginRun(const edm::Run& iRun, const edm::EventSetup& iSetup
           if(verbose_) std::cout << ">>>   \e[1m" << trigname << "\e[0m" << std::endl;
           std::vector<std::string> filters = hltConfig_.moduleLabels(trigname);
           std::string shortname  = removeVersionLabel(trigname);
-          bool selectedFilter = false;
+          bool selectedFilter = filters_.empty(); //false;
           if(checkFilters_.size()>0){
             for(auto const& filter: filters){
               if(selectFilter(filter))
