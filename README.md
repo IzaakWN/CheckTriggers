@@ -17,7 +17,7 @@ scram b -j4
 ```
 Source `setEnv.sh` each new session to make the python modules available:
 ```
-source setEnv.sh
+source setupEnv.sh
 ```
 
 
