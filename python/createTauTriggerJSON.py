@@ -117,6 +117,8 @@ def createTauTriggerJSON(year):
                        'HLT_IsoMu22_eta2p1',
                        'HLT_IsoTkMu22',
                        'HLT_IsoTkMu22_eta2p1'],
+        'SingleMuon_Mu24': ['HLT_IsoMu24',
+                            'HLT_IsoTkMu24'],
         'etau':  ['HLT_Ele24_eta2p1_WPLoose_Gsf_LooseIsoPFTau20_SingleL1',
                   'HLT_Ele24_eta2p1_WPLoose_Gsf_LooseIsoPFTau20',
                   'HLT_Ele24_eta2p1_WPLoose_Gsf_LooseIsoPFTau30'],
@@ -174,6 +176,20 @@ def createTauTriggerJSON(year):
            'Muon': orderDict({
              'ptmin':      23,
              'etamax':     2.1,
+             'filterbits': ['IsoTk']
+           }),
+        })),
+        ('HLT_IsoMu24', orderDict({
+           'filter': "hltL3crIsoL1sMu22L1f0L2f10QL3f24QL3trkIsoFiltered0p09",
+           'Muon': orderDict({
+             'ptmin':      23,
+             'filterbits': ['Iso']
+           }),
+        })),
+        ('HLT_IsoTkMu24', orderDict({
+           'filter': "hltL3fL1sMu22L1f0Tkf24QL3trkIsoFiltered0p09",
+           'Muon': orderDict({
+             'ptmin':      23,
              'filterbits': ['IsoTk']
            }),
         })),
@@ -601,17 +617,24 @@ def json_order(key,value):
   if key in order:
     return order.index(key)
   return key
-    
+  
 
-
-def main():
-    years = [2016,2017,2018]
-    for year in years:
-      createTauTriggerJSON(year)
-    
+def main(args):
+  years = args.years #[2016,2017,2018]
+  for year in years:
+    createTauTriggerJSON(year)
+  
 
 
 if __name__ == '__main__':
-    main()
+  from argparse import ArgumentParser
+  description = """Create JSON file of triggers and their filters and nanoAOD bits (for matching)."""
+  parser = ArgumentParser(prog="createTauTriggerJSON.py",description=description,epilog="Good luck!")
+  parser.add_argument('-y', '--year',    dest='years', type=int, nargs='+', default=[2016,2017,2018],
+                                         help="years to create a JSON for" )
+  ###parser.add_argument('-v', '--verbose', dest='verbosity', type=int, nargs='?', const=1, default=0, action='store',
+  ###                                       help="set verbosity" )
+  args = parser.parse_args()
+  main(args)
     
 

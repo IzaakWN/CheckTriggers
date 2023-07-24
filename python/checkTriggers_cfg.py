@@ -14,29 +14,32 @@ options.register('veto',    "", mytype=VarParsing.varType.string) # hide trigger
 options.register('filter',  "", mytype=VarParsing.varType.string) # only show triggers with these filters
 #options.register('trigtype', "", mytype=VarParsing.varType.string)
 options.parseArguments()
-director = "file:root://xrootd-cms.infn.it/"
+#director = "file:root://xrootd-cms.infn.it/"     # DAS, use in Europe & Asia
+#director = "file:root://cmsxrootd.fnal.gov/"     # DAS, use in the US
+director = "file:root://cms-xrd-global.cern.ch/" # DAS, everywhere
 verbose  = options.verbose>0
 nlast    = options.nlast
 year     = options.year
 dtype    = options.dtype
 #trigtype = options.trigtype
 triggers = options.trigger.split(',') if options.trigger else [ # only check these triggers
-#   
-#   # SINGLE MUON
-#   'HLT_IsoMu22',
-#   'HLT_IsoMu22_eta2p1',
-#   'HLT_IsoTkMu22',
-#   'HLT_IsoTkMu22_eta2p1',
-#   'HLT_IsoMu24',
-#   'HLT_IsoMu27',
-#   'HLT_Mu50',
-#   'HLT_TkMu50',
-#   'HLT_Mu100',
-#   'HLT_OldMu100',
-#   'HLT_TkMu100',
-#   ###'HLT_*Mu50*',
-#   ###'HLT_*Mu100*',
-#   
+  
+  # SINGLE MUON
+  'HLT_IsoMu22',
+  'HLT_IsoMu22_eta2p1',
+  'HLT_IsoTkMu22',
+  'HLT_IsoTkMu22_eta2p1',
+  'HLT_IsoMu24',
+  'HLT_IsoTkMu24',
+  'HLT_IsoMu27',
+  'HLT_Mu50',
+  'HLT_TkMu50',
+  'HLT_Mu100',
+  'HLT_OldMu100',
+  'HLT_TkMu100',
+  ###'HLT_*Mu50*',
+  ###'HLT_*Mu100*',
+  
 #   # SINGLE ELECTRON
 #     'HLT_Ele*'
 #   'HLT_Ele25_eta2p1_WPTight_Gsf',
@@ -116,31 +119,31 @@ filters = [ # only show triggers with these filters
 #   'hltEle*CaloIdVTGsfTrkIdTGsf*Filter',
 ]
 checkFilters = options.filter.split(',') if options.filter else [ # highlight these filters
-#   'hltEgammaCandidates',
-#   '*PixelMatchFilter',
+  'hltEgammaCandidates',
+  '*PixelMatchFilter',
   'hltEle*CaloIdVTGsfTrkIdTGsf*Filter',
-#   '*RelTrkIso*Filtered0p4',
-#   'hltL3cr*IsoFiltered0p09',
-#   'hltL3f*IsoFiltered0p09',
-#   'hlt*L3MuonCandidates', #'hltIterL3MuonCandidates', 'hltOldL3MuonCandidates',
-#   'hltHighPtTkMuonCands',
-#   'hlt*TkMuonCands',
-#   'hlt*TrkMuonCands',
-#   'hltEle*Ele*CaloIdLTrackIdLIsoVL*Filter',
-#   'hltMu*TrkIsoVVL*Ele*CaloIdLTrackIdLIsoVL*Filter*',
-#   'hlt*OverlapFilterIsoEle*PFTau*',
-#   'hltEle*Ele*Ele*CaloIdLTrackIdLDphiLeg*Filter',
-#   'hltL3fL1Mu*DoubleEG*Filtered*',
-#   'hltMu*DiEle*CaloIdLTrackIdLElectronleg*Filter',
-#   'hltL3fL1DoubleMu*EG*Filter*',
-#   'hltDiMu*Ele*CaloIdLTrackIdLElectronleg*Filter',
-#   'hltEle32L1DoubleEGWPTightGsfTrackIsoFilter',
-#   'hltEGL1SingleEGOrFilter',
-#   'hltDiMuon*Filtered*',
-#   'hlt*OverlapFilterIsoMu*PFTau*',
-#   'hltL3fL1TripleMu*',
-#   'hltL3fL1DoubleMu*EG*Filtered*',
-#   'hltDoublePFTau*TrackPt1*ChargedIsolation*',
+  '*RelTrkIso*Filtered0p4',
+  'hltL3cr*IsoFiltered0p09',
+  'hltL3f*IsoFiltered0p09',
+  'hlt*L3MuonCandidates', #'hltIterL3MuonCandidates', 'hltOldL3MuonCandidates',
+  'hltHighPtTkMuonCands',
+  'hlt*TkMuonCands',
+  'hlt*TrkMuonCands',
+  'hltEle*Ele*CaloIdLTrackIdLIsoVL*Filter',
+  'hltMu*TrkIsoVVL*Ele*CaloIdLTrackIdLIsoVL*Filter*',
+  'hlt*OverlapFilterIsoEle*PFTau*',
+  'hltEle*Ele*Ele*CaloIdLTrackIdLDphiLeg*Filter',
+  'hltL3fL1Mu*DoubleEG*Filtered*',
+  'hltMu*DiEle*CaloIdLTrackIdLElectronleg*Filter',
+  'hltL3fL1DoubleMu*EG*Filter*',
+  'hltDiMu*Ele*CaloIdLTrackIdLElectronleg*Filter',
+  'hltEle32L1DoubleEGWPTightGsfTrackIsoFilter',
+  'hltEGL1SingleEGOrFilter',
+  'hltDiMuon*Filtered*',
+  'hlt*OverlapFilterIsoMu*PFTau*',
+  'hltL3fL1TripleMu*',
+  'hltL3fL1DoubleMu*EG*Filtered*',
+  'hltDoublePFTau*TrackPt1*ChargedIsolation*',
 ]
 ignoreFilters = [ # hide these filters
 ]
@@ -257,7 +260,7 @@ elif dtype=='mc':   files = filter(lambda f: '/store/data/' not in f,files)
 # PRINT
 print ">>> %s checkTriggers_cfg.py %s"%('-'*15,'-'*36)
 print ">>> year          = %s"%year
-print ">>> dtype         = '%s'"%dtype
+print ">>> dtype         = %r"%dtype
 print ">>> verbose       = %s"%verbose
 print ">>> nlast         = %s"%nlast
 print ">>> triggers      = %s"%triggers

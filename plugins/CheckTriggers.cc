@@ -66,6 +66,7 @@ class TriggerChecks
     std::vector<std::string> triggers_ = {
       "HLT_Iso*Mu22*",
       "HLT_IsoMu24",
+      "HLT_IsoTkMu24",
       "HLT_IsoMu27",
       "HLT_Ele27_WPTight_Gsf",
       "HLT_Ele35_WPTight_Gsf",

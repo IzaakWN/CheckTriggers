@@ -1,6 +1,7 @@
 # Tools for checking triggers
 
-This repository contains a few tools to study CMS triggers.
+This repository contains a few tools to study the CMS triggers
+and corresponding filters stored in miniAOD and nanoAOD.
 
 
 ## Installation

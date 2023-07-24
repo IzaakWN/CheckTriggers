@@ -59,6 +59,10 @@
       "ditau": [
         "HLT_DoubleMediumIsoPFTau35_Trk1_eta2p1_Reg", 
         "HLT_DoubleMediumCombinedIsoPFTau35_Trk1_eta2p1_Reg"
+      ], 
+      "SingleMuon_Mu24": [
+        "HLT_IsoMu24", 
+        "HLT_IsoTkMu24"
       ]
     }, 
     "mc": {
@@ -84,6 +88,10 @@
       "ditau": [
         "HLT_DoubleMediumIsoPFTau35_Trk1_eta2p1_Reg", 
         "HLT_DoubleMediumCombinedIsoPFTau35_Trk1_eta2p1_Reg"
+      ], 
+      "SingleMuon_Mu24": [
+        "HLT_IsoMu24", 
+        "HLT_IsoTkMu24"
       ]
     }
   }, 
@@ -139,6 +147,24 @@
       "Muon": {
         "ptmin": 23, 
         "etamax": 2.1, 
+        "filterbits": [
+          "IsoTk"
+        ]
+      }
+    }, 
+    "HLT_IsoMu24": {
+      "filter": "hltL3crIsoL1sMu22L1f0L2f10QL3f24QL3trkIsoFiltered0p09", 
+      "Muon": {
+        "ptmin": 23, 
+        "filterbits": [
+          "Iso"
+        ]
+      }
+    }, 
+    "HLT_IsoTkMu24": {
+      "filter": "hltL3fL1sMu22L1f0Tkf24QL3trkIsoFiltered0p09", 
+      "Muon": {
+        "ptmin": 23, 
         "filterbits": [
           "IsoTk"
         ]
