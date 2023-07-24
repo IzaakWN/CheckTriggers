@@ -35,6 +35,8 @@ def createTauTriggerJSON(year):
     #  NANOAOD filters bits  #
     ##########################
     # https://github.com/cms-sw/cmssw/blob/master/PhysicsTools/NanoAOD/python/triggerObjects_cff.py
+    # Create dictionary with ALL filter bits in nanoAOD,
+    # pointing from human-readable labels to bits (powers of 2)
     
     data = OrderedDict()
     data['year'] = year
@@ -614,7 +616,8 @@ def json_order(key,value):
     return value
   order = ['ptmin','etamax','filter','filterbits','runrange',
            'Electron','Muon','Tau','Jet','MET',
-           'SingleElectron','SingleMuon','etau','mutau','ditau','data','mc']
+           'SingleElectron','SingleMuon','SingleMuon_Mu24',
+           'etau','mutau','ditau','data','mc']
   if key in order:
     return order.index(key)
   return key

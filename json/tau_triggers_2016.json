@@ -47,6 +47,10 @@
         "HLT_IsoTkMu22", 
         "HLT_IsoTkMu22_eta2p1"
       ], 
+      "SingleMuon_Mu24": [
+        "HLT_IsoMu24", 
+        "HLT_IsoTkMu24"
+      ], 
       "etau": [
         "HLT_Ele24_eta2p1_WPLoose_Gsf_LooseIsoPFTau20_SingleL1", 
         "HLT_Ele24_eta2p1_WPLoose_Gsf_LooseIsoPFTau20", 
@@ -59,10 +63,6 @@
       "ditau": [
         "HLT_DoubleMediumIsoPFTau35_Trk1_eta2p1_Reg", 
         "HLT_DoubleMediumCombinedIsoPFTau35_Trk1_eta2p1_Reg"
-      ], 
-      "SingleMuon_Mu24": [
-        "HLT_IsoMu24", 
-        "HLT_IsoTkMu24"
       ]
     }, 
     "mc": {
@@ -76,6 +76,10 @@
         "HLT_IsoTkMu22", 
         "HLT_IsoTkMu22_eta2p1"
       ], 
+      "SingleMuon_Mu24": [
+        "HLT_IsoMu24", 
+        "HLT_IsoTkMu24"
+      ], 
       "etau": [
         "HLT_Ele24_eta2p1_WPLoose_Gsf_LooseIsoPFTau20_SingleL1", 
         "HLT_Ele24_eta2p1_WPLoose_Gsf_LooseIsoPFTau20", 
@@ -88,10 +92,6 @@
       "ditau": [
         "HLT_DoubleMediumIsoPFTau35_Trk1_eta2p1_Reg", 
         "HLT_DoubleMediumCombinedIsoPFTau35_Trk1_eta2p1_Reg"
-      ], 
-      "SingleMuon_Mu24": [
-        "HLT_IsoMu24", 
-        "HLT_IsoTkMu24"
       ]
     }
   }, 
