@@ -62,6 +62,7 @@ def createTauTriggerJSON(year):
         ('Iso',                     2), # hltL3cr*IsoFiltered0p09
         ('OverlapFilterPFTau',      4), # *OverlapFilter*IsoMu*PFTau*
         ('IsoTk',                   8), # hltL3f*IsoFiltered0p09
+        #('IsoTkMu',                 8), # hltL3f*IsoFiltered0p09
         ('Mu50',                 1024), # hltL3fL1sMu*L3Filtered50* || hltL3fL1sMu*TkFiltered50*
       ])
       data['filterbits']['Tau'] = OrderedDict([
