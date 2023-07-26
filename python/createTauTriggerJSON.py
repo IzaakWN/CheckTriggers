@@ -295,6 +295,8 @@ def createTauTriggerJSON(year):
                            'HLT_Ele35_WPTight_Gsf'],
         'SingleMuon': ['HLT_IsoMu24',
                        'HLT_IsoMu27'],
+        'SingleMuon_Mu24': ['HLT_IsoMu24'],
+        'SingleMuon_Mu27': ['HLT_IsoMu27'],
         'etau':  ['HLT_Ele24_eta2p1_WPTight_Gsf_LooseChargedIsoPFTau30_eta2p1_CrossL1'],
         'mutau': ['HLT_IsoMu20_eta2p1_LooseChargedIsoPFTau27_eta2p1_CrossL1'],
         'ditau': ['HLT_DoubleTightChargedIsoPFTau35_Trk1_TightID_eta2p1_Reg',
@@ -616,7 +618,7 @@ def json_order(key,value):
     return value
   order = ['ptmin','etamax','filter','filterbits','runrange',
            'Electron','Muon','Tau','Jet','MET',
-           'SingleElectron','SingleMuon','SingleMuon_Mu24',
+           'SingleElectron','SingleMuon','SingleMuon_Mu24','SingleMuon_Mu27',
            'etau','mutau','ditau','data','mc']
   if key in order:
     return order.index(key)
